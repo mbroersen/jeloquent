@@ -1,5 +1,6 @@
 {
   "name": "jeloquent",
+  "module": "dist/jeloquent.js",
   "version": "1.0.0",
   "description": "micro framework / memory model store",
   "main": "app.js",
@@ -17,6 +18,10 @@
     "laravel",
     "data"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbroersen/jeloquent.git"
+  },
   "author": "Mark Broersen",
   "license": "ISC",
   "dependencies": {
