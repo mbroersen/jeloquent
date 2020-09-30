@@ -1,0 +1,30 @@
+{
+  "name": "jeloquent",
+  "version": "1.0.0",
+  "description": "micro framework / memory model store",
+  "main": "app.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "framework",
+    "models",
+    "datastorage",
+    "memory",
+    "store",
+    "data"
+  ],
+  "author": "Mark Broersen",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.11.5"
+  },
+  "devDependencies": {
+    "webpack": "^4.44.2",
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "terser-webpack-plugin": "^4.2.2"
+  }
+}

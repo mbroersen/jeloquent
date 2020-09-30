@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": true,
+        "loose": true,
+        "targets": {
+          "chrome": "last 2 versions",
+          "firefox": "latest 2 versions"
+        },
+        "useBuiltIns": "usage",
+        "corejs": "3.6.4"
+      }
+    ]
+  ]
+}
