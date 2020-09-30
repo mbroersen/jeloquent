@@ -26,7 +26,7 @@ export default class Table {
         return Object.values(this.models);
     }
 
-    insertModel(model) {
+    insert(model) {
         if (this.models.hasOwnProperty(model.primaryKey)) {
             throw new Error('Record already exists');
         }
@@ -44,7 +44,7 @@ export default class Table {
         this.models[model.primaryKey] = model;
     }
 
-    updateModel(model) {
+    update(model) {
         if (!this.models.hasOwnProperty(model.primaryKey)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -68,6 +68,7 @@ export default class Table {
         if (!this.models.hasOwnProperty(id)) {
             throw new Error('Record doesn\'t exists');
         }
+        //todo remove from indexes;
 
         delete this.models[id];
     }
@@ -82,37 +83,4 @@ export default class Table {
         //     }, []);
         // }
     }
-
-    // select(id) {
-    //     if (!this.records.hasOwnProperty(id)) {
-    //         throw new Error('Record doesn\'t exists');
-    //     }
-    //
-    //     return {...this.records[id]};
-    // }
-    //
-    // insert(data) {
-    //     if (this.records.hasOwnProperty(data[this.primaryKey])) {
-    //         throw new Error('Record already exists');
-    //     }
-    //
-    //     this.records[data[this.primaryKey]] = data;
-    // }
-    //
-    // update(data) {
-    //     if (!this.records.hasOwnProperty(data[this.primaryKey])) {
-    //         throw new Error('Record doesn\'t exists');
-    //     }
-    //
-    //     const originalData = this.records[data[this.primaryKey]];
-    //     this.records[data[this.primaryKey]] = {...originalData, ...data};
-    // }
-    //
-    // delete(id) {
-    //     if (!this.records.hasOwnProperty(id)) {
-    //         throw new Error('Record doesn\'t exists');
-    //     }
-    //
-    //     delete this.records[id];
-    // }
 }

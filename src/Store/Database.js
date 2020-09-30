@@ -37,16 +37,20 @@ export default class Database {
         return this.tables[table].allModels();
     }
 
-    insertModel(table, model) {
-        return this.tables[table].insertModel(model);
+    insert(table, model) {
+        return this.tables[table].insert(model);
     }
 
-    updateModel(table, model) {
-        return this.tables[table].updateModel(model);
+    update(table, model) {
+        return this.tables[table].update(model);
     }
 
     select(table, id) {
         return this.tables[table].select(id);
+    }
+
+    delete(table, id) {
+        return this.tables[table].delete(id);
     }
 
     /**

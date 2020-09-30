@@ -30,14 +30,14 @@ class Model {
         data.forEach((modelData) => {
             const model = this.getInstance();
             model.fill(modelData);
-            window.Store.database().insertModel(this.className(), model);
+            window.Store.database().insert(this.className(), model);
         });
     }
 
     static update(data) {
         const model = new this();
         model.fill(data);
-        window.Store.database().updateModel(this.className(), model);
+        window.Store.database().update(this.className(), model);
     }
 
     static select(id) {
@@ -47,6 +47,11 @@ class Model {
 
         }
     }
+
+    static delete(id) {
+        window.Store.database().delete(this.className(), id);
+    }
+
 
     static all() {
         return window.Store.database().all(this.className());
