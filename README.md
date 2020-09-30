@@ -3,15 +3,11 @@
 **Class example**
 
 ```js
-import Model from "../Store/Model.js";
-import Field from "../Store/Model/Field.js";
-import BelongsTo from "../Store/Model/Relation/BelongTo.js";
+import {Model, Field, HasMany, BelongsTo} from '../dist/jeloquent.js';
 import Team from "./Team.js";
 import Comment from "./Comment";
-import HasMany from "../Store/Model/Relation/HasMany";
 
 export default class User extends Model {
-
     constructor() {
         const fields = [
             new Field('id', true),
@@ -30,7 +26,7 @@ export default class User extends Model {
 
 ```js
 
-import {Database, Store} from './Store/Store.js';
+import {Database, Store} from './dist/jeloquent.js';
 import {User, Team, Comment} from './Models.js';
 
 const models = [
@@ -42,6 +38,5 @@ const models = [
 const store = new Store();
 store.add(new Database('chess', models));
 store.use('chess');
-
 
 ```
