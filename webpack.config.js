@@ -13,11 +13,10 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'jeloquent.js',
-        // library: 'fMark',
-        // libraryTarget: 'umd',
-        // umdNamedDefine: true,
+        library: 'Jeloquent',
+        libraryTarget: 'umd',
+        umdNamedDefine: true,
     },
-
     optimization: {
         minimizer  : [
             new TerserPlugin({
@@ -36,15 +35,10 @@ module.exports = {
                     safari10: false,
                 },
             })
-
-
         ]
     },
 
-
     module: {
-
-
         rules: [
             {
                 test: /\.m?js$/,
@@ -58,11 +52,5 @@ module.exports = {
             }
         ]
     },
-
-
-    // Default mode for Webpack is production.
-    // Depending on mode Webpack will apply different things
-    // on final bundle. For now we don't need production's JavaScript
-    // minifying and other thing so let's set mode to development
     mode: 'production'
 };
