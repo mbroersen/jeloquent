@@ -25,5 +25,5 @@ class Store {
 export {
     Store,
     Database,
-    Table
+    Table,
 };

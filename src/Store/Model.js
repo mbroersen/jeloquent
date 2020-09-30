@@ -1,8 +1,9 @@
 import HasMany from "./Model/Relation/HasMany.js";
 import BelongsTo from "./Model/Relation/BelongTo.js";
-import Relation from "./Model/Relation";
+import Field from "./Model/Field.js";
+import Relation from "./Model/Relation.js";
 
-export default class Model {
+class Model {
 
     constructor(fields) {
         this.setFields(fields);
@@ -119,3 +120,11 @@ export default class Model {
         return json;
     }
 }
+
+export {
+    Model,
+    Field,
+    Relation,
+    BelongsTo,
+    HasMany
+};

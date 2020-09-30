@@ -1,4 +1,4 @@
-import Model from "./Model.js";
+import {Model} from "./Model.js";
 
 export default class Table {
 
