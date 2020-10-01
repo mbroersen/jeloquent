@@ -1,9 +1,20 @@
+
+
 # jeloquent
+
+## Install
+
+[![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
+
+```bash
+npm install jeloquent
+```
+
 
 **Class example**
 
 ```js
-import {Model, Field, HasMany, BelongsTo} from '../dist/jeloquent.js';
+import {Model, Field, HasMany, BelongsTo} from 'jeloquent';
 import Team from "./Team.js";
 import Comment from "./Comment";
 
@@ -26,7 +37,7 @@ export default class User extends Model {
 
 ```js
 
-import {Database, Store} from './dist/jeloquent.js';
+import {Database, Store} from 'jeloquent';
 import {User, Team, Comment} from './Models.js';
 
 const models = [
