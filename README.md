@@ -25,8 +25,44 @@ export default class User extends Model {
             new Field('name'),
             new Field('team_id'),
             new BelongsTo(Team),
-            new HasMany(Comment) //should have index
+            new HasMany(Comment),
         ];
+        super(fields);
+    }
+}
+
+import {Model, Field, HasMany, HasManyThrough} from 'jeloquent';
+import User from "./User";
+import Comment from "./Comment";
+
+export default class Team extends Model {
+
+    constructor() {
+        const fields = [
+            new Field('id', true),
+            new Field('name'),
+            new HasMany(User),
+            new HasManyThrough(Comment, User),
+        ];
+
+        super(fields);
+    }
+}
+
+import {Model, Field, BelongsTo} from 'jeloquent';
+import User from "./User";
+
+export default class Comment extends Model {
+
+    constructor() {
+        const fields = [
+            new Field('id', true),
+            new Field('title'),
+            new Field('text'),
+            new Field('user_id'),
+            new BelongsTo(User),
+        ];
+
         super(fields);
     }
 }
