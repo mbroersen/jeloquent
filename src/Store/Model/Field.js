@@ -49,15 +49,19 @@ export default class Field {
             }
         )
 
+        this.setFillPropertyOnParent();
+
+        return this;
+    }
+
+    setFillPropertyOnParent() {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
             {
-            set: (value) => {
-                this.fieldValue = value;
-            }
+                set: (value) => {
+                    this.fieldValue = value;
+                }
         });
-
-        return this;
     }
 
 

@@ -27,17 +27,22 @@ class Model {
     static insert(data) {
         data = Array.isArray(data) ? data : [data];
 
-        data.forEach((modelData) => {
+        data.map((modelData) => {
             const model = this.getInstance();
             model.fill(modelData);
             window.Store.database().insert(this.className(), model);
+            return model;
         });
+
+        return data;
     }
 
     static update(data) {
         const model = new this();
         model.fill(data);
         window.Store.database().update(this.className(), model);
+
+        return model;
     }
 
     static select(id) {
@@ -54,6 +59,10 @@ class Model {
 
 
     static all() {
+        return window.Store.database().all(this.className());
+    }
+
+    static ids() {
         return window.Store.database().all(this.className());
     }
 
