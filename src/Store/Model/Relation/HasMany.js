@@ -47,7 +47,7 @@ export default class HasMany extends Relation {
             }, []) ?? [];
         }
 
-        return Store.database().allModels(this.model.className()).filter(model => {
+        return Store.database().all(this.model.className()).filter(model => {
             return model[this.foreignKey] === this.$parent[this.localKey];
         });
     }

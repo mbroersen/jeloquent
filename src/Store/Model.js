@@ -1,3 +1,4 @@
+import HasManyThrough from './Model/Relation/HasManyThrough.js';
 import HasMany from "./Model/Relation/HasMany.js";
 import BelongsTo from "./Model/Relation/BelongTo.js";
 import Field from "./Model/Field.js";
@@ -57,13 +58,12 @@ class Model {
         window.Store.database().delete(this.className(), id);
     }
 
-
     static all() {
         return window.Store.database().all(this.className());
     }
 
     static ids() {
-        return window.Store.database().all(this.className());
+        return window.Store.database().ids(this.className());
     }
 
 
@@ -140,5 +140,6 @@ export {
     Field,
     Relation,
     BelongsTo,
-    HasMany
+    HasMany,
+    HasManyThrough,
 };
