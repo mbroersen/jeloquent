@@ -120,6 +120,10 @@ User.select(1).team;
 
 //returns array of comments or empty array
 User.select(1).comments;
+
+// Has many trough
+// same as Team.select(1).users.reduce((array, user) => {array.push(...user.comments)}, []);
+Team.select(1).comments;
 ```
 
 **Relations getters**
