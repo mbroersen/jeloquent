@@ -4,13 +4,17 @@
 ### Is an orm memory store for javascript. 
 
 **Main goals are:** 
-* to quickly select models and/or his relations using primaryKeys and foreignKeys.
+* to quickly select models and/or his relations using primaryKeys and foreignKeys
+* automated indexing of relations
 * use the relation names of laravel eloquent
-* simple setup of the relations
+* a simple setup of the relations
 * return array collections of relations
 * add easy accessors for relations on model
 * keep the package lightweight and for modern browsers
 
+## Speed test with more than 600 000 entities
+5000 times a selection of an entity and 4 of his relations of all relation types.
+average speed in this was 0.19ms :smile:
 ![speed test](./docs/img/speed_test.gif)
 
 ## Install
