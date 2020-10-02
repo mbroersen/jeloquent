@@ -18,6 +18,10 @@ export default class Table {
         });
     }
 
+    allModels() {
+        return this.models;
+    }
+
     ids() {
         return Object.keys(this.models);
     }

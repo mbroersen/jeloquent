@@ -27,9 +27,14 @@ export default class HasManyThrough extends Relation {
     }
 
     get value() {
-        if (Store.database().indexes(this.model.className()).hasOwnProperty(this.indexName)) {
-            return Store.database().indexes(this.model.className())[this.indexName][this.$parent[this.localKey]]?.reduce((obj, key) => {
-                obj.push(this.model.select(key));
+        const className = this.model.className();
+        const indexes = Store.database().indexes(className);
+
+        if (indexes.hasOwnProperty(this.indexName)) {
+            const allRelations = Store.database().allModels(className);
+
+            return indexes[this.indexName][this.$parent[this.localKey]]?.reduce((obj, key) => {
+                obj.push(allRelations[key]);
                 return obj;
             }, []) ?? [];
         }

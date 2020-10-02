@@ -40,9 +40,14 @@ export default class HasMany extends Relation {
     }
 
     get value() {
-        if (Store.database().indexes(this.model.className()).hasOwnProperty(this.foreignKey)) {
-            return Store.database().indexes(this.model.className())[this.foreignKey][this.$parent[this.localKey]]?.reduce((obj, key) => {
-                obj.push(this.model.select(key));
+        const className = this.model.className();
+        const indexes = Store.database().indexes(className);
+
+        if (indexes.hasOwnProperty(this.foreignKey)) {
+            const allRelations = Store.database().allModels(className);
+
+            return indexes[this.foreignKey][this.$parent[this.localKey]]?.reduce((obj, key) => {
+                obj.push(allRelations[key]);
                 return obj;
             }, []) ?? [];
         }

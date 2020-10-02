@@ -37,6 +37,10 @@ export default class Database {
         return this.tables[table].all();
     }
 
+    allModels(table) {
+        return this.tables[table].allModels();
+    }
+
     addIndex(table, name) {
         return this.tables[table].addIndex(name);
     }
