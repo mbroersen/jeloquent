@@ -11,6 +11,7 @@
 * add easy accessors for relations on model
 * keep the package lightweight and for modern browsers
 
+![speed test](./docs/img/speed_test.gif)
 
 ## Install
 
