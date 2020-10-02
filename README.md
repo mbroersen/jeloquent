@@ -1,7 +1,7 @@
 
 
 # jeloquent
-### Is a model memory store for javascript. 
+### Is a orm memory store for javascript. 
 
 **Main goals are:** 
 * to quickly select models and/or his relations using primaryKeys and foreignKeys.
