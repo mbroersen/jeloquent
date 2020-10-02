@@ -1,13 +1,13 @@
 
 
 # jeloquent
-### Is a orm memory store for javascript. 
+### Is an orm memory store for javascript. 
 
 **Main goals are:** 
 * to quickly select models and/or his relations using primaryKeys and foreignKeys.
 * use the relation names of laravel eloquent
 * simple setup of the relations
-* return arrays collections of relations
+* return array collections of relations
 * add easy accessors for relations on model
 * keep the package lightweight and for modern browsers
 
