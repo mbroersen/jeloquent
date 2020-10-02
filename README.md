@@ -15,6 +15,8 @@
 ## Speed test with more than 600 000 entities
 5000 times a selection of an entity and 3 of his relations of all relation types, 
 average speed in this test was 0.19ms :smile:
+
+After release 1.2.1 same test average is `0.05ms` "ms avg"
 ![speed test](./docs/img/speed_test.gif)
 
 ## Install
