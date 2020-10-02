@@ -1,7 +1,7 @@
 {
   "name": "jeloquent",
   "module": "dist/jeloquent.js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "micro framework / memory model store",
   "main": "app.js",
   "scripts": {
