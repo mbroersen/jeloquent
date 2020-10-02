@@ -13,7 +13,7 @@
 * keep the package lightweight and for modern browsers
 
 ## Speed test with more than 600 000 entities
-5000 times a selection of an entity and 4 of his relations of all relation types.
+5000 times a selection of an entity and 3 of his relations of all relation types.
 average speed in this was 0.19ms :smile:
 ![speed test](./docs/img/speed_test.gif)
 
