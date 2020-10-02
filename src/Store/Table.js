@@ -36,9 +36,15 @@ export default class Table {
         }
 
         this.indexedFields.forEach((fieldName) => {
-            const indexes = this.indexes[fieldName][model[fieldName]] ?? [];
+            const lookUpValue = fieldName.split('.');
+
+            const indexLookUpValue = lookUpValue.reduce((object, objectKey) => {
+                return object[objectKey];
+            }, model);
+
+            const indexes = this.indexes[fieldName][indexLookUpValue] ?? [];
             indexes.push(model.primaryKey);
-            this.indexes[fieldName][model[fieldName]] = indexes;
+            this.indexes[fieldName][indexLookUpValue] = indexes;
         })
 
         this.models[model.primaryKey] = model;
@@ -71,6 +77,13 @@ export default class Table {
         //todo remove from indexes;
 
         delete this.models[id];
+    }
+
+    addIndex(indexName) {
+        if ((indexName in this.indexes) === false) {
+            this.indexedFields.push(indexName);
+            this.indexes[indexName] = {};
+        }
     }
 
     selectModelsByIndex(key) {

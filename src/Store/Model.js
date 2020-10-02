@@ -14,6 +14,10 @@ class Model {
         return this.name;
     }
 
+    static addIndex(name) {
+        window.Store.database().addIndex(this.className(), name);
+    }
+
     static getInstance() {
         const original =  window.Store.classInstances[this.className()] ?? (window.Store.classInstances[this.className()] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
@@ -73,6 +77,13 @@ class Model {
                 this[`_${fieldName}`] = data[fieldName];
             }
         }
+
+        const values = [];
+        this.primaryFields.forEach((primaryField) => {
+            values.push(this[primaryField.$name]);
+        });
+
+        this.primaryKeyValue = values.join('-');
     }
 
     belongsTo(model, foreignKey) {
@@ -87,6 +98,14 @@ class Model {
         const hasMany = new HasMany(model, foreignKey);
         hasMany.setup(this);
         return hasMany;
+    }
+
+    get primaryKey () {
+        return this.primaryKeyValue
+    }
+
+    get primaryKeyName() {
+        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
     }
 
     setFields(fields) {
@@ -107,6 +126,7 @@ class Model {
             }
         );
 
+        this.primaryFields = this.originalFields.filter(field => field.isPrimary);
 
         return this;
     }

@@ -18,26 +18,6 @@ export default class Field {
     }
 
     setParentProperties() {
-        if (this.isPrimary) {
-            Object.defineProperty(this.$parent,
-                'primaryKey', {
-                    get: () => {
-                        return this.value;
-                    }
-                }
-            )
-
-            Object.defineProperty(this.$parent,
-                'primaryKeyName', {
-                    get: () => {
-                        return this.$name;
-                    }
-                }
-            )
-        }
-
-
-
         Object.defineProperty(this.$parent,
             this.$name, {
                 get: () => {

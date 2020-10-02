@@ -1,4 +1,5 @@
 import Table from "./Table.js";
+import HasManyThrough from "./Model/Relation/HasManyThrough.js";
 
 export default class Database {
 
@@ -10,10 +11,17 @@ export default class Database {
          * @type {{<Table>}}
          */
         this.tables = {};
+        this.hasManyThroughRelations = [];
 
         models.forEach((model) => {
             const table = new Table(model);
             this.tables[table.name] = table;
+
+            this.hasManyThroughRelations.push(...model.getInstance().originalFields.filter(field => field instanceof HasManyThrough));
+        });
+
+        this.hasManyThroughRelations.forEach((hasManyThrough) => {
+            this.addIndex(hasManyThrough.model.className(), hasManyThrough.indexName);
         });
     }
 
@@ -29,12 +37,12 @@ export default class Database {
         return this.tables[table].all();
     }
 
-    indexes(table) {
-        return this.tables[table].indexes;
+    addIndex(table, name) {
+        return this.tables[table].addIndex(name);
     }
 
-    allModels(table) {
-        return this.tables[table].allModels();
+    indexes(table) {
+        return this.tables[table].indexes;
     }
 
     insert(table, model) {
