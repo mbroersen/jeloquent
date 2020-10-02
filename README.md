@@ -8,6 +8,7 @@
 * use the relation names of laravel eloquent
 * simple setup of the relations
 * return arrays collections of relations
+* add easy accessors for relations on model
 * keep the package lightweight and for modern browsers
 
 
