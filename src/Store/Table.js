@@ -66,6 +66,19 @@ export default class Table {
         this.models[model.primaryKey] = model;
     }
 
+    find(id) {
+        if (Array.isArray(id)) {
+            const result = [];
+            for (let i = 0; i < id.length; i++) {
+                result.push(this.models[id[i]] ?? null)
+            }
+
+            return result;
+        }
+
+        return this.models[id] ?? null;
+    }
+
     select(id) {
         if (!this.models.hasOwnProperty(id)) {
             throw new Error('Record doesn\'t exists');

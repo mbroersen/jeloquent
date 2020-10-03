@@ -117,7 +117,8 @@ User.insert([
 **Selecting data from tables**
 
 ```js
-User.select(1)
+User.find(1);
+User.find([1, 5, 9]);
 User.all();
 User.ids();
 ```
@@ -133,14 +134,14 @@ User.delete(1);
 
 ```js
 // return Team object or null
-User.select(1).team;
+User.find(1).team;
 
 //returns array of comments or empty array
-User.select(1).comments;
+User.find(1).comments;
 
 // Has many trough
 // same as Team.select(1).users.reduce((array, user) => {array.push(...user.comments)}, []);
-Team.select(1).comments;
+Team.find(1).comments;
 ```
 
 **Relations getters**
@@ -149,14 +150,14 @@ Team.select(1).comments;
 //BelongsTo
 
 //return true or false
-User.select(1).hasTeam 
+User.find(1).hasTeam 
 
 //HasMany
 
-User.select(1).hasComments
+User.find(1).hasComments
 
 // returns number of comments of user 1
-User.select(1).commentsCount
+User.find(1).commentsCount
 
 ```
 

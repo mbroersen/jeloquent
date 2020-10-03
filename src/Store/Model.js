@@ -50,6 +50,10 @@ class Model {
         return model;
     }
 
+    static find(id) {
+        return window.Store.database().find(this.className(), id);
+    }
+
     static select(id) {
         try {
             return window.Store.database().select(this.className(), id);

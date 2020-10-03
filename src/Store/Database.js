@@ -57,6 +57,10 @@ export default class Database {
         return this.tables[table].update(model);
     }
 
+    find(table, id) {
+        return this.tables[table].find(id);
+    }
+
     select(table, id) {
         return this.tables[table].select(id);
     }

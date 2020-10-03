@@ -31,12 +31,9 @@ export default class HasManyThrough extends Relation {
         const indexes = Store.database().indexes(className);
 
         if (indexes.hasOwnProperty(this.indexName)) {
-            const allRelations = Store.database().allModels(className);
-
-            return indexes[this.indexName][this.$parent[this.localKey]]?.reduce((obj, key) => {
-                obj.push(allRelations[key]);
-                return obj;
-            }, []) ?? [];
+            return Store.database().find(className,
+                indexes[this.indexName][this.$parent[this.localKey]] ?? []
+            );
         }
 
         const foreignKey = `${this.model.className().toLowerCase()}s`;
