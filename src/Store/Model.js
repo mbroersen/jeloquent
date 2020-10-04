@@ -8,6 +8,7 @@ class Model {
 
     constructor(fields) {
         this.setFields(fields);
+        this._tmpId = `_${++Store.numberOfModelCreated}`;
     }
 
     static className() {
@@ -74,6 +75,27 @@ class Model {
         return window.Store.database().ids(this.className());
     }
 
+    save() {
+        const className = this.constructor.className();
+        const currentDatabase =  Store.database();
+        const tableIds = currentDatabase.ids(className);
+
+        this.setPrimaryKey();
+
+        if (this.primaryKey[0] != '_' && tableIds.includes(this._tmpId)) {
+            //todo remove indexes for foreignKey
+            //                                team_id  this.team_id
+            //currentDatabase.removeFromIndex(indexName, lookUpKey, this._tmpId);
+            currentDatabase.delete(className, this._tmpId);
+        }
+
+        if (tableIds.includes(this.primaryKey)) {
+            currentDatabase.update(className, this);
+            return;
+        }
+        currentDatabase.insert(className, this);
+    }
+
 
     fill (data) {
         for (const fieldName in data) {
@@ -82,6 +104,10 @@ class Model {
             }
         }
 
+        this.setPrimaryKey();
+    }
+
+    setPrimaryKey() {
         const values = [];
         this.primaryFields.forEach((primaryField) => {
             values.push(this[primaryField.$name]);
@@ -105,7 +131,7 @@ class Model {
     }
 
     get primaryKey () {
-        return this.primaryKeyValue
+        return this.primaryKeyValue ?? this._tmpId;
     }
 
     get primaryKeyName() {

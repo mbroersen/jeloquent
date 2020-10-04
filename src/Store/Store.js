@@ -5,6 +5,7 @@ class Store {
     constructor() {
         this.classInstances = {};
         this.databases = {};
+        this.numberOfModelCreated = 0;
         window.Store = this;
     }
 
