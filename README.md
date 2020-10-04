@@ -25,6 +25,7 @@ average speed in this test was `0.07ms` :smile:
 npm install jeloquent
 ```
 
+## Usage
 
 **Class example**
 
@@ -111,6 +112,31 @@ User.insert([
     {id: 2, name: 'name 2', 'team_id': 1}
 ]);
 ```
+
+**Add one model temporary model to table** 
+```js
+const newUser = new User();
+newUser.name = 'New User';
+newUser.team_id = 1;
+newUser.save();
+```
+
+It generates a temporary key then can be used to find the model
+```js
+User.find('_1');
+```
+
+When you update the primary key, then the primary key index will be replaced.
+```js
+const newUser = User.find('_1');
+newUser.id = 1234;
+newUser.save();
+
+//now use 
+User.find(1234);
+```
+
+
 
 **Selecting data from tables**
 
