@@ -5,6 +5,7 @@ export default class Field {
         this.isPrimary = isPrimary ?? false;
         this.$name = name;
         this.fieldValue = null;
+        this.previousValue = undefined;
         this.$parent = null;
     }
 
@@ -24,6 +25,7 @@ export default class Field {
                     return this.value;
                 },
                 set: (value) => {
+                    this.previousValue = JSON.parse(JSON.stringify(this.value));
                     this.value = value;
                 }
             }
