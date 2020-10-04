@@ -45,6 +45,10 @@ export default class Database {
         return this.tables[table].addIndex(name);
     }
 
+    removeFromIndex(table, indexName, lookUpKey, id) {
+        return this.tables[table].removeFromIndex(indexName, lookUpKey, id);
+    }
+
     indexes(table) {
         return this.tables[table].indexes;
     }

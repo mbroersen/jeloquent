@@ -96,6 +96,11 @@ export default class Table {
         delete this.models[id];
     }
 
+    removeFromIndex(indexName, lookUpKey, id) {
+        const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
+        this.indexes[indexName][lookUpKey][itemToRemove];
+    }
+
     addIndex(indexName) {
         if ((indexName in this.indexes) === false) {
             this.indexedFields.push(indexName);
