@@ -82,7 +82,7 @@ class Model {
 
         this.setPrimaryKey();
 
-        if (this.primaryKey[0] != '_' && tableIds.includes(this._tmpId)) {
+        if (this.primaryKey[0] !== '_' && tableIds.includes(this._tmpId)) {
             //todo remove indexes for foreignKey
             //                                team_id  this.team_id
             //currentDatabase.removeFromIndex(indexName, lookUpKey, this._tmpId);
@@ -140,7 +140,6 @@ class Model {
 
     setFields(fields) {
         this.originalFields = fields;
-        this.fields = {};
         fields.forEach((field) => {
             field.setup(this);
         });
@@ -164,24 +163,28 @@ class Model {
     toJson(fromRelation) {
         const json = {};
 
-        Object.keys(this.fields).forEach((fieldName) => {
-            json[fieldName] = this.fields[fieldName].value;
+        for (let i = 0; i < this.originalFields.length; i++) {
+            const field = this.originalFields[i];
 
-            if (fromRelation) {
-                return;
+            if (field instanceof Relation && fromRelation) {
+                continue;
             }
 
-            if (json[fieldName] instanceof Model) {
-                json[fieldName] = {...json[fieldName].toJson(true)};
-                return;
+            json[field.$name] = field.value;
+
+            if (json[field.$name] instanceof Model) {
+                json[field.$name] = json[field.$name].toJson(true);
+                continue;
             }
 
-            if (json[fieldName] instanceof Array) {
-                json[fieldName] = [...json[fieldName].map((value) => value?.toJson(true) ?? value)];
+            if (json[field.$name]instanceof Array) {
+                json[field.$name] = [...json[field.$name].map((value) => {
+                    return value?.toJson(true) ?? value
+                })];
             }
-        });
+        }
 
-        return json;
+        return {...json};
     }
 }
 

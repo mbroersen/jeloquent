@@ -13,8 +13,11 @@ export default class HasManyThrough extends Relation {
     }
 
     setName() {
-        this.foreignKey = `${this.throughModel.className().toLowerCase()}_id`;
-        this.$name = `${this.model.className().toLowerCase()}s`;
+        this._lcThroughModelClassName = this.throughModel.className().toLowerCase();
+        this._lcModelClassName = this.model.className().toLowerCase();
+        this._lcParentClassName = this.$parent.constructor.className().toLowerCase();
+        this.foreignKey = `${this._lcThroughModelClassName}_id`;
+        this.$name = `${this._lcModelClassName}s`;
         return this;
     }
 
@@ -23,7 +26,7 @@ export default class HasManyThrough extends Relation {
     }
 
     get indexName() {
-        return `${this.throughModel.className().toLowerCase()}.${this.$parent.constructor.className().toLowerCase()}_id`;
+        return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
     }
 
     get value() {
@@ -36,8 +39,8 @@ export default class HasManyThrough extends Relation {
             );
         }
 
-        const foreignKey = `${this.model.className().toLowerCase()}s`;
-        const throughForeignKey = `${this.throughModel.className().toLowerCase()}s`;
+        const foreignKey = `${this._lcModelClassName}s`;
+        const throughForeignKey = `${this._lcThroughModelClassName}s`;
 
         return this.$parent[throughForeignKey].reduce(
             (array, object) => {

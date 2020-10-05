@@ -7,8 +7,10 @@ export default class BelongsTo extends Relation {
     }
 
     setName() {
-        this.$name = `${this.model.className().toLowerCase()}`;
-        this.foreignKey = `${this.model.className().toLowerCase()}_id`;
+        let className = this.model.className().toLowerCase();
+
+        this.$name = `${className}`;
+        this.foreignKey = `${className}_id`;
         return this;
     }
 
