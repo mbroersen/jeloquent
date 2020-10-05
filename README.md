@@ -18,7 +18,7 @@ average speed in this test was `0.07ms` :smile:
 ![speed test](./docs/img/speed_test.gif)
 
 ## Quick Setup Guide
-[Quick Setup Guide](./wiki/Quick-Setup)
+[Quick Setup Guide](https://github.com/mbroersen/jeloquent/wiki/Quick-Setup)
 
 ## Install
 
