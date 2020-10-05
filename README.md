@@ -113,7 +113,7 @@ User.insert([
 ]);
 ```
 
-**Add one model temporary model to table** 
+**Add one model or temporary model to table** 
 ```js
 const newUser = new User();
 newUser.name = 'New User';
@@ -208,7 +208,7 @@ const jsonDataOfUser = User.find(1).toJson();
     id: 1,
     name: 'test 1',
     team_id: 1,
-    team: {id: 1, name: 'Team 1'}
+    team: {id: 1, name: 'name'}
 };
 ```
 
