@@ -17,6 +17,9 @@
 average speed in this test was `0.07ms` :smile:
 ![speed test](./docs/img/speed_test.gif)
 
+## Quick Setup Guide
+[Quick Setup Guide](./wiki/Quick-Setup)
+
 ## Install
 
 [![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
