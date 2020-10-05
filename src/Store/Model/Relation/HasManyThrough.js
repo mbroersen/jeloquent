@@ -1,7 +1,7 @@
 import Relation from "../Relation.js";
 
 /**
- * TODO add foreignKey to comments table based on parent model;
+ *
  */
 export default class HasManyThrough extends Relation {
 
