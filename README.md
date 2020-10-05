@@ -194,7 +194,23 @@ User.all().filter(user => !user.hasComment);
 
 ```
 
+**Getting model and direct relations as json object** 
+```js
 
+const jsonDataOfUser = User.find(1).toJson();
+
+//results in
+{
+    comments: [
+        {id: 1, title: "Hello", text: 'Bla Bla', user_id: 1}, 
+        {id: 2, title: "Hello 2", text: 'Bla Bla Bla', user_id: 1}
+    ],
+    id: 1,
+    name: 'test 1',
+    team_id: 1,
+    team: {id: 1, name: 'Team 1'}
+};
+```
 
 
 
