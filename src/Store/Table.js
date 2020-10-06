@@ -12,6 +12,7 @@ export default class Table {
         this.name = model.constructor.className();
         this.models = {};
         this.indexes = {};
+        this.primaryKeyFieldNames = model.primaryKeyName;
 
         this.indexedFields.forEach((indexedField) => {
             this.indexes[indexedField] = {};
@@ -66,14 +67,31 @@ export default class Table {
         this.models[model.primaryKey] = model;
     }
 
+    getKey(id) {
+        const key = [];
+        for (let i = 0; i < this.primaryKeyFieldNames.length; i++) {
+            key.push(id[this.primaryKeyFieldNames[i]] ?? '');
+        }
+        return key.join('-');
+    }
+
     find(id) {
         if (Array.isArray(id)) {
             const result = [];
             for (let i = 0; i < id.length; i++) {
-                result.push(this.models[id[i]] ?? null)
+                if (this.primaryKeyFieldNames.length > 1) {
+                    result.push(this.models[this.getKey(id[i])] ?? null);
+                    continue;
+                }
+
+                result.push(this.models[i] ?? null)
             }
 
             return result;
+        }
+
+        if (this.primaryKeyFieldNames.length > 1) {
+            return this.models[this.getKey(id)] ?? null;
         }
 
         return this.models[id] ?? null;
@@ -98,7 +116,7 @@ export default class Table {
 
     removeFromIndex(indexName, lookUpKey, id) {
         const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
-        this.indexes[indexName][lookUpKey][itemToRemove];
+        delete this.indexes[indexName][lookUpKey][itemToRemove];
     }
 
     addIndex(indexName) {
