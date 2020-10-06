@@ -1,15 +1,24 @@
-import Field from "../Field";
 
-export default class MorphOne extends Field {
+import Relation from "../Relation";
 
-    constructor(name) {
-        super(name);
+
+//should return avatar
+export default class MorphOne extends Relation {
+
+    constructor(model) {
+        super(model);
     }
 
     get value() {
-        const type = this.$parent[`${this.$name}_type`];
-        const id = this.$parent[`${this.$name}_id`];
+        const type = this.$parent.constructor.className();
+        const id = this.$parent.primaryKey;
+        const idKeyName = `${this.$name}_id`;
+        const idTypeName = `${this.$name}_type`;
 
-        return Store.classInstances[type].constructor().find(id);
+        const lookUpKey = {};
+        lookUpKey[idKeyName] = id;
+        lookUpKey[idTypeName] = type;
+
+        return this.model.find(lookUpKey);
     }
 }
