@@ -84,7 +84,7 @@ export default class Table {
                     continue;
                 }
 
-                result.push(this.models[i] ?? null)
+                result.push(this.models[id[i]] ?? null)
             }
 
             return result;
