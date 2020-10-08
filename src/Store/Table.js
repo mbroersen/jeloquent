@@ -1,4 +1,5 @@
 import {Model} from "./Model.js";
+import Collection from "./Collection.js";
 
 export default class Table {
 
@@ -28,7 +29,7 @@ export default class Table {
     }
 
     all() {
-        return Object.values(this.models);
+        return new Collection(...Object.values(this.models));
     }
 
     insert(model) {
@@ -76,21 +77,23 @@ export default class Table {
     }
 
     find(id) {
+        const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
         if (Array.isArray(id)) {
             const result = [];
-            for (let i = 0; i < id.length; i++) {
-                if (this.primaryKeyFieldNames.length > 1) {
-                    result.push(this.models[this.getKey(id[i])] ?? null);
-                    continue;
-                }
-
-                result.push(this.models[id[i]] ?? null)
+            let pushFunction = hasComposedPrimaryKey ? (i) => {
+                result.push(this.models[this.getKey(id[i])] ?? null);
+            } : (i) => {
+                result.push(this.models[id[i]] ?? null);
             }
 
-            return result;
+            for (let i = 0; i < id.length; i++) {
+                pushFunction(i);
+            }
+
+            return new Collection(...result);
         }
 
-        if (this.primaryKeyFieldNames.length > 1) {
+        if (hasComposedPrimaryKey) {
             return this.models[this.getKey(id)] ?? null;
         }
 
