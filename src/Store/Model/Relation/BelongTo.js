@@ -30,7 +30,7 @@ export default class BelongsTo extends Relation {
     }
 
     get value() {
-        return this.model.select(this.$parent[this.foreignKey]);
+        return this.model.find(this.$parent[this.foreignKey]);
     }
 
     set value(value) {
