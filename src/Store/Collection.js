@@ -5,21 +5,53 @@ export default class Collection extends Array {
         super(...items);
     }
 
+    _getRowFieldResult(row, lookUpFields) {
+        let resultField = row[lookUpFields[0]] ?? null;
+        for (let i = 1; i < lookUpFields.length; i++) {
+            const currentField = lookUpFields[i];
+
+            if (resultField === null) {
+                break;
+            }
+
+            // todo add collection support
+            // if (resultField instanceof Collection) {
+            //     resultField = resultField.pluck(lookUpFields.slice(i+1).join('.'));
+            //     break;
+            // }
+
+            resultField = resultField[currentField] ?? null;
+        }
+
+        return resultField;
+    }
+
     pluck(field, keyField) {
+        const lookUpFields = field.split('.');
+
         if (keyField) {
+            const lookUpKeyField = keyField.split('.');
             const result = {};
             for (let i in this) {
-                result[this[i][keyField]] = this[i][field];
+                result[this._getRowFieldResult(this[i], lookUpKeyField)] = this._getRowFieldResult(this[i], lookUpFields);
             }
             return result;
         }
 
         const result = [];
         for (let i in this) {
-            result.push(this[i][field]);
+            result.push(this._getRowFieldResult(this[i], lookUpFields));
         }
 
         return result;
+    }
+
+    first() {
+        return this[0] ?? null;
+    }
+
+    last() {
+        return this.slice(-1)[0] ?? null;
     }
 
     merge(array) {
