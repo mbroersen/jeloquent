@@ -35,17 +35,24 @@ class Model {
         return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
     }
 
+    static aSyncInsert(data) {
+        return new Promise((resolve) => {
+            requestAnimationFrame(() => {
+                resolve(this.insert(data));
+            })
+        });
+    }
 
     static insert(data) {
         data = Array.isArray(data) ? data : [data];
-
-        data.map((modelData) => {
+        const length = data.length;
+        for (let i = 0; i < length; i++) {
+            const modelData = data[i];
             const model = this.getInstance();
             model.fill(modelData);
             window.Store.database().insert(this.className(), model);
-            return model;
-        });
-
+            data[i] = model;
+        }
         return data;
     }
 
@@ -104,8 +111,13 @@ class Model {
 
 
     fill (data) {
-        for (const fieldName in data) {
-            if (this.hasOwnProperty(fieldName)) {
+        const fillableFields = this.originalFields;
+        const numberOfFillableFields = this.originalFields.length;
+        
+        for (let i = 0; i < numberOfFillableFields; i++) {
+            const fieldName = fillableFields[i].$name;
+            
+            if (data[fieldName] !== undefined) {
                 this[`_${fieldName}`] = data[fieldName];
             }
         }
@@ -114,12 +126,16 @@ class Model {
     }
 
     setPrimaryKey() {
-        const values = [];
-        this.primaryFields.forEach((primaryField) => {
-            values.push(this[primaryField.$name]);
-        });
+        let str = '';
 
-        this.primaryKeyValue = values.join('-');
+        for (let i = 0; i < this.primaryFields.length; i++) {
+            if (i > 0) {
+                str += '-';
+            }
+            str += this[this.primaryFields[i].$name];
+        }
+
+        this.primaryKeyValue = str;
     }
 
     belongsTo(model, foreignKey) {
