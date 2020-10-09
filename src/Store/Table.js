@@ -13,10 +13,11 @@ export default class Table {
         this.name = model.constructor.className();
         this.models = {};
         this.indexes = {};
+        this.splittedIndexNames = {};
         this.primaryKeyFieldNames = model.primaryKeyName;
 
         this.indexedFields.forEach((indexedField) => {
-            this.indexes[indexedField] = {};
+            this.addIndex(indexedField);
         });
     }
 
@@ -29,7 +30,14 @@ export default class Table {
     }
 
     all() {
-        return new Collection(...Object.values(this.models));
+        const values = Object.values(this.models);
+        const numberOfValues = values.length;
+        const collection = new Collection();
+        for (let i = 0; i < numberOfValues; i += 10000) {
+            collection.push(...values.slice(i, i + 10000));
+        }
+
+        return collection;
     }
 
     insert(model) {
@@ -41,17 +49,28 @@ export default class Table {
             throw new Error('Record should be instance of model');
         }
 
-        this.indexedFields.forEach((fieldName) => {
-            const lookUpValue = fieldName.split('.');
+        for (let fieldName in this.indexes) {
+            const lookUpValue = this.splittedIndexNames[fieldName];
+            const length = this.splittedIndexNames[fieldName].length;
+            let indexLookUpValue = model;
+            for (let i = 0; i < length; i++) {
+                if (indexLookUpValue[lookUpValue[i]] === undefined) {
+                    indexLookUpValue = undefined;
+                    break;
+                }
+                indexLookUpValue = indexLookUpValue[lookUpValue[i]];
+            }
 
-            const indexLookUpValue = lookUpValue.reduce((object, objectKey) => {
-                return object[objectKey];
-            }, model);
+            if (indexLookUpValue === undefined) {
+                continue;
+            }
 
-            const indexes = this.indexes[fieldName][indexLookUpValue] ?? [];
-            indexes.push(model.primaryKey);
-            this.indexes[fieldName][indexLookUpValue] = indexes;
-        })
+            if (this.indexes[fieldName][indexLookUpValue] === undefined) {
+                this.indexes[fieldName][indexLookUpValue] = [model.primaryKey];
+                continue;
+            }
+            this.indexes[fieldName][indexLookUpValue].push(model.primaryKey);
+        }
 
         this.models[model.primaryKey] = model;
     }
@@ -125,18 +144,8 @@ export default class Table {
     addIndex(indexName) {
         if ((indexName in this.indexes) === false) {
             this.indexedFields.push(indexName);
+            this.splittedIndexNames[indexName] = indexName.split('.');
             this.indexes[indexName] = {};
         }
-    }
-
-    selectModelsByIndex(key) {
-        // todo HasMany.js -> get value(value)
-
-        // if (Store.database().indexes(this.model.className()).hasOwnProperty(this.foreignKey)) {
-        //     return Store.database().indexes(this.model.className())[this.foreignKey][this.$parent[this.localKey]].reduce((obj, key) => {
-        //         obj.push(Store.database().selectModel(this.model.className(), key));
-        //         return obj;
-        //     }, []);
-        // }
     }
 }
