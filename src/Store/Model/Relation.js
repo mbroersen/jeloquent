@@ -3,7 +3,7 @@ import Field from "./Field.js";
 export default class Relation extends Field {
 
     constructor(model, foreignKey) {
-        let className = model.className().toLowerCase();
+        let className = model.snakeCaseClassName();
         super(className);
         this.model = model;
         this.foreignKey = foreignKey;

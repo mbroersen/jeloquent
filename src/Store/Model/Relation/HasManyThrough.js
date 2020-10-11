@@ -13,9 +13,9 @@ export default class HasManyThrough extends Relation {
     }
 
     setName() {
-        this._lcThroughModelClassName = this.throughModel.className().toLowerCase();
-        this._lcModelClassName = this.model.className().toLowerCase();
-        this._lcParentClassName = this.$parent.constructor.className().toLowerCase();
+        this._lcThroughModelClassName = this.throughModel.snakeCaseClassName();
+        this._lcModelClassName = this.model.snakeCaseClassName();;
+        this._lcParentClassName = this.$parent.constructor.snakeCaseClassName();;
         this.foreignKey = `${this._lcThroughModelClassName}_id`;
         this.$name = `${this._lcModelClassName}s`;
         return this;
