@@ -5,8 +5,6 @@ import MorphOne from "./Model/Relation/MorphOne.js";
 import HasOne from "./Model/Relation/HasOne.js";
 import MorphTo from "./Model/Field/MorphTo.js";
 
-
-
 import Field from "./Model/Field.js";
 import Relation from "./Model/Relation.js";
 
@@ -15,6 +13,11 @@ class Model {
     constructor(fields) {
         this.setFields(fields);
         this._tmpId = `_${++Store.numberOfModelCreated}`;
+        this.snakeCaseName = this.constructor.snakeCaseClassName();
+    }
+
+    static snakeCaseClassName() {
+        return (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
     }
 
     static className() {
