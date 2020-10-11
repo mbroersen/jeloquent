@@ -7,7 +7,7 @@ export default class HasOne extends Relation {
     }
 
     setName() {
-        this.foreignKey = `${this.$parent.constructor.className().toLowerCase()}_id`;
+        this.foreignKey = `${this.$parent.constructor.snakeCaseClassName()}_id`;
         return this;
     }
 

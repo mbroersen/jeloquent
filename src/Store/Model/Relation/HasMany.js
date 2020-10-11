@@ -8,8 +8,8 @@ export default class HasMany extends Relation {
     }
 
     setName() {
-        const parentClassName = this.$parent.constructor.className().toLowerCase();
-        const modelClassName = this.model.className().toLowerCase();
+        const parentClassName = this.$parent.constructor.snakeCaseClassName();
+        const modelClassName = this.model.snakeCaseClassName();;
 
         this.foreignKey = `${parentClassName}_id`;
         this.$name = `${modelClassName}s`;

@@ -9,7 +9,7 @@ export default class MorphTo extends Field {
     }
 
     get value() {
-        const name = this.$parent.constructor.className().toLowerCase();
+        const name = this.$parent.constructor.snakeCaseClassName();
 
         const type = this.$parent[`${name}_type`];
         const id = this.$parent[`${name}_id`];
