@@ -19,10 +19,6 @@ export default class Field {
     }
 
     setParentProperties() {
-        if (this.$parent.hasOwnProperty(this.$name)) {
-            return;
-        }
-
         Object.defineProperty(this.$parent,
             this.$name, {
                 get: () => {
