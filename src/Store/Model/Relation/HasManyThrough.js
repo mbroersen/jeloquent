@@ -21,6 +21,10 @@ export default class HasManyThrough extends Relation {
         return this;
     }
 
+    getRelationalFields() {
+        return [];
+    }
+
     setParentProperties() {
         super.setParentProperties();
     }

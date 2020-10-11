@@ -9,6 +9,10 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
+    getRelationalFields() {
+        return [new Field(this.foreignKey)];
+    }
+
     setFillPropertyOnParent() {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,

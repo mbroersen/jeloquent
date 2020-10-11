@@ -166,8 +166,14 @@ class Model {
     setFields(fields) {
         this.originalFields = fields;
         fields.forEach((field) => {
-            field.setup(this);
+            if (field instanceof Relation) {
+                this.originalFields = [...field.getRelationalFields(), ...this.originalFields];
+            }
         });
+
+        this.originalFields.forEach(field => {
+            field.setup(this);
+        })
 
         Object.defineProperty(this,
             `indexedFields`, {

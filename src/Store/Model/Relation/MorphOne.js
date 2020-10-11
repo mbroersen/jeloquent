@@ -9,6 +9,10 @@ export default class MorphOne extends Relation {
         super(model);
     }
 
+    getRelationalFields() {
+        return [];
+    }
+
     get value() {
         const type = this.$parent.constructor.className();
         const id = this.$parent.primaryKey;

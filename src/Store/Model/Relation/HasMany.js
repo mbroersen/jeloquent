@@ -1,4 +1,5 @@
 import Relation from "../Relation.js";
+import Field from "../Field";
 
 export default class HasMany extends Relation {
 
@@ -9,11 +10,15 @@ export default class HasMany extends Relation {
 
     setName() {
         const parentClassName = this.$parent.constructor.snakeCaseClassName();
-        const modelClassName = this.model.snakeCaseClassName();;
+        const modelClassName = this.model.snakeCaseClassName();
 
         this.foreignKey = `${parentClassName}_id`;
         this.$name = `${modelClassName}s`;
         return this;
+    }
+
+    getRelationalFields() {
+        return [];
     }
 
     setParentProperties() {
