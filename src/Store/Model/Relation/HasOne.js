@@ -11,6 +11,9 @@ export default class HasOne extends Relation {
         return this;
     }
 
+    getRelationalFields() {
+        return [];
+    }
 
     setParentProperties() {
         super.setParentProperties();

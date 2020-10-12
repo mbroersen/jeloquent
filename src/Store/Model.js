@@ -11,7 +11,8 @@ import Relation from "./Model/Relation.js";
 class Model {
 
     constructor(fields) {
-        this.setFields(fields);
+
+        this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++Store.numberOfModelCreated}`;
         this.snakeCaseName = this.constructor.snakeCaseClassName();
     }
@@ -114,12 +115,8 @@ class Model {
 
 
     fill (data) {
-        const fillableFields = this.originalFields;
-        const numberOfFillableFields = this.originalFields.length;
-        
-        for (let i = 0; i < numberOfFillableFields; i++) {
-            const fieldName = fillableFields[i].$name;
-            
+        for (let i = 0; i < this.numberOfFields; i++) {
+            const fieldName = this.originalFields[i].$name;
             if (data[fieldName] !== undefined) {
                 this[`_${fieldName}`] = data[fieldName];
             }
@@ -163,16 +160,28 @@ class Model {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
     }
 
-    setFields(fields) {
-        this.originalFields = fields;
-        fields.forEach((field) => {
-            field.setup(this);
+    addRelationFields(fields) {
+        const fieldList = [...fields];
+        fields.forEach((field, i) => {
+            if (field instanceof Relation) {
+                fieldList.splice(i, 0, ...field.getRelationalFields());
+            }
         });
+        this.numberOfFields = fieldList.length;
+        return fieldList;
+    }
+
+    setFields(fields) {
+        this.originalFields = [...fields];
+        this.numberOfFields = this.originalFields.length;
+        for (let i = 0; i < this.numberOfFields; i++) {
+            this.originalFields[i].setup(this);
+        }
 
         Object.defineProperty(this,
             `indexedFields`, {
                 get: () => {
-                    return fields.filter((field) => field instanceof BelongsTo).reduce((array, relation) => {
+                    return this.originalFields.filter((field) => field instanceof BelongsTo).reduce((array, relation) => {
                         array.push(relation.foreignKey);
                         return array;
                     }, []);

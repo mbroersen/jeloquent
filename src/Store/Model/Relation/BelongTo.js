@@ -3,14 +3,12 @@ import Relation from "../Relation.js";
 export default class BelongsTo extends Relation {
 
     constructor(model, foreignKey) {
-        super(model, foreignKey);
+        super(model, (foreignKey ?? `${model.snakeCaseClassName()}_id`));
     }
 
     setName() {
         let className = this.model.snakeCaseClassName();
-
         this.$name = `${className}`;
-        this.foreignKey = `${className}_id`;
         return this;
     }
 
