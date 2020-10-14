@@ -1,15 +1,17 @@
+import ConnectionAdapterJsonRequest from "./Adapter/ConnectionAdapterJsonRequest";
 
-export default class ConnectionAdapter {
+class ConnectionAdapter {
     constructor(options) {
         this.options = options;
     }
 
     /**
      *
-     * @param Model
-     * @return QueueMessage
+     * @param model
+     * @param filter
+     * @return Promise
      */
-    load(Model) {
+    load(model, filter) {
         throw new Error('should be extended');
     }
 
@@ -28,4 +30,9 @@ export default class ConnectionAdapter {
     delete() {
         throw new Error('should be extended');
     }
+}
+
+export {
+    ConnectionAdapter,
+    ConnectionAdapterJsonRequest,
 }

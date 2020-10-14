@@ -2,21 +2,24 @@ export default class Connection {
 
     constructor(adapter)
     {
-        this.adapter = adapters;
+        this.adapter = adapter;
         this.updateQueue = [];
         this.paused = false;
     }
 
     processQueue() {
-        const nextMessage = this.updateQueue.shift();
-        if (nextMessage === null) {
+        const nextMessage = (this.updateQueue ?? []).shift();
+        if (!nextMessage) {
             return;
         }
         nextMessage.execute();
+        setTimeout(() => {
+            this.processQueue()
+        }, 1);
     }
 
     addToQueue(...queueMessage) {
-        this.updateQueue.push(queueMessage);
+        this.updateQueue.push(...queueMessage);
     }
 
     pause() {
@@ -27,8 +30,13 @@ export default class Connection {
         this.paused = false;
     }
 
-    load(Model) {
-        this.addToQueue(this.adapter.load(Model));
-        setTimeout(this.processQueue, 1);
+    load(model) {
+        this.adapter.load(model)
+            .then((queueMessage) => {
+                this.addToQueue(queueMessage);
+                setTimeout(() => {
+                    this.processQueue()
+                }, 1);
+            });
     }
 }
