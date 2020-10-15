@@ -1,8 +1,16 @@
+import ConnectionAdapter from "./Connection/ConnectionAdapter";
+import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
+
 export default class Connection {
 
-    constructor(adapter)
+    constructor(adapter, options)
     {
-        this.adapter = adapter;
+        if (adapter instanceof ConnectionAdapter) {
+            this.adapter = adapter;
+        } else {
+            this.adapter = ConnectionAdapterFactory.getAdapter(adapter, options);
+        }
+
         this.updateQueue = [];
         this.paused = false;
     }

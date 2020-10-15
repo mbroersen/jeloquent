@@ -1,4 +1,4 @@
-import {ConnectionAdapter} from '../ConnectionAdapter.js';
+import ConnectionAdapter from '../ConnectionAdapter.js';
 import QueueMessage from '../Queue/QueueMessage.js';
 
 export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
@@ -7,12 +7,19 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
         super(options);
     }
 
-    load(model, filter) {
+    get isRemote() {
+        return true;
+    }
+
+    get isLocal() {
+        return false;
+    }
+
+    load(model) {
         const promise = new Promise((resolve, reject) => {
             const method = this.options.method ?? 'GET';
-            const url = `${this.options.url}/${model.className().toLowerCase()}s`;
-            const formatter = this.options.formatter ?? ((data) => data);
-            //const data = new FormData();
+            const url = `${this.options.url}/${model.kebabCaseClassName()}`;
+            const formatter = this.options?.formatter ?? ((data) => data);
 
             const request = new XMLHttpRequest();
             request.open(method, url, true);
@@ -24,8 +31,6 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
                 }
             })
             request.send(null);
-
-
         });
 
         return promise;

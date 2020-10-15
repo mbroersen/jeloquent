@@ -11,7 +11,6 @@ import Relation from "./Model/Relation.js";
 class Model {
 
     constructor(fields) {
-
         this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++Store.numberOfModelCreated}`;
         this.snakeCaseName = this.constructor.snakeCaseClassName();
@@ -19,6 +18,10 @@ class Model {
 
     static snakeCaseClassName() {
         return (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
+    }
+
+    static kebabCaseClassName() {
+        return (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase());
     }
 
     static className() {
@@ -136,20 +139,6 @@ class Model {
         }
 
         this.primaryKeyValue = str;
-    }
-
-    belongsTo(model, foreignKey) {
-        foreignKey = foreignKey ?? `${model.className().toLowerCase()}_id`;
-        const belongsTo = new BelongsTo(model, foreignKey);
-        belongsTo.setup(this);
-        return belongsTo;
-    }
-
-    hasMany(model, foreignKey) {
-        foreignKey = foreignKey ?? `${this.constructor.className().toLowerCase()}_id`;
-        const hasMany = new HasMany(model, foreignKey);
-        hasMany.setup(this);
-        return hasMany;
     }
 
     get primaryKey () {
