@@ -148,4 +148,8 @@ export default class Table {
             this.indexes[indexName] = {};
         }
     }
+
+    load() {
+
+    }
 }
