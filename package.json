@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "eloquent",
@@ -26,11 +26,14 @@
   "author": "Mark Broersen",
   "license": "ISC",
   "devDependencies": {
-    "@babel/polyfill": "^7.11.5",
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
+    "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
+    "babel-jest": "^26.5.2",
     "babel-loader": "^8.1.0",
+    "core-js": "^3.6.5",
+    "jest": "^26.5.3",
     "terser-webpack-plugin": "^4.2.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
