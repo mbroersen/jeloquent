@@ -3,11 +3,10 @@
     [
       "@babel/preset-env",
       {
-        "modules": true,
-        "loose": true,
+        "modules": "umd",
         "targets": {
-          "chrome": "last 2 versions",
-          "firefox": "latest 2 versions"
+          "chrome": "85",
+          "firefox": "80"
         },
         "useBuiltIns": "usage",
         "corejs": "3.6.4"

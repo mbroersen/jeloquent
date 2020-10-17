@@ -149,6 +149,14 @@ export default class Table {
         }
     }
 
+    truncate() {
+        this.models = {};
+
+        for (const indexName in this.indexes) {
+            this.indexes[indexName] = {};
+        }
+    }
+
     load() {
 
     }
