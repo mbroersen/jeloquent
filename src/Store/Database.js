@@ -73,6 +73,14 @@ export default class Database {
         return this.tables[table].delete(id);
     }
 
+    drop(table) {
+        return delete this.tables[table];
+    }
+
+    truncate(table) {
+        return this.tables[table].truncate();
+    }
+
     /**
      * Todo Build better way of parsing queries;
      * @param sql
