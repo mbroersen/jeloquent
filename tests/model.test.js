@@ -1,10 +1,6 @@
-import {Database, Store, Model, Field, Collection} from "../dist/jeloquent";
-import {User} from "./Models";
+import {Collection} from "../dist/jeloquent";
+import {User, testStore} from "./Models";
 
-const store = new Store();
-const database = new Database('default', [User]);
-store.add(database);
-store.use('default');
 
 User.insert({id: 12});
 
@@ -13,7 +9,7 @@ test('Simpel model setup', () => {
 
     expect(lUser.primaryKeyName).toStrictEqual(["id"]);
     expect(lUser.id).toStrictEqual(null);
-    expect(lUser._tmpId).toStrictEqual('_2');
+    expect(lUser._tmpId).toStrictEqual('_6');
 });
 
 test('User can be found', () => {
@@ -34,4 +30,11 @@ test('Model returns classNames', () => {
     expect(User.className()).toStrictEqual("User");
     expect(User.kebabCaseClassName()).toStrictEqual("user");
     expect(User.snakeCaseClassName()).toStrictEqual("user");
+});
+
+test('Model fetch all primaryKeys', () => {
+    const indexes = User.ids();
+    expect(indexes).toStrictEqual(["12"]);
+    testStore.database().truncate('User');
+    expect(User.ids()).toStrictEqual([]);
 });
