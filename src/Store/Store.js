@@ -8,12 +8,13 @@ class Store {
         this.databases = {};
         this.connetions = {}
         this.numberOfModelCreated = 0;
+        this.useDatabase = 'default';
         this.useConnection = 'default';
         window.Store = this;
     }
 
     use(storeName) {
-        this.use = storeName;
+        this.useDatabase = storeName;
     }
 
     add(database) {
@@ -29,7 +30,7 @@ class Store {
     }
 
     database() {
-        return this.databases[this.use];
+        return this.databases[this.useDatabase] ?? null;
     }
 
     connection() {
