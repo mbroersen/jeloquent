@@ -21,7 +21,7 @@ average speed in this test was `0.07ms` :smile:
 [Quick Setup Guide](https://github.com/mbroersen/jeloquent/wiki/Quick-Setup)
 
 ## Documentation
-[Quick Setup Guide](https://github.com/mbroersen/jeloquent/wiki/Home)
+[Documentation](https://github.com/mbroersen/jeloquent/wiki/Home)
 
 ## Install
 [![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
