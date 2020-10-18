@@ -42,7 +42,7 @@ export default class Database {
     }
 
     addIndex(table, name) {
-        return this.tables[table].addIndex(name);
+        this.tables[table]?.addIndex(name);
     }
 
     removeFromIndex(table, indexName, lookUpKey, id) {
