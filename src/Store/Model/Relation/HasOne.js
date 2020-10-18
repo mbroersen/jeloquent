@@ -33,12 +33,17 @@ export default class HasOne extends Relation {
         const className = this.model.className();
         const indexes = Store.database().indexes(className);
 
-        if (indexes.hasOwnProperty(this.foreignKey)) {
-            return Store.database().find(className,
-                indexes[this.foreignKey][this.$parent.primaryKey][0] ?? null
-            );
+        if (!indexes.hasOwnProperty(this.foreignKey)) {
+            return null;
         }
 
-        return null;
+        const keyIndex = indexes[this.foreignKey];
+        if (!keyIndex.hasOwnProperty(this.$parent.primaryKey)) {
+            return null;
+        }
+
+        return Store.database().find(className,
+            keyIndex[this.$parent.primaryKey][0] ?? null
+        );
     }
 }
