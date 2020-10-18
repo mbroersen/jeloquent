@@ -1,5 +1,3 @@
-
-
 # jeloquent
 ### Is an orm memory store for javascript. 
 
