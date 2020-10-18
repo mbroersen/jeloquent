@@ -19,7 +19,7 @@ export default class BelongsTo extends Relation {
         Object.defineProperty(this.$parent,
             `has${this.model.className()}`, {
                 get: () => {
-                    return this.value !== undefined;
+                    return this.value !== null;
                 },
             }
         )
