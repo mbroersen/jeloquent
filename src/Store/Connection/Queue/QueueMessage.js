@@ -6,7 +6,12 @@ export default class QueueMessage {
         this.data = data;
     }
 
+    addCallback(callback) {
+        this.callback = callback;
+    }
+
     execute() {
         this.model[this.action](this.data);
+        (this.callback ?? (() => {}))();
     }
 }
