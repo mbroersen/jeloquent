@@ -74,7 +74,7 @@ export default class Database {
     }
 
     drop(table) {
-        return delete this.tables[table];
+        delete this.tables[table];
     }
 
     truncate(table) {
