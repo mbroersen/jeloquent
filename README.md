@@ -15,13 +15,15 @@
 ## Speed test with more than 600 000 entities
 5000 times a selection of an entity and 3 of his relations of all relation types, 
 average speed in this test was `0.07ms` :smile:
-![speed test](./docs/img/speed_test.gif)
+![speed test](https://github.com/mbroersen/jeloquent/wiki/assets/images/speed_test.gif)
 
 ## Quick Setup Guide
 [Quick Setup Guide](https://github.com/mbroersen/jeloquent/wiki/Quick-Setup)
 
-## Install
+## Documentation
+[Quick Setup Guide](https://github.com/mbroersen/jeloquent/wiki/Home)
 
+## Install
 [![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
 
 ```bash
