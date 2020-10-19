@@ -16,7 +16,7 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     }
 
     load(model) {
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve) => {
             const method = this.options.method ?? 'GET';
             const url = `${this.options.url}/${model.kebabCaseClassName()}`;
             const formatter = this.options?.formatter ?? ((data) => data);

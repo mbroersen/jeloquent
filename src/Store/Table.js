@@ -41,7 +41,7 @@ export default class Table {
     }
 
     insert(model) {
-        if (this.models.hasOwnProperty(model.primaryKey)) {
+        if (Object.prototype.hasOwnProperty.call(this.models, model.primaryKey)) {
             throw new Error('Record already exists');
         }
 
@@ -76,7 +76,7 @@ export default class Table {
     }
 
     update(model) {
-        if (!this.models.hasOwnProperty(model.primaryKey)) {
+        if (!Object.prototype.hasOwnProperty.call(this.models, model.primaryKey)) {
             throw new Error('Record doesn\'t exists');
         }
 
@@ -120,7 +120,7 @@ export default class Table {
     }
 
     select(id) {
-        if (!this.models.hasOwnProperty(id)) {
+        if (!Object.prototype.hasOwnProperty.call(this.models, id)) {
             throw new Error('Record doesn\'t exists');
         }
 
@@ -128,7 +128,7 @@ export default class Table {
     }
 
     delete(id) {
-        if (!this.models.hasOwnProperty(id)) {
+        if (!Object.prototype.hasOwnProperty.call(this.models, id)) {
             throw new Error('Record doesn\'t exists');
         }
         //todo remove from indexes;

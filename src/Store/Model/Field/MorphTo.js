@@ -14,6 +14,6 @@ export default class MorphTo extends Field {
         const type = this.$parent[`${name}_type`];
         const id = this.$parent[`${name}_id`];
 
-        return Store.classInstances[type].constructor.find(id);
+        return window.Store.classInstances[type].constructor.find(id);
     }
 }

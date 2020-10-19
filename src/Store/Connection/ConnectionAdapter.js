@@ -9,6 +9,7 @@ export default class ConnectionAdapter {
      * @return Promise
      */
     load(model) {
+        model.className();
         throw new Error('should be extended');
     }
 

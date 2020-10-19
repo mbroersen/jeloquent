@@ -12,7 +12,7 @@ class Model {
 
     constructor(fields) {
         this.setFields(this.addRelationFields(fields));
-        this._tmpId = `_${++Store.numberOfModelCreated}`;
+        this._tmpId = `_${++window.Store.numberOfModelCreated}`;
         this.snakeCaseName = this.constructor.snakeCaseClassName();
     }
 
@@ -79,7 +79,7 @@ class Model {
         try {
             return window.Store.database().select(this.className(), id);
         } catch (e) {
-
+            console.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ class Model {
 
     save() {
         const className = this.constructor.className();
-        const currentDatabase =  Store.database();
+        const currentDatabase = window.Store.database();
         const tableIds = currentDatabase.ids(className);
 
         this.setPrimaryKey();

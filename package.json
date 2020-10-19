@@ -1,7 +1,7 @@
 {
   "name": "jeloquent",
   "module": "dist/jeloquent.js",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "micro framework / memory orm model store",
   "main": "app.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "babel-jest": "^26.5.2",
     "babel-loader": "^8.1.0",
     "core-js": "^3.6.5",
+    "eslint": "^7.11.0",
     "jest": "^26.5.3",
     "terser-webpack-plugin": "^4.2.2",
     "webpack": "^4.44.2",

@@ -14,7 +14,7 @@ export default class ConnectionAdapterLocalArray extends ConnectionAdapter {
     }
 
     getLocalStorageKey(model) {
-        return `jeloquent-${Store.use}-${model.className}`;
+        return `jeloquent-${window.Store.use}-${model.className}`;
     }
 
     getTableFromLocalStorage(model) {

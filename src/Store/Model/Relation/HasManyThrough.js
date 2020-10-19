@@ -14,8 +14,8 @@ export default class HasManyThrough extends Relation {
 
     setName() {
         this._lcThroughModelClassName = this.throughModel.snakeCaseClassName();
-        this._lcModelClassName = this.model.snakeCaseClassName();;
-        this._lcParentClassName = this.$parent.constructor.snakeCaseClassName();;
+        this._lcModelClassName = this.model.snakeCaseClassName();
+        this._lcParentClassName = this.$parent.constructor.snakeCaseClassName();
         this.foreignKey = `${this._lcThroughModelClassName}_id`;
         this.$name = `${this._lcModelClassName}s`;
         return this;
@@ -35,10 +35,10 @@ export default class HasManyThrough extends Relation {
 
     get value() {
         const className = this.model.className();
-        const indexes = Store.database().indexes(className);
+        const indexes = window.Store.database().indexes(className);
 
-        if (indexes.hasOwnProperty(this.indexName)) {
-            return Store.database().find(className,
+        if (Object.prototype.hasOwnProperty.call(indexes, this.indexName)) {
+            return window.Store.database().find(className,
                 indexes[this.indexName][this.$parent[this.localKey]] ?? []
             );
         }
