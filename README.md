@@ -124,7 +124,7 @@ newUser.team_id = 1;
 newUser.save();
 ```
 
-It generates a temporary key then can be used to find the model
+It generates a temporary key that can be used to find the model
 ```js
 User.find('_1');
 ```

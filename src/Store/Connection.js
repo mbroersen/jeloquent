@@ -39,12 +39,15 @@ export default class Connection {
     }
 
     load(model) {
-        this.adapter.load(model)
-            .then((queueMessage) => {
-                this.addToQueue(queueMessage);
-                setTimeout(() => {
-                    this.processQueue()
-                }, 1);
-            });
+        return new Promise((resolve) => {
+            this.adapter.load(model)
+                .then((queueMessage) => {
+                    queueMessage.addCallback(resolve);
+                    this.addToQueue(queueMessage);
+                    setTimeout(() => {
+                        this.processQueue(resolve)
+                    }, 1);
+                });
+        });
     }
 }
