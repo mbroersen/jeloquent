@@ -7,15 +7,15 @@ class ConnectionAdapterFactory {
 
     static getAdapter (name, options) {
 
-        if (name = 'jsonRequest') {
+        if (name === 'jsonRequest') {
             return new ConnectionAdapterJsonRequest(options);
         }
 
-        if (name = 'localStorage') {
+        if (name === 'localStorage') {
             return new ConnectionAdapterLocalStorage(options);
         }
 
-        if (name = 'localArray') {
+        if (name === 'localArray') {
             return new ConnectionAdapterLocalArray(options);
         }
 

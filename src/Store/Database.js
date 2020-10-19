@@ -87,14 +87,14 @@ export default class Database {
      * @returns {null|*}
      */
     query(sql) {
-        const sqlParts = sql.match(/^((SELECT)|(INSERT)|(DELETE))\s+(.*)\s+FROM\s+([^\s]+)(\s+WHERE\s+([^\s]+)\s+(\=)\s+([^\s+]))?((\s+)|;)?$/i);
+        const sqlParts = sql.match(/^((SELECT)|(INSERT)|(DELETE))\s+(.*)\s+FROM\s+([^\s]+)(\s+WHERE\s+([^\s]+)\s+(=)\s+([^\s+]))?((\s+)|;)?$/i);
 
         if (sqlParts.length === 0) {
             return null;
         }
 
         const action = sqlParts[1];
-        const fields = sqlParts[5].split(',');
+        //const fields = sqlParts[5].split(',');
         const table = sqlParts[6]
         const matchField = sqlParts[8];
         const matchValue = sqlParts[10];

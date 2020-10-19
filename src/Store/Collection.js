@@ -93,7 +93,7 @@ export default class Collection extends Array {
             }
         }
 
-        if (!operators.hasOwnProperty(operator)) {
+        if (!Object.prototype.hasOwnProperty.call(operators, operator)) {
             throw new Error("Invalid comparison operator used");
         }
 
