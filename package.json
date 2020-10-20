@@ -1,7 +1,7 @@
 {
   "name": "jeloquent",
   "module": "dist/jeloquent.js",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "micro framework / memory orm model store",
   "main": "app.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/mbroersen/jeloquent.git"
   },
   "author": "Mark Broersen",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
