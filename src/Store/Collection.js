@@ -14,11 +14,9 @@ export default class Collection extends Array {
                 break;
             }
 
-            // todo add collection support
-            // if (resultField instanceof Collection) {
-            //     resultField = resultField.pluck(lookUpFields.slice(i+1).join('.'));
-            //     break;
-            // }
+            if (resultField instanceof Collection) {
+                return resultField.pluck(lookUpFields[i]);
+            }
 
             resultField = resultField[currentField] ?? null;
         }
