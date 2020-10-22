@@ -1,5 +1,5 @@
 import {Collection} from "../dist/jeloquent";
-import {User, UserAddress, testStore, Avatar} from "./Models";
+import {User, UserAddress, testStore, Avatar, Team, Comment} from "./Models";
 
 
 User.insert({id: 12});
@@ -24,7 +24,7 @@ test('User can be found', () => {
     const allUsers = User.all();
 
     expect(lUser).toBeInstanceOf(User);
-    expect(lUser.primaryKey).toBe("12");
+    expect(lUser.primaryKey).toBe(12);
     expect(allUsers).toBeInstanceOf(Collection);
     expect(cUser).toBeInstanceOf(Collection);
     expect(allUsers.length).toBe(1);
@@ -56,4 +56,38 @@ test('Model fetch all primaryKeys', () => {
     expect(indexes).toStrictEqual(["12"]);
     testStore.database().truncate('User');
     expect(User.ids()).toStrictEqual([]);
+});
+
+test('Insert relations via model', () => {
+    testStore.database().truncate('User');
+    testStore.database().truncate('Team');
+    testStore.database().truncate('Avatar');
+    testStore.database().truncate('Comment');
+
+    User.insert({
+        id: 1, name: 'user 1', team_id: 1,
+        team: {id: 1, name: 'team relation 1'},
+        user_address: {id: 22, city: 'Hoorn', steet: 'waagplein', house_number: 1, user_id: 1},
+        avatar: {avatar_type: 'User', avatar_id: 1, img_url: 'team.png'},
+    });
+
+    User.insert({
+        comments: [
+            {id: 9, title: 'titel', text: 'hoi', user_id: 1},
+            {id: 19, title: 'a titel', text: 'hoi 2', user_id: 1},
+            {id: 29, title: 'titel b', text: 'hoi 2', user_id: 1},
+            {id: 39, title: '9 titel', text: 'hoi 2', user_id: 1},
+        ]
+    })
+
+    expect(User.all().length).toStrictEqual(1);
+    expect(Team.find(1)).toBeInstanceOf(Team);
+    expect(Team.find(1).name).toStrictEqual('team relation 1');
+    expect(UserAddress.find(22).city).toStrictEqual('Hoorn');
+    expect(User.find(1).user_address).toBeInstanceOf(UserAddress);
+    expect(User.find(1).team).toBeInstanceOf(Team);
+    expect(User.find(1).avatar).toBeInstanceOf(Avatar);
+    expect(User.find(1).comments.length).toStrictEqual(4);
+    expect(Comment.all().length).toStrictEqual(4);
+
 });
