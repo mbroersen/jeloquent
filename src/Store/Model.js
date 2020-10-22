@@ -129,6 +129,11 @@ class Model {
     }
 
     setPrimaryKey() {
+        if (this.primaryFields.length === 1) {
+            this.primaryKeyValue = this[this.primaryFields[0].$name] ?? null;
+            return;
+        }
+
         let str = '';
 
         for (let i = 0; i < this.primaryFields.length; i++) {
@@ -142,7 +147,7 @@ class Model {
     }
 
     get primaryKey () {
-        return this.primaryKeyValue ?? this._tmpId;
+        return this.primaryKeyValue ?? this._tmpId ?? null;
     }
 
     get primaryKeyName() {
