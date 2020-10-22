@@ -49,12 +49,16 @@ export default class Table {
             throw new Error('Record should be instance of model');
         }
 
+        if (model.primaryKey != null) {
+            this.models[model.primaryKey] = model;
+        }
+
         for (let fieldName in this.indexes) {
             const lookUpValue = this.splittedIndexNames[fieldName];
             const length = this.splittedIndexNames[fieldName].length;
             let indexLookUpValue = model;
             for (let i = 0; i < length; i++) {
-                if (indexLookUpValue[lookUpValue[i]] === undefined) {
+                if (indexLookUpValue[lookUpValue[i]] === null) {
                     indexLookUpValue = undefined;
                     break;
                 }
@@ -69,10 +73,10 @@ export default class Table {
                 this.indexes[fieldName][indexLookUpValue] = [model.primaryKey];
                 continue;
             }
+
             this.indexes[fieldName][indexLookUpValue].push(model.primaryKey);
         }
 
-        this.models[model.primaryKey] = model;
     }
 
     update(model) {
