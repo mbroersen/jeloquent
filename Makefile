@@ -1,6 +1,6 @@
 lint: do-lint
 lint-fix: do-lint-fix
-patch-release: do-build do-lint do-test do-npm-version do-npm-publish do-git-push
+release: do-build do-lint do-test do-npm-version do-npm-publish do-git-push
 
 do-build:
 	npm run build
@@ -15,7 +15,16 @@ do-lint-fix:
 	./node_modules/.bin/eslint src/*/** --fix
 
 do-npm-version:
-	npm version patch
+	@echo "select your version type\n1: major\n2: minor\n3: patch"
+	@read -p "select release version: " versionType;\
+	case $$versionType in '1') \
+	rVersion='major';; \
+	'2') \
+	rVersion='minor';; \
+	*) \
+	rVersion='patch';; \
+	esac; \
+	npm version $$rVersion
 
 do-npm-publish:
 	npm publish
