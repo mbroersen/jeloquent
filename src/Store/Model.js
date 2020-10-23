@@ -3,6 +3,7 @@ import HasMany from "./Model/Relation/HasMany.js";
 import BelongsTo from "./Model/Relation/BelongTo.js";
 import MorphOne from "./Model/Relation/MorphOne.js";
 import HasOne from "./Model/Relation/HasOne.js";
+import HasOneThrough from "./Model/Relation/HasOneThrough.js";
 import MorphTo from "./Model/Field/MorphTo.js";
 
 import Field from "./Model/Field.js";
@@ -222,6 +223,7 @@ export {
     Relation,
     BelongsTo,
     HasOne,
+    HasOneThrough,
     HasMany,
     HasManyThrough,
     MorphOne,

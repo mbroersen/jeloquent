@@ -100,3 +100,11 @@ test('HasManyThrough Relation is added to team model', () => {
     expect(lTeam.comments.first().user_id).toStrictEqual(1);
     expect(lTeam.comments.last().user_id).toStrictEqual(2);
 });
+
+
+test('HasOneThrough Relation is added to team model', () => {
+    const lComment = Comment.find(1);
+
+    expect(lComment.user_address).toBeInstanceOf(UserAddress);
+
+});

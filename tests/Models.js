@@ -1,5 +1,4 @@
-import {Store, Database, BelongsTo, HasOne, Model, Field, HasMany, HasManyThrough, MorphOne, MorphTo} from '../dist/jeloquent';
-
+import {Store, Database, BelongsTo, HasOne, Model, Field, HasMany, HasManyThrough, MorphOne, MorphTo, HasOneThrough} from '../dist/jeloquent';
 
 /**
  * Has composed primary key {avatar_id: '', avatar_type: ''}
@@ -32,6 +31,7 @@ class User extends Model {
             new HasMany(Comment),
             new MorphOne(Avatar),
             new HasOne(UserAddress),
+            //new MorphOneThrough(Avatar, Team) fix relation
         ];
         super(fields);
     }
@@ -83,6 +83,7 @@ class Comment extends Model {
             new Field('text'),
             //new Field('user_id'),
             new BelongsTo(User),
+            new HasOneThrough(UserAddress, User),
         ];
 
         super(fields);
