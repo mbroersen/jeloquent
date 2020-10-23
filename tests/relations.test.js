@@ -106,5 +106,6 @@ test('HasOneThrough Relation is added to team model', () => {
     const lComment = Comment.find(1);
 
     expect(lComment.user_address).toBeInstanceOf(UserAddress);
+    expect(lComment.user_address.city).toStrictEqual('Alkmaar');
 
 });
