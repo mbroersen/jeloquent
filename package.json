@@ -1,12 +1,14 @@
 {
   "name": "jeloquent",
   "module": "dist/jeloquent.js",
-  "version": "2.4.0",
+  "unpkg": "dist/jeloquent.js",
+  "main": "dist/jeloquent.js",
+  "version": "2.4.1",
   "description": "micro framework / memory orm model store",
-  "main": "app.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint src/*/** --fix-dry-run"
   },
   "keywords": [
     "eloquent",
@@ -23,6 +25,10 @@
     "type": "git",
     "url": "git+https://github.com/mbroersen/jeloquent.git"
   },
+  "bugs": {
+    "url": "https://github.com/mbroersen/jeloquent/issues"
+  },
+  "homepage": "https://github.com/mbroersen/jeloquent#readme",
   "author": "Mark Broersen",
   "license": "MIT",
   "devDependencies": {
