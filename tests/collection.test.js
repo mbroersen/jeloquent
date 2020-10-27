@@ -287,3 +287,41 @@ test('where(Not)InstanceOf statement of collection', () => {
     expect(whereNotInstanceOf).not.toContainEqual(new Collection());
 });
 
+
+test('returning random value', () => {
+
+    const randomCollection = new Collection(
+        {id: 1, name: 'test'},
+        {id: 2, name: null},
+        {id: 3, name: 'test2'},
+        {id: 4, name: 'test3'}
+    );
+
+
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+    expect(randomCollection.random().id).toBeLessThan(5);
+});
+
+test('returning random value', () => {
+
+    const uniqueCollection = new Collection(
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 2, name: null},
+        {id: 3, name: 'test2'},
+        {id: 4, name: 'test3'}
+    ).unique('id');
+
+    expect(uniqueCollection).toBeInstanceOf(Collection);
+    expect(uniqueCollection.length).toStrictEqual(4);
+});

@@ -57,6 +57,19 @@ export default class Collection extends Array {
         return this;
     }
 
+    random() {
+        return this[Math.round(((this.length - 1) * Math.random()))];
+    }
+
+    unique(field) {
+        const unique = {};
+        for (let i in this) {
+            unique[this[i][field]] = this[i];
+        }
+
+        return new Collection(...Object.values(unique));
+    }
+
     whereIfFunction(field, whereIfFunction) {
         const reqister = new Collection();
         for (let i in this) {
