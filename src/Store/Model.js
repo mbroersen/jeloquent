@@ -110,7 +110,7 @@ class Model {
             currentDatabase.delete(className, this._tmpId);
         }
 
-        if (tableIds.includes(this.primaryKey)) {
+        if (tableIds.includes(this.primaryKey+'')) {
             currentDatabase.update(className, this);
             return;
         }
