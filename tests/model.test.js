@@ -91,3 +91,29 @@ test('Insert relations via model', () => {
     expect(Comment.all().length).toStrictEqual(4);
 
 });
+
+
+test('user can be saved', () => {
+    let user = new User();
+    user.name = 'Mark Man';
+    user.team_id = 1;
+    user.user_address_id = 22;
+
+    expect(user.primaryKey).toContain('_');
+    expect(Store.database().ids('User')).not.toContain(user.primaryKey);
+    expect(user.name).toStrictEqual('Mark Man');
+
+    user.save();
+    expect(Store.database().ids('User')).toContain(user.primaryKey);
+    user.id = 9;
+    user.save();
+    expect(Store.database().ids('User')).not.toContain('_6');
+    expect(user.primaryKey).toEqual(9);
+    expect(Store.database().ids('User')).toContain('9');
+
+    const foundUser = Store.database().find('User', 9);
+    expect(foundUser.name).toStrictEqual('Mark Man');
+    user.name = 'Mark2';
+    user.save();
+    expect(foundUser.name).toStrictEqual('Mark2');
+});
