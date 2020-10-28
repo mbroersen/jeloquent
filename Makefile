@@ -1,6 +1,6 @@
 lint: do-lint
 lint-fix: do-lint-fix
-release: do-build do-lint do-test do-npm-version do-npm-publish do-git-tag do-git-push
+release: do-build do-lint do-test do-npm-version do-npm-publish do-git-push
 
 do-build:
 	npm run build
@@ -34,9 +34,6 @@ do-git-checkout-develop:
 
 do-git-pull:
 	git fetch && git pull
-
-do-git-tag:
-	git tag
 
 do-git-push:
 	git push
