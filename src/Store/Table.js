@@ -92,6 +92,10 @@ export default class Table {
     }
 
     getKey(id) {
+        if (typeof id === 'string') {
+            return id;
+        }
+
         const key = [];
         for (let i = 0; i < this.primaryKeyFieldNames.length; i++) {
             key.push(id[this.primaryKeyFieldNames[i]] ?? '');

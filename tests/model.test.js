@@ -43,6 +43,10 @@ test('Avatar composed primary key can be found', () => {
 
     const lAvatar4 = Avatar.find({avatar_id: 4, avatar_type: 'Team'});
     expect(lAvatar4).toStrictEqual(null);
+
+    const lAvatar5 = Avatar.find('12-Team');
+    expect(lAvatar5).toBeInstanceOf(Avatar);
+
 });
 
 test('Model returns classNames', () => {
