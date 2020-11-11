@@ -73,16 +73,13 @@ test('Insert relations via model', () => {
         team: {id: 1, name: 'team relation 1'},
         user_address: {id: 22, city: 'Hoorn', steet: 'waagplein', house_number: 1, user_id: 1},
         avatar: {avatar_type: 'User', avatar_id: 1, img_url: 'team.png'},
-    });
-
-    User.insert({
         comments: [
             {id: 9, title: 'titel', text: 'hoi', user_id: 1},
             {id: 19, title: 'a titel', text: 'hoi 2', user_id: 1},
             {id: 29, title: 'titel b', text: 'hoi 2', user_id: 1},
             {id: 39, title: '9 titel', text: 'hoi 2', user_id: 1},
         ]
-    })
+    });
 
     expect(User.all().length).toStrictEqual(1);
     expect(Team.find(1)).toBeInstanceOf(Team);
