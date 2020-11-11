@@ -59,7 +59,9 @@ class Model {
             const model = this.getInstance();
             model.fill(modelData);
             window.Store.database().insert(this.className(), model);
+            model.fillRelations(modelData);
             data[i] = model;
+
         }
         return data;
     }
@@ -119,15 +121,31 @@ class Model {
 
 
     fill (data) {
+        // insert through relations after model insert;
         for (let i = 0; i < this.numberOfFields; i++) {
-            const fieldName = this.originalFields[i].$name;
-            if (data[fieldName] !== undefined) {
-                this[`_${fieldName}`] = data[fieldName];
+            if (!(this.originalFields[i] instanceof Relation)) {
+                const fieldName = this.originalFields[i].$name;
+                if (data[fieldName] !== undefined) {
+                    this[`_${fieldName}`] = data[fieldName];
+                }
             }
         }
 
         this.setPrimaryKey();
     }
+
+    fillRelations(data) {
+        // insert through relations after model insert;
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if ((this.originalFields[i] instanceof Relation)) {
+                const fieldName = this.originalFields[i].$name;
+                if (data[fieldName] !== undefined) {
+                    this[`_${fieldName}`] = data[fieldName];
+                }
+            }
+        }
+    }
+
 
     setPrimaryKey() {
         if (this.primaryFields.length === 1) {
