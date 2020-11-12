@@ -22,7 +22,7 @@ export default class HasManyThrough extends Relation {
         return this;
     }
 
-    tableSetup(table) {
+    tableSetup() {
         //todo fix this;
         //table
 

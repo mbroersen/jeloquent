@@ -18,7 +18,7 @@ export default class Field {
         return this.setName().setParentProperties();
     }
 
-    tableSetup(table) {
+    tableSetup() {
         //todo setup table;
     }
 
