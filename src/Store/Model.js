@@ -8,6 +8,7 @@ import MorphTo from "./Model/Field/MorphTo.js";
 
 import Field from "./Model/Field.js";
 import Relation from "./Model/Relation.js";
+import ForeignKey from "./Model/Field/ForeignKey.js";
 
 class Model {
 
@@ -98,6 +99,31 @@ class Model {
         return window.Store.database().ids(this.className());
     }
 
+    tableSetup(table) {
+
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i] instanceof ForeignKey) {
+                this.originalFields[i].tableSetup(table);
+            }
+        }
+
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i] instanceof HasManyThrough) {
+                this.originalFields[i].tableSetup(table);
+            }
+        }
+
+        // this.originalFields.forEach((field) => {
+        //     field.tableSetup();
+        // });
+
+        // this.originalFields.filter(field => field instanceof HasManyThrough).forEach((hasManyThrough) => {
+        //     hasManyThrough.tableSetup();
+        //     //this.addIndex(hasManyThrough.model.className(), hasManyThrough.indexName);
+        // });
+    }
+
+
     save() {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
@@ -119,9 +145,28 @@ class Model {
         currentDatabase.insert(className, this);
     }
 
+    addNewIndex(name) {
+        window.Store.database().addIndex(this.constructor.className(), name);
+    }
+
+
+    removeFromIndex(foreignKeyField) {
+        const className = this.constructor.className();
+        const currentDatabase = window.Store.database();
+
+        currentDatabase.removeFromIndex(className, foreignKeyField.$name, foreignKeyField.value, this.primaryKey);
+    }
+
+
+    addToIndex(foreignKeyField) {
+        const className = this.constructor.className();
+        const currentDatabase = window.Store.database();
+        currentDatabase.addToIndex(className, foreignKeyField.$name, foreignKeyField.value, this.primaryKey);
+    }
+
 
     fill (data) {
-        // insert through relations after model insert;
+        this.fillPrimaryKey(data);
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
                 const fieldName = this.originalFields[i].$name;
@@ -130,9 +175,20 @@ class Model {
                 }
             }
         }
+    }
 
+    fillPrimaryKey(data) {
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i].isPrimary === true) {
+                const fieldName = this.originalFields[i].$name;
+                if (data[fieldName] !== undefined) {
+                    this[`_${fieldName}`] = data[fieldName];
+                }
+            }
+        }
         this.setPrimaryKey();
     }
+
 
     fillRelations(data) {
         // insert through relations after model insert;
@@ -180,6 +236,7 @@ class Model {
                 fieldList.splice(i, 0, ...field.getRelationalFields());
             }
         });
+
         this.numberOfFields = fieldList.length;
         return fieldList;
     }
@@ -194,8 +251,8 @@ class Model {
         Object.defineProperty(this,
             `indexedFields`, {
                 get: () => {
-                    return this.originalFields.filter((field) => field instanceof BelongsTo).reduce((array, relation) => {
-                        array.push(relation.foreignKey);
+                    return this.originalFields.filter((field) => field instanceof ForeignKey).reduce((array, relation) => {
+                        array.push(relation.$name);
                         return array;
                     }, []);
                 },
@@ -246,4 +303,5 @@ export {
     HasManyThrough,
     MorphOne,
     MorphTo,
+    ForeignKey,
 };

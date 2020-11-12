@@ -9,16 +9,17 @@ export default class Table {
 
     setup(model) {
         //todo setup by model;
+        this.model = model;
         this.indexedFields = model.indexedFields;
         this.name = model.constructor.className();
         this.models = {};
         this.indexes = {};
         this.splittedIndexNames = {};
         this.primaryKeyFieldNames = model.primaryKeyName;
+    }
 
-        this.indexedFields.forEach((indexedField) => {
-            this.addIndex(indexedField);
-        });
+    setupIndexes() {
+        this.model.tableSetup(this);
     }
 
     allModels() {
@@ -53,7 +54,13 @@ export default class Table {
             this.models[model.primaryKey] = model;
         }
 
-        for (let fieldName in this.indexes) {
+        this.addValueToIndexes(model);
+    }
+
+    addValueToIndexes(model) {
+        const indexes = this.indexes;
+
+        for (let fieldName in indexes) {
             const lookUpValue = this.splittedIndexNames[fieldName];
             const length = this.splittedIndexNames[fieldName].length;
             let indexLookUpValue = model;
@@ -69,14 +76,15 @@ export default class Table {
                 continue;
             }
 
-            if (this.indexes[fieldName][indexLookUpValue] === undefined) {
-                this.indexes[fieldName][indexLookUpValue] = [model.primaryKey];
+            if (indexes[fieldName][indexLookUpValue] === undefined) {
+                indexes[fieldName][indexLookUpValue] = [model.primaryKey];
                 continue;
             }
 
-            this.indexes[fieldName][indexLookUpValue].push(model.primaryKey);
+            if (indexes[fieldName][indexLookUpValue].indexOf(model.primaryKey) === -1) {
+                indexes[fieldName][indexLookUpValue].push(model.primaryKey);
+            }
         }
-
     }
 
     update(model) {
@@ -145,8 +153,34 @@ export default class Table {
     }
 
     removeFromIndex(indexName, lookUpKey, id) {
+        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+            return;
+        }
+
+        if (!Object.prototype.hasOwnProperty.call(this.indexes[indexName], lookUpKey)) {
+            return;
+        }
+
         const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
+        if (itemToRemove !== -1) {
+            return;
+        }
+
         delete this.indexes[indexName][lookUpKey][itemToRemove];
+    }
+
+    addToIndex(indexName, lookUpKey, id) {
+        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+            return;
+        }
+
+        if (this.indexes[indexName][lookUpKey] === undefined) {
+
+            this.indexes[indexName][lookUpKey] = [id];
+            return;
+        }
+
+        this.indexes[indexName][lookUpKey].push(id);
     }
 
     addIndex(indexName) {

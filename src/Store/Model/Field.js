@@ -18,6 +18,10 @@ export default class Field {
         return this.setName().setParentProperties();
     }
 
+    tableSetup(table) {
+        //todo setup table;
+    }
+
     setParentProperties() {
         Object.defineProperty(this.$parent,
             this.$name, {

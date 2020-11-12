@@ -1,4 +1,5 @@
 import Field from "./Field.js";
+import ForeignKey from "./Field/ForeignKey";
 
 export default class Relation extends Field {
 
@@ -9,8 +10,13 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
+    tableSetup(table) {
+        table.addIndex(this.foreignKey);
+    }
+
+
     getRelationalFields() {
-        return [new Field(this.foreignKey)];
+        return [new ForeignKey(this.foreignKey)];
     }
 
     setFillPropertyOnParent() {
