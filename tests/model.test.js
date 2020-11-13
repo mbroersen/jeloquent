@@ -15,7 +15,7 @@ test('Simple model setup', () => {
 
     expect(lUser.primaryKeyName).toStrictEqual(["id"]);
     expect(lUser.id).toStrictEqual(null);
-    expect(lUser._tmpId).toStrictEqual('_6');
+    expect(lUser._tmpId).toStrictEqual('_7');
 });
 
 test('User can be found', () => {
@@ -108,7 +108,7 @@ test('user can be saved', () => {
     expect(Store.database().ids('User')).toContain(user.primaryKey);
     user.id = 9;
     user.save();
-    expect(Store.database().ids('User')).not.toContain('_6');
+    expect(Store.database().ids('User')).not.toContain('_7');
     expect(user.primaryKey).toEqual(9);
     expect(Store.database().ids('User')).toContain('9');
 

@@ -1,5 +1,17 @@
 import {Store, Database, BelongsTo, HasOne, Model, Field, HasMany, HasManyThrough, MorphOne, MorphTo, HasOneThrough} from '../dist/jeloquent';
 
+class AvatarInfo extends Model {
+    constructor() {
+        const fields = [
+            new Field('id', true),
+            new Field('name'),
+        ];
+
+        super(fields);
+    }
+}
+
+
 /**
  * Has composed primary key {avatar_id: '', avatar_type: ''}
  * Can access parent object by calling myParent
@@ -11,6 +23,7 @@ class Avatar extends Model {
             new Field('img_url'),
             new Field('avatar_id', true),
             new Field('avatar_type', true),
+            new BelongsTo(AvatarInfo),
             new MorphTo('my_parent'),
         ];
 
@@ -91,7 +104,7 @@ class Comment extends Model {
 }
 
 const testStore = new Store();
-const database = new Database('default', [Team, User, Comment, Avatar, UserAddress]);
+const database = new Database('default', [Team, User, Comment, AvatarInfo, Avatar, UserAddress]);
 testStore.add(database);
 testStore.use('default');
 
@@ -101,6 +114,7 @@ export {
     User,
     Comment,
     Avatar,
+    AvatarInfo,
     UserAddress,
     testStore
 }
