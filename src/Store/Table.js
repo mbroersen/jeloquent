@@ -50,6 +50,8 @@ export default class Table {
             throw new Error('Record should be instance of model');
         }
 
+        model.resetDirty();
+
         if (model.primaryKey != null) {
             this.models[model.primaryKey] = model;
         }
@@ -95,6 +97,10 @@ export default class Table {
         if (!(model instanceof Model)) {
             throw new Error('Record should be instance of model');
         }
+
+        //check for dirty fields
+        //update related indexes of dirty fields
+        model.resetDirty();
 
         this.models[model.primaryKey] = model;
     }
@@ -153,20 +159,27 @@ export default class Table {
     }
 
     removeFromIndex(indexName, lookUpKey, id) {
+
         if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
             return;
         }
 
-        if (!Object.prototype.hasOwnProperty.call(this.indexes[indexName], lookUpKey)) {
+        if (!Object.prototype.hasOwnProperty.call(this.indexes[indexName], lookUpKey+'')) {
             return;
         }
+
 
         const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
-        if (itemToRemove !== -1) {
+
+        if (itemToRemove === -1) {
             return;
         }
 
-        delete this.indexes[indexName][lookUpKey][itemToRemove];
+        this.indexes[indexName][lookUpKey].splice(itemToRemove, 1);
+
+        if (this.indexes[indexName][lookUpKey].length === 0) {
+            delete this.indexes[indexName][lookUpKey];
+        }
     }
 
     addToIndex(indexName, lookUpKey, id) {
@@ -175,12 +188,17 @@ export default class Table {
         }
 
         if (this.indexes[indexName][lookUpKey] === undefined) {
-
             this.indexes[indexName][lookUpKey] = [id];
             return;
         }
 
+        if (this.indexes[indexName][lookUpKey].includes(id)) {
+            return;
+        }
+
+
         this.indexes[indexName][lookUpKey].push(id);
+
     }
 
     addIndex(indexName) {

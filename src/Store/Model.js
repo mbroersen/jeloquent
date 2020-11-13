@@ -100,7 +100,6 @@ class Model {
     }
 
     tableSetup(table) {
-
         for (let i = 0; i < this.numberOfFields; i++) {
             if (this.originalFields[i] instanceof ForeignKey) {
                 this.originalFields[i].tableSetup(table);
@@ -112,15 +111,6 @@ class Model {
                 this.originalFields[i].tableSetup(table);
             }
         }
-
-        // this.originalFields.forEach((field) => {
-        //     field.tableSetup();
-        // });
-
-        // this.originalFields.filter(field => field instanceof HasManyThrough).forEach((hasManyThrough) => {
-        //     hasManyThrough.tableSetup();
-        //     //this.addIndex(hasManyThrough.model.className(), hasManyThrough.indexName);
-        // });
     }
 
 
@@ -138,6 +128,12 @@ class Model {
             currentDatabase.delete(className, this._tmpId);
         }
 
+        this.dirtyFields.forEach((field) => {
+            window.Store.database().removeFromIndex(className, field.$name, field.previousValue, this.primaryKeyValue);
+            this.fill(field.toJson());
+            window.Store.database().addToIndex(className, field.$name, field.value, this.primaryKeyValue);
+        });
+
         if (tableIds.includes(this.primaryKey+'')) {
             currentDatabase.update(className, this);
             return;
@@ -154,14 +150,14 @@ class Model {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
 
-        currentDatabase.removeFromIndex(className, foreignKeyField.$name, foreignKeyField.value, this.primaryKey);
+        currentDatabase.removeFromIndex(className, foreignKeyField.$name, foreignKeyField.previousValue, this.primaryKey);
     }
 
 
     addToIndex(foreignKeyField) {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
-        currentDatabase.addToIndex(className, foreignKeyField.$name, foreignKeyField.value, this.primaryKey);
+        currentDatabase.addToIndex(className, foreignKeyField.$name, foreignKeyField.fieldValue, this.primaryKey);
     }
 
 
@@ -227,6 +223,27 @@ class Model {
 
     get primaryKeyName() {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
+    }
+
+    isDirty(fieldName) {
+        if (fieldName) {
+            return this.dirtyFieldNames.includes(fieldName);
+        }
+        return this.dirtyFields.length > 0;
+    }
+
+    get dirtyFields() {
+        return this.originalFields.filter(field => field.isDirty);
+    }
+
+    get dirtyFieldNames() {
+        return this.dirtyFields.map(field => field.$name);
+    }
+
+    resetDirty() {
+        this.originalFields.filter((field) => !(field instanceof Relation)).forEach(field => {
+            field.resetDirty();
+        })
     }
 
     addRelationFields(fields) {
