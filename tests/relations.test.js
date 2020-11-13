@@ -1,5 +1,5 @@
 import {Collection} from "../dist/jeloquent";
-import {User, Team, Avatar, UserAddress, Comment} from "./Models";
+import {User, Team, Avatar, UserAddress, Comment, AvatarInfo} from "./Models";
 
 const userData = [
     {id: 1, name: 'test 1', team_id: 123},
@@ -19,9 +19,9 @@ const userAddressData = [
 ];
 
 const avatarData = [
-    {avatar_id: 1, avatar_type: 'User', 'img_url': 'http://test.com/test.png'},
-    {avatar_id: 1, avatar_type: 'Team', 'img_url': 'http://test.com/test2.png'},
-    {avatar_id: 123, avatar_type: 'Team', 'img_url': 'http://test.com/test3.png'},
+    {avatar_id: 1, avatar_type: 'User', 'img_url': 'http://test.com/test.png', avatar_info_id: 99},
+    {avatar_id: 1, avatar_type: 'Team', 'img_url': 'http://test.com/test2.png', avatar_info_id: 99},
+    {avatar_id: 123, avatar_type: 'Team', 'img_url': 'http://test.com/test3.png', avatar_info_id: 99},
 ];
 
 const commentData = [
@@ -35,11 +35,20 @@ const commentData = [
     {id: 8, title: 'title', text: 'My Text 3_2', user_id: 3},
 ];
 
+const avatarInfoData = [
+    {id: 99, name: 'test data'},
+    {id: 199, name: 'test21321 data'},
+    {id: 299, name: 'test 2123data'},
+];
+
+
+AvatarInfo.insert(avatarInfoData);
 Avatar.insert(avatarData);
 User.insert(userData);
 UserAddress.insert(userAddressData);
 Team.insert(teamData);
 Comment.insert(commentData);
+//
 
 test('BelongsTo relations is added to user', () => {
     const lUser = User.find(1);
@@ -108,4 +117,45 @@ test('HasOneThrough Relation is added to team model', () => {
     expect(lComment.user_address).toBeInstanceOf(UserAddress);
     expect(lComment.user_address.city).toStrictEqual('Alkmaar');
 
+});
+
+
+test('relation indexes should update on save', () => {
+
+    const lComment = Comment.find(5);
+    const lTeamOriginal = Team.find(123); //original team
+    const lTeamNew = Team.find(1);
+    const lUser = User.find(3);
+
+    expect(lTeamOriginal.comments.length).toStrictEqual(6);
+    expect(lTeamNew.comments.length).toStrictEqual(2);
+
+    lComment.user_id = 3;
+
+    const dirtyFields = lComment.dirtyFields;
+    expect(dirtyFields.length).toStrictEqual(1);
+    expect(lComment.isDirty('user_id')).toStrictEqual(true);
+    expect(lComment.isDirty()).toStrictEqual(true);
+
+    lComment.save();
+    expect(window.Store.database().indexes('Comment').user_id[3]).toContain(5);
+
+    expect(lUser.comments.length).toStrictEqual(3);
+    expect(lComment.user.id).toStrictEqual(3);
+
+    //todo fix index update hasThrough relations;
+    // expect(lTeamNew.comments.length).toStrictEqual(3);
+    // expect(lTeamOriginal.comments.length).toStrictEqual(5);
+
+});
+
+
+test('relation indexes should update on save', () => {
+    const lAvatar = Avatar.find({avatar_id: 1, avatar_type: 'User'});
+    lAvatar.avatar_info_id = 199;
+    lAvatar.save();
+
+    expect(lAvatar.avatar_info.id).toStrictEqual(199);
+    expect(window.Store.database().indexes('Avatar').avatar_info_id[199]).toContain('1-User');
+    expect(window.Store.database().indexes('Avatar').avatar_info_id[99]).not.toContain('1-User');
 });

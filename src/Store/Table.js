@@ -9,16 +9,17 @@ export default class Table {
 
     setup(model) {
         //todo setup by model;
+        this.model = model;
         this.indexedFields = model.indexedFields;
         this.name = model.constructor.className();
         this.models = {};
         this.indexes = {};
         this.splittedIndexNames = {};
         this.primaryKeyFieldNames = model.primaryKeyName;
+    }
 
-        this.indexedFields.forEach((indexedField) => {
-            this.addIndex(indexedField);
-        });
+    setupIndexes() {
+        this.model.tableSetup(this);
     }
 
     allModels() {
@@ -49,11 +50,19 @@ export default class Table {
             throw new Error('Record should be instance of model');
         }
 
+        model.resetDirty();
+
         if (model.primaryKey != null) {
             this.models[model.primaryKey] = model;
         }
 
-        for (let fieldName in this.indexes) {
+        this.addValueToIndexes(model);
+    }
+
+    addValueToIndexes(model) {
+        const indexes = this.indexes;
+
+        for (let fieldName in indexes) {
             const lookUpValue = this.splittedIndexNames[fieldName];
             const length = this.splittedIndexNames[fieldName].length;
             let indexLookUpValue = model;
@@ -69,14 +78,15 @@ export default class Table {
                 continue;
             }
 
-            if (this.indexes[fieldName][indexLookUpValue] === undefined) {
-                this.indexes[fieldName][indexLookUpValue] = [model.primaryKey];
+            if (indexes[fieldName][indexLookUpValue] === undefined) {
+                indexes[fieldName][indexLookUpValue] = [model.primaryKey];
                 continue;
             }
 
-            this.indexes[fieldName][indexLookUpValue].push(model.primaryKey);
+            if (indexes[fieldName][indexLookUpValue].indexOf(model.primaryKey) === -1) {
+                indexes[fieldName][indexLookUpValue].push(model.primaryKey);
+            }
         }
-
     }
 
     update(model) {
@@ -87,6 +97,10 @@ export default class Table {
         if (!(model instanceof Model)) {
             throw new Error('Record should be instance of model');
         }
+
+        //check for dirty fields
+        //update related indexes of dirty fields
+        model.resetDirty();
 
         this.models[model.primaryKey] = model;
     }
@@ -145,8 +159,46 @@ export default class Table {
     }
 
     removeFromIndex(indexName, lookUpKey, id) {
+
+        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+            return;
+        }
+
+        if (!Object.prototype.hasOwnProperty.call(this.indexes[indexName], lookUpKey+'')) {
+            return;
+        }
+
+
         const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
-        delete this.indexes[indexName][lookUpKey][itemToRemove];
+
+        if (itemToRemove === -1) {
+            return;
+        }
+
+        this.indexes[indexName][lookUpKey].splice(itemToRemove, 1);
+
+        if (this.indexes[indexName][lookUpKey].length === 0) {
+            delete this.indexes[indexName][lookUpKey];
+        }
+    }
+
+    addToIndex(indexName, lookUpKey, id) {
+        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+            return;
+        }
+
+        if (this.indexes[indexName][lookUpKey] === undefined) {
+            this.indexes[indexName][lookUpKey] = [id];
+            return;
+        }
+
+        if (this.indexes[indexName][lookUpKey].includes(id)) {
+            return;
+        }
+
+
+        this.indexes[indexName][lookUpKey].push(id);
+
     }
 
     addIndex(indexName) {

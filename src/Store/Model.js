@@ -8,6 +8,7 @@ import MorphTo from "./Model/Field/MorphTo.js";
 
 import Field from "./Model/Field.js";
 import Relation from "./Model/Relation.js";
+import ForeignKey from "./Model/Field/ForeignKey.js";
 
 class Model {
 
@@ -98,6 +99,21 @@ class Model {
         return window.Store.database().ids(this.className());
     }
 
+    tableSetup(table) {
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i] instanceof ForeignKey) {
+                this.originalFields[i].tableSetup(table);
+            }
+        }
+
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i] instanceof HasManyThrough) {
+                this.originalFields[i].tableSetup(table);
+            }
+        }
+    }
+
+
     save() {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
@@ -112,6 +128,12 @@ class Model {
             currentDatabase.delete(className, this._tmpId);
         }
 
+        this.dirtyFields.forEach((field) => {
+            window.Store.database().removeFromIndex(className, field.$name, field.previousValue, this.primaryKeyValue);
+            this.fill(field.toJson());
+            window.Store.database().addToIndex(className, field.$name, field.value, this.primaryKeyValue);
+        });
+
         if (tableIds.includes(this.primaryKey+'')) {
             currentDatabase.update(className, this);
             return;
@@ -119,9 +141,28 @@ class Model {
         currentDatabase.insert(className, this);
     }
 
+    addNewIndex(name) {
+        window.Store.database().addIndex(this.constructor.className(), name);
+    }
+
+
+    removeFromIndex(foreignKeyField) {
+        const className = this.constructor.className();
+        const currentDatabase = window.Store.database();
+
+        currentDatabase.removeFromIndex(className, foreignKeyField.$name, foreignKeyField.previousValue, this.primaryKey);
+    }
+
+
+    addToIndex(foreignKeyField) {
+        const className = this.constructor.className();
+        const currentDatabase = window.Store.database();
+        currentDatabase.addToIndex(className, foreignKeyField.$name, foreignKeyField.fieldValue, this.primaryKey);
+    }
+
 
     fill (data) {
-        // insert through relations after model insert;
+        this.fillPrimaryKey(data);
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
                 const fieldName = this.originalFields[i].$name;
@@ -130,9 +171,20 @@ class Model {
                 }
             }
         }
+    }
 
+    fillPrimaryKey(data) {
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i].isPrimary === true) {
+                const fieldName = this.originalFields[i].$name;
+                if (data[fieldName] !== undefined) {
+                    this[`_${fieldName}`] = data[fieldName];
+                }
+            }
+        }
         this.setPrimaryKey();
     }
+
 
     fillRelations(data) {
         // insert through relations after model insert;
@@ -173,6 +225,27 @@ class Model {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
     }
 
+    isDirty(fieldName) {
+        if (fieldName) {
+            return this.dirtyFieldNames.includes(fieldName);
+        }
+        return this.dirtyFields.length > 0;
+    }
+
+    get dirtyFields() {
+        return this.originalFields.filter(field => field.isDirty);
+    }
+
+    get dirtyFieldNames() {
+        return this.dirtyFields.map(field => field.$name);
+    }
+
+    resetDirty() {
+        this.originalFields.filter((field) => !(field instanceof Relation)).forEach(field => {
+            field.resetDirty();
+        })
+    }
+
     addRelationFields(fields) {
         const fieldList = [...fields];
         fields.forEach((field, i) => {
@@ -180,6 +253,7 @@ class Model {
                 fieldList.splice(i, 0, ...field.getRelationalFields());
             }
         });
+
         this.numberOfFields = fieldList.length;
         return fieldList;
     }
@@ -194,8 +268,8 @@ class Model {
         Object.defineProperty(this,
             `indexedFields`, {
                 get: () => {
-                    return this.originalFields.filter((field) => field instanceof BelongsTo).reduce((array, relation) => {
-                        array.push(relation.foreignKey);
+                    return this.originalFields.filter((field) => field instanceof ForeignKey).reduce((array, relation) => {
+                        array.push(relation.$name);
                         return array;
                     }, []);
                 },
@@ -246,4 +320,5 @@ export {
     HasManyThrough,
     MorphOne,
     MorphTo,
+    ForeignKey,
 };

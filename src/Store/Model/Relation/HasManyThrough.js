@@ -8,6 +8,7 @@ export default class HasManyThrough extends Relation {
     //this.parent.comments
     constructor(model, throughModel, foreignKey, localKey) {
         super(model, foreignKey);
+        this.model = model;
         this.throughModel = throughModel;
         this.localKey = localKey ?? 'id';
     }
@@ -19,6 +20,13 @@ export default class HasManyThrough extends Relation {
         this.foreignKey = `${this._lcThroughModelClassName}_id`;
         this.$name = `${this._lcModelClassName}s`;
         return this;
+    }
+
+    tableSetup() {
+        //todo fix this;
+        //table
+
+       this.model.addIndex(this.indexName);
     }
 
     getRelationalFields() {

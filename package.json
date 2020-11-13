@@ -3,10 +3,11 @@
   "module": "dist/jeloquent.js",
   "unpkg": "dist/jeloquent.js",
   "main": "dist/jeloquent.js",
-  "version": "2.4.5",
+  "version": "2.5.0",
   "description": "micro framework / memory orm model store",
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch",
     "test": "jest",
     "lint": "eslint src/*/** --fix-dry-run"
   },

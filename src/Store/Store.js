@@ -15,6 +15,7 @@ class Store {
 
     use(storeName) {
         this.useDatabase = storeName;
+        this.databases[this.useDatabase ?? 'default']?.setIndexes();
     }
 
     add(database) {
