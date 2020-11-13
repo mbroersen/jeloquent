@@ -29,7 +29,7 @@ export default class Field {
                     return this.value;
                 },
                 set: (value) => {
-                    this.previousValue = JSON.parse(JSON.stringify(this.value));
+                    this.previousValue = JSON.parse(JSON.stringify(this.value ?? value));
                     this.value = value;
                 }
             }
@@ -45,11 +45,25 @@ export default class Field {
             `_${this.$name}`,
             {
                 set: (value) => {
+                    this.previousValue = JSON.parse(JSON.stringify(this.value));
                     this.fieldValue = value;
                 }
         });
     }
 
+    get isDirty() {
+        return this.fieldValue != this.previousValue;
+    }
+
+    resetDirty() {
+        this.previousValue = JSON.parse(JSON.stringify(this.fieldValue));
+    }
+
+    toJson() {
+        const object = {};
+        object[this.$name] = this.fieldValue;
+        return JSON.parse(JSON.stringify(object));
+    }
 
     get value() {
         return this.fieldValue;
