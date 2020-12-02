@@ -1,7 +1,5 @@
 import Field from "../Field";
 
-
-//should return User or Team
 export default class MorphTo extends Field {
 
     constructor(name) {
@@ -15,5 +13,26 @@ export default class MorphTo extends Field {
         const id = this.$parent[`${name}_id`];
 
         return window.Store.classInstances[type].constructor.find(id);
+    }
+
+    setFillPropertyOnParent() {
+        Object.defineProperty(this.$parent,
+            `_${this.$name}`,
+            {
+            set: (value) => {
+                if (!Array.isArray(value)) {
+                    value = [value];
+                }
+
+                const name = this.$parent.constructor.snakeCaseClassName()
+                const type = `${name}_type`;
+                const id = `${name}_id`;
+
+                for (const record of value) {
+                    record['id'] = record[id];
+                    window.Store.classInstances[record[type]].constructor.insert(record);
+                }
+            }
+        });
     }
 }
