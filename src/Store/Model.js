@@ -150,14 +150,14 @@ class Model {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
 
-        currentDatabase.removeFromIndex(className, foreignKeyField.$name, foreignKeyField.previousValue, this.primaryKey);
+        currentDatabase.removeFromIndex(className, foreignKeyField.foreignKey, foreignKeyField.previousValue, this.primaryKey);
     }
 
 
     addToIndex(foreignKeyField) {
         const className = this.constructor.className();
         const currentDatabase = window.Store.database();
-        currentDatabase.addToIndex(className, foreignKeyField.$name, foreignKeyField.fieldValue, this.primaryKey);
+        currentDatabase.addToIndex(className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, this.primaryKey);
     }
 
 
