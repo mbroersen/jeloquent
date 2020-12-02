@@ -2,13 +2,13 @@ import Relation from "../Relation.js";
 
 export default class BelongsTo extends Relation {
 
-    constructor(model, foreignKey) {
-        super(model, (foreignKey ?? `${model.snakeCaseClassName()}_id`));
+    constructor(model, foreignKey, name) {
+        super(model, (foreignKey ?? `${model.snakeCaseClassName()}_id`), name);
     }
 
     setName() {
         let className = this.model.snakeCaseClassName();
-        this.$name = `${className}`;
+        this.$name = this.$name ?? `${className}`;
         return this;
     }
 
@@ -16,8 +16,13 @@ export default class BelongsTo extends Relation {
     setParentProperties() {
         super.setParentProperties();
 
+        let name = '';
+        for (const namePart of this.$name.split('_')) {
+            name += namePart[0].toUpperCase() + namePart.slice(1);
+        }
+
         Object.defineProperty(this.$parent,
-            `has${this.model.className()}`, {
+            `has${name}`, {
                 get: () => {
                     return this.value !== null;
                 },

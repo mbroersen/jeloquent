@@ -3,8 +3,8 @@ import ForeignKey from "./Field/ForeignKey";
 
 export default class Relation extends Field {
 
-    constructor(model, foreignKey) {
-        let className = model.snakeCaseClassName();
+    constructor(model, foreignKey, name) {
+        let className = name ?? model.snakeCaseClassName();
         super(className);
         this.model = model;
         this.foreignKey = foreignKey;

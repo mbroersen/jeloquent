@@ -159,3 +159,16 @@ test('relation indexes should update on save', () => {
     expect(window.Store.database().indexes('Avatar').avatar_info_id[199]).toContain('1-User');
     expect(window.Store.database().indexes('Avatar').avatar_info_id[99]).not.toContain('1-User');
 });
+
+
+test('can insert relation via morphTo field', () => {
+    Avatar.insert({
+        my_parent: [
+            {avatar_id: 9190, avatar_type: 'Team', name: 'AvatarInsertedTeam'},
+            {avatar_id: 2901, avatar_type: 'User', name: 'AvatarInsertedUser', team_id: 9190},
+        ]
+    })
+
+    expect(User.find(2901).name).toStrictEqual('AvatarInsertedUser');
+    expect(Team.find(9190).name).toStrictEqual('AvatarInsertedTeam');
+})

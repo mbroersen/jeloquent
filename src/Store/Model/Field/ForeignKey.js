@@ -4,12 +4,14 @@ import Field from "../Field";
 //should return User or Team
 export default class ForeignKey extends Field {
 
-    constructor(name) {
+    constructor(name, foreignKey) {
         super(name);
+
+        this.foreignKey = name ?? foreignKey;
     }
 
     tableSetup(table) {
-        table.addIndex(this.$name);
+        table.addIndex(this.foreignKey);
     }
 
     get value() {
