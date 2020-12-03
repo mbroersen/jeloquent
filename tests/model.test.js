@@ -1,5 +1,5 @@
 import {Collection} from "../dist/jeloquent";
-import {User, UserAddress, testStore, Avatar, Team, Comment} from "./Models";
+import {User, UserAddress, testStore, Avatar, Team, Comment, TwoPersonTeam} from "./Models";
 
 
 User.insert({id: 12});
@@ -15,7 +15,7 @@ test('Simple model setup', () => {
 
     expect(lUser.primaryKeyName).toStrictEqual(["id"]);
     expect(lUser.id).toStrictEqual(null);
-    expect(lUser._tmpId).toStrictEqual('_7');
+    expect(lUser._tmpId).toStrictEqual('_8');
 });
 
 test('User can be found', () => {
@@ -118,3 +118,25 @@ test('user can be saved', () => {
     user.save();
     expect(foundUser.name).toStrictEqual('Mark2');
 });
+
+test('two belongsTo relation of same type can be saved', () => {
+    testStore.database().truncate('User');
+
+    TwoPersonTeam.insert({
+        id: 1,
+        name: "2 belongsTo Team",
+        user_one: {id: 1, name: 'name', team_id: 1},
+        user_two: {id: 2, name: 'name', team_id: 1},
+        user_one_id: 1,
+        user_two_id: 2,
+    });
+
+    const team = TwoPersonTeam.find(1);
+
+    expect(team.user_one).toBeInstanceOf(User);
+    expect(team.user_one.id).toStrictEqual(1);
+
+    expect(team.user_two).toBeInstanceOf(User);
+    expect(team.user_two.id).toStrictEqual(2);
+
+})

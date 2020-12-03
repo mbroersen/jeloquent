@@ -84,7 +84,19 @@ class Team extends Model {
     }
 }
 
+class TwoPersonTeam extends Model {
 
+    constructor() {
+        const fields = [
+            new Field('id', true),
+            new Field('name'),
+            new BelongsTo(User, 'user_one_id', 'user_one'),
+            new BelongsTo(User, 'user_two_id', 'user_two'),
+        ];
+
+        super(fields);
+    }
+}
 
 
 class Comment extends Model {
@@ -104,7 +116,7 @@ class Comment extends Model {
 }
 
 const testStore = new Store();
-const database = new Database('default', [Team, User, Comment, AvatarInfo, Avatar, UserAddress]);
+const database = new Database('default', [Team, TwoPersonTeam, User, Comment, AvatarInfo, Avatar, UserAddress]);
 testStore.add(database);
 testStore.use('default');
 
@@ -116,5 +128,6 @@ export {
     Avatar,
     AvatarInfo,
     UserAddress,
+    TwoPersonTeam,
     testStore
 }
