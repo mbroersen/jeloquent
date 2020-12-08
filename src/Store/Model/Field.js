@@ -29,7 +29,11 @@ export default class Field {
                     return this.value;
                 },
                 set: (value) => {
-                    this.previousValue = JSON.parse(JSON.stringify(this.value ?? value));
+                    if (this.previousValue === undefined) {
+                        this.previousValue = JSON.parse(JSON.stringify(this.value ?? value));
+                    }
+
+                    this.previousValue = JSON.parse(JSON.stringify(this.value));
                     this.value = value;
                 }
             }

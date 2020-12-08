@@ -140,3 +140,23 @@ test('two belongsTo relation of same type can be saved', () => {
     expect(team.user_two.id).toStrictEqual(2);
 
 })
+
+
+test('changed model has dirty fields', () => {
+
+    const user = new User();
+    expect(user.dirtyFields.length).toStrictEqual(0);
+    user.name = 'test';
+    expect(user.dirtyFields.length).toStrictEqual(1);
+    user.save();
+    expect(user.dirtyFields.length).toStrictEqual(0);
+    user.name = null;
+    expect(user.dirtyFields.length).toStrictEqual(1);
+    user.save();
+    expect(user.dirtyFields.length).toStrictEqual(0);
+    user.name = 'test';
+    expect(user.dirtyFields.length).toStrictEqual(1);
+    user.save();
+    expect(user.dirtyFields.length).toStrictEqual(0);
+
+});
