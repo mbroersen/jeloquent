@@ -110,10 +110,15 @@ export default class Table {
             return id;
         }
 
+        if (id === null) {
+            return null;
+        }
+
         const key = [];
         for (let i = 0; i < this.primaryKeyFieldNames.length; i++) {
             key.push(id[this.primaryKeyFieldNames[i]] ?? '');
         }
+
         return key.join('-');
     }
 
