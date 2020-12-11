@@ -172,3 +172,11 @@ test('can insert relation via morphTo field', () => {
     expect(User.find(2901).name).toStrictEqual('AvatarInsertedUser');
     expect(Team.find(9190).name).toStrictEqual('AvatarInsertedTeam');
 })
+
+test('user without relation should return null', () => {
+    User.insert({id: 2837, 'name': 'testUser'});
+
+    expect(User.find(2837).hasTeam).toStrictEqual(false);
+    expect(User.find(2837).team).toStrictEqual(null);
+    expect(User.find(2837).avatar).toStrictEqual(null);
+});
