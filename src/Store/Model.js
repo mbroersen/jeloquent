@@ -14,7 +14,7 @@ class Model {
 
     constructor(fields) {
         this.setFields(this.addRelationFields(fields));
-        this._tmpId = `_${++window.Store.numberOfModelCreated}`;
+        this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
         this.snakeCaseName = this.constructor.snakeCaseClassName();
     }
 
@@ -31,11 +31,11 @@ class Model {
     }
 
     static addIndex(name) {
-        window.Store.database().addIndex(this.className(), name);
+        globalThis.Store.database().addIndex(this.className(), name);
     }
 
     static getInstance() {
-        const original =  window.Store.classInstances[this.className()] ?? (window.Store.classInstances[this.className()] = new this())
+        const original =  globalThis.Store.classInstances[this.className()] ?? (globalThis.Store.classInstances[this.className()] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
             obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
             return obj;
@@ -59,7 +59,7 @@ class Model {
             const modelData = data[i];
             const model = this.getInstance();
             model.fill(modelData);
-            window.Store.database().insert(this.className(), model);
+            globalThis.Store.database().insert(this.className(), model);
             model.fillRelations(modelData);
             data[i] = model;
 
@@ -70,33 +70,33 @@ class Model {
     static update(data) {
         const model = new this();
         model.fill(data);
-        window.Store.database().update(this.className(), model);
+        globalThis.Store.database().update(this.className(), model);
 
         return model;
     }
 
     static find(id) {
-        return window.Store.database().find(this.className(), id);
+        return globalThis.Store.database().find(this.className(), id);
     }
 
     static select(id) {
         try {
-            return window.Store.database().select(this.className(), id);
+            return globalThis.Store.database().select(this.className(), id);
         } catch (e) {
             console.error(e);
         }
     }
 
     static delete(id) {
-        window.Store.database().delete(this.className(), id);
+        globalThis.Store.database().delete(this.className(), id);
     }
 
     static all() {
-        return window.Store.database().all(this.className());
+        return globalThis.Store.database().all(this.className());
     }
 
     static ids() {
-        return window.Store.database().ids(this.className());
+        return globalThis.Store.database().ids(this.className());
     }
 
     tableSetup(table) {
@@ -116,7 +116,7 @@ class Model {
 
     save() {
         const className = this.constructor.className();
-        const currentDatabase = window.Store.database();
+        const currentDatabase = globalThis.Store.database();
         const tableIds = currentDatabase.ids(className);
 
         this.setPrimaryKey();
@@ -129,9 +129,9 @@ class Model {
         }
 
         this.dirtyFields.forEach((field) => {
-            window.Store.database().removeFromIndex(className, field.$name, field.previousValue, this.primaryKeyValue);
+            globalThis.Store.database().removeFromIndex(className, field.$name, field.previousValue, this.primaryKeyValue);
             this.fill(field.toJson());
-            window.Store.database().addToIndex(className, field.$name, field.value, this.primaryKeyValue);
+            globalThis.Store.database().addToIndex(className, field.$name, field.value, this.primaryKeyValue);
         });
 
         if (tableIds.includes(this.primaryKey+'')) {
@@ -142,13 +142,13 @@ class Model {
     }
 
     addNewIndex(name) {
-        window.Store.database().addIndex(this.constructor.className(), name);
+        globalThis.Store.database().addIndex(this.constructor.className(), name);
     }
 
 
     removeFromIndex(foreignKeyField) {
         const className = this.constructor.className();
-        const currentDatabase = window.Store.database();
+        const currentDatabase = globalThis.Store.database();
 
         currentDatabase.removeFromIndex(className, foreignKeyField.foreignKey, foreignKeyField.previousValue, this.primaryKey);
     }
@@ -156,7 +156,7 @@ class Model {
 
     addToIndex(foreignKeyField) {
         const className = this.constructor.className();
-        const currentDatabase = window.Store.database();
+        const currentDatabase = globalThis.Store.database();
         currentDatabase.addToIndex(className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, this.primaryKey);
     }
 

@@ -42,21 +42,21 @@ export default class HasMany extends Relation {
     }
 
     get count() {
-        const index = window.Store.database().indexes(this.model.className())[this.foreignKey] ?? {};
+        const index = globalThis.Store.database().indexes(this.model.className())[this.foreignKey] ?? {};
         return index[this.$parent[this.localKey]]?.length ?? 0;
     }
 
     get value() {
         const className = this.model.className();
-        const indexes = window.Store.database().indexes(className);
+        const indexes = globalThis.Store.database().indexes(className);
 
         if (Object.prototype.hasOwnProperty.call(indexes, this.foreignKey)) {
-            return window.Store.database().find(className,
+            return globalThis.Store.database().find(className,
                 indexes[this.foreignKey][this.$parent[this.localKey]] ?? []
             );
         }
 
-        return window.Store.database().all(this.model.className()).filter(model => {
+        return globalThis.Store.database().all(this.model.className()).filter(model => {
             return model[this.foreignKey] === this.$parent[this.localKey];
         });
     }

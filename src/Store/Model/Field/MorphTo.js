@@ -12,7 +12,7 @@ export default class MorphTo extends Field {
         const type = this.$parent[`${name}_type`];
         const id = this.$parent[`${name}_id`];
 
-        return window.Store.classInstances[type].constructor.find(id);
+        return globalThis.Store.classInstances[type].constructor.find(id);
     }
 
     setFillPropertyOnParent() {
@@ -30,7 +30,7 @@ export default class MorphTo extends Field {
 
                 for (const record of value) {
                     record['id'] = record[id];
-                    window.Store.classInstances[record[type]].constructor.insert(record);
+                    globalThis.Store.classInstances[record[type]].constructor.insert(record);
                 }
             }
         });

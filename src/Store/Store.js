@@ -10,7 +10,7 @@ class Store {
         this.numberOfModelCreated = 0;
         this.useDatabase = 'default';
         this.useConnection = 'default';
-        window.Store = this;
+        globalThis.Store = this;
     }
 
     use(storeName) {
