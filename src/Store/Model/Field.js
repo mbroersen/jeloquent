@@ -79,7 +79,7 @@ export default class Field {
         // todo fix entity store update
         // const objectValue = {}
         //
-        // window.Store.database().update(
+        // globalThis.Store.database().update(
         //     this.$parent.constructor.name,
         //     {...value}
         // );

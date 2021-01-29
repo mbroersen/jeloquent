@@ -31,7 +31,7 @@ export default class HasOne extends Relation {
 
     get value() {
         const className = this.model.className();
-        const indexes = window.Store.database().indexes(className);
+        const indexes = globalThis.Store.database().indexes(className);
 
         if (!Object.prototype.hasOwnProperty.call(indexes, this.foreignKey)) {
             return null;
@@ -42,7 +42,7 @@ export default class HasOne extends Relation {
             return null;
         }
 
-        return window.Store.database().find(className,
+        return globalThis.Store.database().find(className,
             keyIndex[this.$parent.primaryKey][0] ?? null
         );
     }

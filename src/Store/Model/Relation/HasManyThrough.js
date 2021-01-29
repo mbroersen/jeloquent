@@ -43,10 +43,10 @@ export default class HasManyThrough extends Relation {
 
     get value() {
         const className = this.model.className();
-        const indexes = window.Store.database().indexes(className);
+        const indexes = globalThis.Store.database().indexes(className);
 
         if (Object.prototype.hasOwnProperty.call(indexes, this.indexName)) {
-            return window.Store.database().find(className,
+            return globalThis.Store.database().find(className,
                 indexes[this.indexName][this.$parent[this.localKey]] ?? []
             );
         }

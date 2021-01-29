@@ -24,7 +24,7 @@ export default class ForeignKey extends Field {
         // todo fix entity store update
         // const objectValue = {}
         //
-        // window.Store.database().update(
+        // globalThis.Store.database().update(
         //     this.$parent.constructor.name,
         //     {...value}
         // );
