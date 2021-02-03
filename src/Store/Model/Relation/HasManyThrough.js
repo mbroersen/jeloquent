@@ -43,23 +43,10 @@ export default class HasManyThrough extends Relation {
 
     get value() {
         const className = this.model.className();
-        const indexes = globalThis.Store.database().indexes(className);
+        const keyIndex = this.model.getIndexByKey(this.indexName);
 
-        if (Object.prototype.hasOwnProperty.call(indexes, this.indexName)) {
-            return globalThis.Store.database().find(className,
-                indexes[this.indexName][this.$parent[this.localKey]] ?? []
-            );
-        }
-
-        const foreignKey = `${this._lcModelClassName}s`;
-        const throughForeignKey = `${this._lcThroughModelClassName}s`;
-
-        return this.$parent[throughForeignKey].reduce(
-            (array, object) => {
-                array.push(...object[foreignKey]);
-                return array
-            },
-        []);
+        return globalThis.Store.database().find(className,
+            [...(keyIndex.get(this.$parent[this.localKey])?.values()) ?? []]
+        );
     }
-
 }

@@ -31,19 +31,14 @@ export default class HasOne extends Relation {
 
     get value() {
         const className = this.model.className();
-        const indexes = globalThis.Store.database().indexes(className);
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
 
-        if (!Object.prototype.hasOwnProperty.call(indexes, this.foreignKey)) {
-            return null;
-        }
-
-        const keyIndex = indexes[this.foreignKey];
-        if (!Object.prototype.hasOwnProperty.call(keyIndex, this.$parent.primaryKey)) {
+        if (!keyIndex.has(this.$parent.primaryKey)) {
             return null;
         }
 
         return globalThis.Store.database().find(className,
-            keyIndex[this.$parent.primaryKey][0] ?? null
-        );
+            [...keyIndex.get(this.$parent.primaryKey).values()] ?? null
+        ).first();
     }
 }

@@ -12,8 +12,8 @@ export default class Table {
         this.model = model;
         this.indexedFields = model.indexedFields;
         this.name = model.constructor.className();
-        this.models = {};
-        this.indexes = {};
+        this.models = new Map();
+        this.indexes = new Map();
         this.splittedIndexNames = {};
         this.primaryKeyFieldNames = model.primaryKeyName;
     }
@@ -27,11 +27,15 @@ export default class Table {
     }
 
     ids() {
-        return Object.keys(this.models);
+        return [...this.models.keys()];
+    }
+
+    getIndexByKey(key) {
+        return this.indexes.get(key);
     }
 
     all() {
-        const values = Object.values(this.models);
+        const values = [...this.models.values()];
         const numberOfValues = values.length;
         const collection = new Collection();
         for (let i = 0; i < numberOfValues; i += 10000) {
@@ -42,7 +46,7 @@ export default class Table {
     }
 
     insert(model) {
-        if (Object.prototype.hasOwnProperty.call(this.models, model.primaryKey)) {
+        if (this.models.has(model.primaryKey)) {
             throw new Error('Record already exists');
         }
 
@@ -53,7 +57,7 @@ export default class Table {
         model.resetDirty();
 
         if (model.primaryKey != null) {
-            this.models[model.primaryKey] = model;
+            this.models.set(model.primaryKey, model);
         }
 
         this.addValueToIndexes(model);
@@ -62,7 +66,7 @@ export default class Table {
     addValueToIndexes(model) {
         const indexes = this.indexes;
 
-        for (let fieldName in indexes) {
+        for (let [fieldName, value] of indexes) {
             const lookUpValue = this.splittedIndexNames[fieldName];
             const length = this.splittedIndexNames[fieldName].length;
             let indexLookUpValue = model;
@@ -78,19 +82,18 @@ export default class Table {
                 continue;
             }
 
-            if (indexes[fieldName][indexLookUpValue] === undefined) {
-                indexes[fieldName][indexLookUpValue] = [model.primaryKey];
-                continue;
+            let current = value;
+            if (!(current.get(indexLookUpValue) instanceof Map)) {
+                current.set(indexLookUpValue, new Map());
             }
 
-            if (indexes[fieldName][indexLookUpValue].indexOf(model.primaryKey) === -1) {
-                indexes[fieldName][indexLookUpValue].push(model.primaryKey);
-            }
+            current = current.get(indexLookUpValue);
+            current.set(model.primaryKey, model.primaryKey);
         }
     }
 
     update(model) {
-        if (!Object.prototype.hasOwnProperty.call(this.models, model.primaryKey)) {
+        if (!this.models.has(model.primaryKey)) {
             throw new Error('Record doesn\'t exists');
         }
 
@@ -102,7 +105,7 @@ export default class Table {
         //update related indexes of dirty fields
         model.resetDirty();
 
-        this.models[model.primaryKey] = model;
+        this.models.set(model.primaryKey, model);
     }
 
     getKey(id) {
@@ -127,9 +130,9 @@ export default class Table {
         if (Array.isArray(id)) {
             const result = [];
             let pushFunction = hasComposedPrimaryKey ? (i) => {
-                result.push(this.models[this.getKey(id[i])] ?? null);
+                result.push(this.models.get(this.getKey(id[i])) ?? null);
             } : (i) => {
-                result.push(this.models[id[i]] ?? null);
+                result.push(this.models.get(id[i]) ?? null);
             }
 
             for (let i = 0; i < id.length; i++) {
@@ -140,85 +143,72 @@ export default class Table {
         }
 
         if (hasComposedPrimaryKey) {
-            return this.models[this.getKey(id)] ?? null;
+            return this.models.get(this.getKey(id)) ?? null;
         }
 
-        return this.models[id] ?? null;
+        return this.models.get(id) ?? null;
     }
 
     select(id) {
-        if (!Object.prototype.hasOwnProperty.call(this.models, id)) {
+        if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
 
-        return this.models[id];
+        return this.find(id);
     }
 
     delete(id) {
-        if (!Object.prototype.hasOwnProperty.call(this.models, id)) {
+        if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
-        //todo remove from indexes;
-
-        delete this.models[id];
+        this.models.delete(id);
     }
 
     removeFromIndex(indexName, lookUpKey, id) {
-
-        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+        if (!this.indexes.has(indexName)) {
+            return;
+        }
+        let current = this.indexes.get(indexName);
+        if (!current.has(lookUpKey)) {
             return;
         }
 
-        if (!Object.prototype.hasOwnProperty.call(this.indexes[indexName], lookUpKey+'')) {
-            return;
-        }
-
-
-        const itemToRemove = this.indexes[indexName][lookUpKey].indexOf(id);
-
-        if (itemToRemove === -1) {
-            return;
-        }
-
-        this.indexes[indexName][lookUpKey].splice(itemToRemove, 1);
-
-        if (this.indexes[indexName][lookUpKey].length === 0) {
-            delete this.indexes[indexName][lookUpKey];
-        }
+        current = current.get(lookUpKey);
+        current?.delete(id);
     }
 
     addToIndex(indexName, lookUpKey, id) {
-        if (!Object.prototype.hasOwnProperty.call(this.indexes, indexName)) {
+        if (!this.indexes.has(indexName)) {
             return;
         }
 
-        if (this.indexes[indexName][lookUpKey] === undefined) {
-            this.indexes[indexName][lookUpKey] = [id];
+        let current = this.indexes.get(indexName);
+        if (!(current instanceof Map && current.has(lookUpKey))) {
+            current.set(lookUpKey, new Map());
             return;
         }
 
-        if (this.indexes[indexName][lookUpKey].includes(id)) {
+        current = current.get(lookUpKey);
+        if (current.has(id)) {
             return;
         }
 
-
-        this.indexes[indexName][lookUpKey].push(id);
-
+        current.set(id, id);
     }
 
     addIndex(indexName) {
-        if ((indexName in this.indexes) === false) {
+        if (!this.indexes.has(indexName)) {
             this.indexedFields.push(indexName);
             this.splittedIndexNames[indexName] = indexName.split('.');
-            this.indexes[indexName] = {};
+            this.indexes.set(indexName, new Map());
         }
     }
 
     truncate() {
-        this.models = {};
+        this.models.clear();
 
-        for (const indexName in this.indexes) {
-            this.indexes[indexName] = {};
+        for (let key in this.indexes) {
+            this.indexes.get(key).clear();
         }
     }
 

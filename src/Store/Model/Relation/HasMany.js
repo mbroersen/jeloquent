@@ -42,27 +42,20 @@ export default class HasMany extends Relation {
     }
 
     get count() {
-        const index = globalThis.Store.database().indexes(this.model.className())[this.foreignKey] ?? {};
-        return index[this.$parent[this.localKey]]?.length ?? 0;
+        let indexes = globalThis.Store.database().indexes(this.model.className());
+        return indexes.get(this.foreignKey).get(this.$parent[this.localKey])?.size ?? 0;
     }
 
     get value() {
         const className = this.model.className();
-        const indexes = globalThis.Store.database().indexes(className);
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
 
-        if (Object.prototype.hasOwnProperty.call(indexes, this.foreignKey)) {
-            return globalThis.Store.database().find(className,
-                indexes[this.foreignKey][this.$parent[this.localKey]] ?? []
-            );
-        }
-
-        return globalThis.Store.database().all(this.model.className()).filter(model => {
-            return model[this.foreignKey] === this.$parent[this.localKey];
-        });
+        return globalThis.Store.database().find(className,
+            [...(keyIndex.get(this.$parent[this.localKey])?.values()) ?? []]
+        );
     }
 
     set value(values) {
         //todo updateEntities in store
     }
-
 }
