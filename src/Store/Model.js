@@ -62,7 +62,6 @@ class Model {
             globalThis.Store.database().insert(this.className(), model);
             model.fillRelations(modelData);
             data[i] = model;
-
         }
         return data;
     }
@@ -134,7 +133,7 @@ class Model {
             globalThis.Store.database().addToIndex(className, field.$name, field.value, this.primaryKeyValue);
         });
 
-        if (tableIds.includes(this.primaryKey+'')) {
+        if (tableIds.includes(this.primaryKey)) {
             currentDatabase.update(className, this);
             return;
         }
@@ -145,7 +144,6 @@ class Model {
         globalThis.Store.database().addIndex(this.constructor.className(), name);
     }
 
-
     removeFromIndex(foreignKeyField) {
         const className = this.constructor.className();
         const currentDatabase = globalThis.Store.database();
@@ -153,13 +151,18 @@ class Model {
         currentDatabase.removeFromIndex(className, foreignKeyField.foreignKey, foreignKeyField.previousValue, this.primaryKey);
     }
 
-
     addToIndex(foreignKeyField) {
         const className = this.constructor.className();
         const currentDatabase = globalThis.Store.database();
         currentDatabase.addToIndex(className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, this.primaryKey);
     }
 
+    static getIndexByKey(indexName) {
+        const className = this.className();
+        const currentDatabase = globalThis.Store.database();
+
+        return currentDatabase.getIndexByKey(className, indexName);
+    }
 
     fill (data) {
         this.fillPrimaryKey(data);
@@ -185,7 +188,6 @@ class Model {
         this.setPrimaryKey();
     }
 
-
     fillRelations(data) {
         // insert through relations after model insert;
         for (let i = 0; i < this.numberOfFields; i++) {
@@ -197,7 +199,6 @@ class Model {
             }
         }
     }
-
 
     setPrimaryKey() {
         if (this.primaryFields.length === 1) {

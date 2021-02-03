@@ -98,7 +98,7 @@ test('HasOne Relation is added to user model', () => {
 
     const lUser2 = User.find(2);
     expect(lUser2.hasUserAddress).toStrictEqual(false);
-    //expect(lUser2.user_address).toStrictEqual(null);
+    expect(lUser2.user_address).toStrictEqual(null);
 
 });
 
@@ -116,16 +116,15 @@ test('HasOneThrough Relation is added to team model', () => {
 
     expect(lComment.user_address).toBeInstanceOf(UserAddress);
     expect(lComment.user_address.city).toStrictEqual('Alkmaar');
-
 });
 
 
 test('relation indexes should update on save', () => {
 
-    const lComment = Comment.find(5);
+    const lComment = Comment.find(5); // is user 2 comment
     const lTeamOriginal = Team.find(123); //original team
     const lTeamNew = Team.find(1);
-    const lUser = User.find(3);
+    const lUser = User.find(3); // has 2 comments
 
     expect(lTeamOriginal.comments.length).toStrictEqual(6);
     expect(lTeamNew.comments.length).toStrictEqual(2);
@@ -138,14 +137,14 @@ test('relation indexes should update on save', () => {
     expect(lComment.isDirty()).toStrictEqual(true);
 
     lComment.save();
-    expect(window.Store.database().indexes('Comment').user_id[3]).toContain(5);
+    expect(globalThis.Store.database().indexes('Comment').get('user_id').get(3).has(5)).toStrictEqual(true);
 
     expect(lUser.comments.length).toStrictEqual(3);
     expect(lComment.user.id).toStrictEqual(3);
 
     //todo fix index update hasThrough relations;
-    // expect(lTeamNew.comments.length).toStrictEqual(3);
-    // expect(lTeamOriginal.comments.length).toStrictEqual(5);
+    //expect(lTeamNew.comments.length).toStrictEqual(3);
+    //expect(lTeamOriginal.comments.length).toStrictEqual(5);
 
 });
 
@@ -156,8 +155,8 @@ test('relation indexes should update on save', () => {
     lAvatar.save();
 
     expect(lAvatar.avatar_info.id).toStrictEqual(199);
-    expect(window.Store.database().indexes('Avatar').avatar_info_id[199]).toContain('1-User');
-    expect(window.Store.database().indexes('Avatar').avatar_info_id[99]).not.toContain('1-User');
+    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get(199).has('1-User')).toStrictEqual(true);
+    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get(99).has('1-User')).toStrictEqual(false);
 });
 
 

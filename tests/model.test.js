@@ -57,7 +57,7 @@ test('Model returns classNames', () => {
 
 test('Model fetch all primaryKeys', () => {
     const indexes = User.ids();
-    expect(indexes).toStrictEqual(["12"]);
+    expect(indexes).toStrictEqual([12]);
     testStore.database().truncate('User');
     expect(User.ids()).toStrictEqual([]);
 });
@@ -110,7 +110,7 @@ test('user can be saved', () => {
     user.save();
     expect(Store.database().ids('User')).not.toContain('_7');
     expect(user.primaryKey).toEqual(9);
-    expect(Store.database().ids('User')).toContain('9');
+    expect(Store.database().ids('User')).toContain(9);
 
     const foundUser = Store.database().find('User', 9);
     expect(foundUser.name).toStrictEqual('Mark Man');
