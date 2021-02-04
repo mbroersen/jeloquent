@@ -184,11 +184,11 @@ export default class Table {
 
         let current = this.indexes.get(indexName);
         if (!(current instanceof Map && current.has(lookUpKey))) {
-            current.set(lookUpKey, new Map());
+            current.set(lookUpKey, new Set());
             return;
         }
-
         current = current.get(lookUpKey);
+
         if (current.has(id)) {
             return;
         }
