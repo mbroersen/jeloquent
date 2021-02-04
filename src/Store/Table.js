@@ -83,12 +83,12 @@ export default class Table {
             }
 
             let current = value;
-            if (!(current.get(indexLookUpValue) instanceof Map)) {
-                current.set(indexLookUpValue, new Map());
+            if (!(current.get(indexLookUpValue) instanceof Set)) {
+                current.set(indexLookUpValue, new Set());
             }
 
             current = current.get(indexLookUpValue);
-            current.set(model.primaryKey, model.primaryKey);
+            current.add(model.primaryKey, model.primaryKey);
         }
     }
 
@@ -193,7 +193,7 @@ export default class Table {
             return;
         }
 
-        current.set(id, id);
+        current.add(id);
     }
 
     addIndex(indexName) {
