@@ -43,7 +43,7 @@ export default class HasMany extends Relation {
 
     get count() {
         let indexes = globalThis.Store.database().indexes(this.model.className());
-        return indexes.get(this.foreignKey).get(this.$parent[this.localKey])?.size ?? 0;
+        return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
     }
 
     get value() {
@@ -51,11 +51,7 @@ export default class HasMany extends Relation {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
 
         return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent[this.localKey])?.values()) ?? []]
+            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
         );
-    }
-
-    set value(values) {
-        //todo updateEntities in store
     }
 }

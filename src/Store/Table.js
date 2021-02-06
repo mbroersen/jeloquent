@@ -178,7 +178,7 @@ export default class Table {
     }
 
     addToIndex(indexName, lookUpKey, id) {
-        if (!this.indexes.has(indexName)) {
+        if (!this.indexes.has(indexName) || id === null) {
             return;
         }
 
