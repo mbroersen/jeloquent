@@ -179,3 +179,26 @@ test('user without relation should return null', () => {
     expect(User.find(2837).team).toStrictEqual(null);
     expect(User.find(2837).avatar).toStrictEqual(null);
 });
+
+
+test('saving relation should add index', () => {
+    //todo fix relation update on save.
+
+    let user = new User();
+    user.save();
+
+    let comment = new Comment();
+    comment.title = 'id';
+    comment.user_id = user.primaryKey;
+    expect(comment.dirtyFields.length).toStrictEqual(2);
+    comment.save();
+
+    let comment2 = new Comment();
+    comment2.title = 'id';
+    comment2.user_id = user.primaryKey;
+    comment2.save();
+
+    expect(comment.user).toBeInstanceOf(User);
+    expect(user.comments.length).toStrictEqual(2);
+    expect(user.comments.first()).toBeInstanceOf(Comment);
+});
