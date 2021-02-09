@@ -5,7 +5,6 @@ import Relation from "../Relation.js";
  */
 export default class HasManyThrough extends Relation {
 
-    //this.parent.comments
     constructor(model, throughModel, foreignKey, localKey) {
         super(model, foreignKey);
         this.model = model;
@@ -23,10 +22,7 @@ export default class HasManyThrough extends Relation {
     }
 
     tableSetup() {
-        //todo fix this;
-        //table
-
-       this.model.addIndex(this.indexName);
+       this.model.registerIndex(this.indexName);
     }
 
     getRelationalFields() {

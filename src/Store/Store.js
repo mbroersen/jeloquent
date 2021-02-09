@@ -1,6 +1,7 @@
 import Database from "./Database.js";
 import Table from "./Table.js";
 import Connection from "./Connection";
+import Index from "./Table/Index";
 
 class Store {
     constructor() {
@@ -45,4 +46,5 @@ export {
     Database,
     Table,
     Connection,
+    Index,
 };
