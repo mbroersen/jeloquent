@@ -1,5 +1,6 @@
 import {Model} from "./Model.js";
 import Collection from "./Collection.js";
+import Relation from "./Model/Relation";
 
 export default class Table {
 
@@ -45,24 +46,6 @@ export default class Table {
         return collection;
     }
 
-    insert(model) {
-        if (this.models.has(model.primaryKey)) {
-            throw new Error('Record already exists');
-        }
-
-        if (!(model instanceof Model)) {
-            throw new Error('Record should be instance of model');
-        }
-
-        model.resetDirty();
-
-        if (model.primaryKey != null) {
-            this.models.set(model.primaryKey, model);
-        }
-
-        this.addValueToIndexes(model);
-    }
-
     addValueToIndexes(model) {
         const indexes = this.indexes;
 
@@ -88,8 +71,26 @@ export default class Table {
             }
 
             current = current.get(indexLookUpValue);
-            current.add(model.primaryKey, model.primaryKey);
+            current.add(model.primaryKey);
         }
+    }
+
+    insert(model) {
+        if (this.models.has(model.primaryKey)) {
+            throw new Error('Record already exists');
+        }
+
+        if (!(model instanceof Model)) {
+            throw new Error('Record should be instance of model');
+        }
+
+        model.resetDirty();
+
+        if (model.primaryKey != null) {
+            this.models.set(model.primaryKey, model);
+        }
+
+        this.addValueToIndexes(model);
     }
 
     update(model) {
@@ -106,6 +107,34 @@ export default class Table {
         model.resetDirty();
 
         this.models.set(model.primaryKey, model);
+    }
+
+    delete(id) {
+        if (!this.models.has(id)) {
+            throw new Error('Record doesn\'t exists');
+        }
+
+        //remove from local index
+        this.indexes.forEach((index) => {
+            index.forEach(values => values.delete(id));
+        })
+
+        //remove from remote index
+        this.find(id).originalFields
+            .filter(field => field instanceof Relation)
+            .forEach(relation => {
+                relation.deleteRelationLookUpKey();
+            });
+
+        this.models.delete(id);
+    }
+
+    truncate() {
+        this.models.clear();
+
+        for (let key in this.indexes) {
+            this.indexes.get(key).clear();
+        }
     }
 
     getKey(id) {
@@ -157,14 +186,7 @@ export default class Table {
         return this.find(id);
     }
 
-    delete(id) {
-        if (!this.models.has(id)) {
-            throw new Error('Record doesn\'t exists');
-        }
-        this.models.delete(id);
-    }
-
-    removeFromIndex(indexName, lookUpKey, id) {
+    removeIndex(indexName, lookUpKey, id) {
         if (!this.indexes.has(indexName)) {
             return;
         }
@@ -177,14 +199,14 @@ export default class Table {
         current?.delete(id);
     }
 
-    addToIndex(indexName, lookUpKey, id) {
+    addIndex(indexName, lookUpKey, id) {
         if (!this.indexes.has(indexName) || id === null) {
             return;
         }
 
         let current = this.indexes.get(indexName);
-        if (!(current instanceof Map && current.has(lookUpKey))) {
-            current.set(lookUpKey, new Set());
+        if (!(current.has(lookUpKey))) {
+            this.registerLookUpKey(indexName, lookUpKey, id);
             return;
         }
         current = current.get(lookUpKey);
@@ -196,19 +218,27 @@ export default class Table {
         current.add(id);
     }
 
-    addIndex(indexName) {
-        if (!this.indexes.has(indexName)) {
-            this.indexedFields.push(indexName);
-            this.splittedIndexNames[indexName] = indexName.split('.');
-            this.indexes.set(indexName, new Map());
+    unregisterLookUpKey(indexName, lookUpKey) {
+        let current = this.indexes.get(indexName);
+
+        if (!current) {
+            return;
         }
+
+        current.delete(lookUpKey);
     }
 
-    truncate() {
-        this.models.clear();
+    registerLookUpKey(indexName, lookUpKey, id)
+    {
+        let current = this.indexes.get(indexName);
+        current.set(lookUpKey, new Set([id]));
+    }
 
-        for (let key in this.indexes) {
-            this.indexes.get(key).clear();
+    registerIndex(indexName) {
+        if (!this.indexes.has(indexName)) {
+            this.indexedFields.add(indexName);
+            this.splittedIndexNames[indexName] = indexName.split('.');
+            this.indexes.set(indexName, new Map());
         }
     }
 
