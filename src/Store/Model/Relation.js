@@ -11,9 +11,8 @@ export default class Relation extends Field {
     }
 
     tableSetup(table) {
-        table.addIndex(this.foreignKey);
+        table.registerIndex(this.foreignKey);
     }
-
 
     getRelationalFields() {
         return [new ForeignKey(this.foreignKey)];
@@ -28,7 +27,7 @@ export default class Relation extends Field {
                         value = [value];
                     }
                     value.forEach((modelValue) => {
-                        if (!this.model.ids().includes(modelValue.id)) {
+                        if (!(this.model.ids().includes(modelValue.id))) {
                             this.model.insert(modelValue);
                         }
                     });
