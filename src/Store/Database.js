@@ -39,20 +39,24 @@ export default class Database {
         return this.tables[table].allModels();
     }
 
-    addIndex(table, name) {
-        this.tables[table].addIndex(name);
+    registerIndex(table, name) {
+        this.tables[table].registerIndex(name);
     }
 
-    addToIndex(table, indexName, lookUpKey, id) {
-        return this.tables[table].addToIndex(indexName, lookUpKey, id)
+    addIndex(table, indexName, lookUpKey, id) {
+        return this.tables[table].addIndex(indexName, lookUpKey, id)
+    }
+
+    removeIndex(table, indexName, lookUpKey, id) {
+        return this.tables[table].removeIndex(indexName, lookUpKey, id);
     }
 
     getIndexByKey(table, indexName) {
         return this.tables[table].getIndexByKey(indexName);
     }
 
-    removeFromIndex(table, indexName, lookUpKey, id) {
-        return this.tables[table].removeFromIndex(indexName, lookUpKey, id);
+    unregisterLookUpKey(table, indexName, lookUpKey) {
+        this.tables[table].unregisterLookUpKey(indexName, lookUpKey);
     }
 
     indexes(table) {
