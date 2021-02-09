@@ -182,8 +182,6 @@ test('user without relation should return null', () => {
 
 
 test('saving relation should add index', () => {
-    //todo fix relation update on save.
-
     let user = new User();
     user.save();
 
@@ -202,3 +200,33 @@ test('saving relation should add index', () => {
     expect(user.comments.length).toStrictEqual(2);
     expect(user.comments.first()).toBeInstanceOf(Comment);
 });
+
+
+test('deleting relation should update relation key', () => {
+    let user = new User();
+    user.save();
+
+    let comment = new Comment();
+    comment.title = 'id';
+    comment.user_id = user.primaryKey;
+    expect(comment.dirtyFields.length).toStrictEqual(2);
+    comment.save();
+
+    let comment2 = new Comment();
+    comment2.title = 'id';
+    comment2.user_id = user.primaryKey;
+    comment2.save();
+
+    let comment3 = new Comment();
+    comment3.title = 'id';
+    comment3.user_id = user.primaryKey;
+    comment3.save();
+    comment3.delete();
+
+
+    Comment.delete(comment.primaryKey);
+
+    expect(comment.user).toBeInstanceOf(User);
+    expect(user.comments.length).toStrictEqual(1);
+    expect(user.comments.first()).toBeInstanceOf(Comment);
+})

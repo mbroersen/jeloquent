@@ -106,7 +106,6 @@ class Comment extends Model {
             new Field('id', true),
             new Field('title'),
             new Field('text'),
-            //new Field('user_id'),
             new BelongsTo(User),
             new HasOneThrough(UserAddress, User),
         ];
