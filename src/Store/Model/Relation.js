@@ -14,6 +14,11 @@ export default class Relation extends Field {
         table.registerIndex(this.foreignKey);
     }
 
+    deleteRelationLookUpKey() {
+        let className = this.model.className();
+        globalThis.Store.database().unregisterLookUpKey(className, this.foreignKey, this.$parent.primaryKey);
+    }
+
     getRelationalFields() {
         return [new ForeignKey(this.foreignKey)];
     }

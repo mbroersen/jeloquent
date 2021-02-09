@@ -1,4 +1,4 @@
-import {ForeignKey, Relation} from "../Model";
+import {ForeignKey} from "../Model";
 
 export default class Index {
 

@@ -9,6 +9,7 @@ export default class HasManyThrough extends Relation {
         super(model, foreignKey);
         this.model = model;
         this.throughModel = throughModel;
+        this.localKey = localKey ?? 'id';
     }
 
     setName() {
