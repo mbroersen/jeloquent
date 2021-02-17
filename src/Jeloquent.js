@@ -2,7 +2,6 @@ import {Database, Store, Table, Connection} from './Store/Store.js';
 import {Model, Field, Relation, BelongsTo, HasOne, HasOneThrough, HasMany, HasManyThrough, MorphOne, MorphTo, ForeignKey} from './Store/Model.js';
 import {ConnectionAdapter, ConnectionAdapterFactory} from "./Store/Connection/ConnectionAdapterFactory.js";
 import QueueMessage from "./Store/Connection/Queue/QueueMessage";
-
 import Collection from './Store/Collection.js';
 
 export {

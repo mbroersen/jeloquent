@@ -1,10 +1,17 @@
 import ConnectionAdapter from "./Connection/ConnectionAdapter";
 import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
 
+/**
+ *
+ */
 export default class Connection {
 
-    constructor(adapter, options)
-    {
+    /**
+     *
+     * @param adapter
+     * @param options
+     */
+    constructor(adapter, options) {
         if (adapter instanceof ConnectionAdapter) {
             this.adapter = adapter;
         } else {
@@ -15,6 +22,9 @@ export default class Connection {
         this.paused = false;
     }
 
+    /**
+     *
+     */
     processQueue() {
         const nextMessage = (this.updateQueue ?? []).shift();
         if (!nextMessage) {
@@ -26,18 +36,33 @@ export default class Connection {
         }, 1);
     }
 
+    /**
+     *
+     * @param queueMessage
+     */
     addToQueue(...queueMessage) {
         this.updateQueue.push(...queueMessage);
     }
 
+    /**
+     *
+     */
     pause() {
         this.paused = true;
     }
 
+    /**
+     *
+     */
     resume() {
         this.paused = false;
     }
 
+    /**
+     * 
+     * @param model
+     * @return {Promise<unknown>}
+     */
     load(model) {
         return new Promise((resolve) => {
             this.adapter.load(model)

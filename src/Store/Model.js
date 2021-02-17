@@ -11,40 +11,132 @@ import Relation from "./Model/Relation.js";
 import ForeignKey from "./Model/Field/ForeignKey.js";
 import Index from "./Table/Index";
 
+/**
+ *
+ */
 class Model {
 
+    /**
+     *
+     * @param fields
+     */
     constructor(fields) {
         this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
-        this.snakeCaseName = this.constructor.snakeCaseClassName();
     }
 
+    /**
+     *
+     * @return {*}
+     */
+    get className() {
+        return this.constructor.className();
+    }
+
+    /**
+     *
+     * @return {*|string|string|null}
+     */
+    get primaryKey() {
+        return this.primaryKeyValue ?? this._tmpId ?? null;
+    }
+
+    /**
+     *
+     * @return {(string|*)[]}
+     */
+    get primaryKeyName() {
+        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
+    }
+
+    /**
+     *
+     * @return {T}
+     */
+    get originalValues() {
+        return this.originalFields.reduce((originalValues, field) => {
+            if (field.originalValue !== undefined) {
+                originalValues[field.$name] = field.originalValue;
+            }
+            return originalValues;
+        }, {});
+    }
+
+    /**
+     *
+     * @return {T[]}
+     */
+    get dirtyFields() {
+        return this.originalFields.filter(field => field.isDirty);
+    }
+
+    /**
+     *
+     * @return {*}
+     */
+    get dirtyFieldNames() {
+        return this.dirtyFields.map(field => field.$name);
+    }
+
+    /**
+     *
+     * @return {Model}
+     */
     static getInstance() {
-        const original =  globalThis.Store.classInstances[this.className()] ?? (globalThis.Store.classInstances[this.className()] = new this())
+        const original = globalThis.Store.classInstances[this.className()] ?? (globalThis.Store.classInstances[this.className()] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
             obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
             return obj;
-        } ,[])
+        }, [])
 
         return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
     }
 
+    /**
+     *
+     * @return {*|string}
+     */
     static snakeCaseClassName() {
-        return (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
+        if (!this.snakeCaseName) {
+            this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
+        }
+
+        return this.snakeCaseName;
     }
 
+    /**
+     *
+     * @return {*|string}
+     */
     static kebabCaseClassName() {
-        return (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase());
+        if (!this.kebabCaseName) {
+            this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
+        }
+
+        return this.kebabCaseName;
     }
 
+    /**
+     *
+     * @return {*}
+     */
     static className() {
         return this.name;
     }
 
+    /**
+     *
+     * @param name
+     */
     static registerIndex(name) {
         Index.registerIndex(this.getInstance(), name);
     }
 
+    /**
+     *
+     * @param indexName
+     * @return {*}
+     */
     static getIndexByKey(indexName) {
         const className = this.className();
         const currentDatabase = globalThis.Store.database();
@@ -52,6 +144,11 @@ class Model {
         return currentDatabase.getIndexByKey(className, indexName);
     }
 
+    /**
+     *
+     * @param data
+     * @return {Promise<unknown>}
+     */
     static aSyncInsert(data) {
         return new Promise((resolve) => {
             requestAnimationFrame(() => {
@@ -60,6 +157,11 @@ class Model {
         });
     }
 
+    /**
+     *
+     * @param data
+     * @return {*|*[]}
+     */
     static insert(data) {
         data = Array.isArray(data) ? data : [data];
         const length = data.length;
@@ -74,6 +176,11 @@ class Model {
         return data;
     }
 
+    /**
+     *
+     * @param data
+     * @return {Model}
+     */
     static update(data) {
         const model = new this();
         model.fill(data);
@@ -82,14 +189,28 @@ class Model {
         return model;
     }
 
+    /**
+     *
+     * @param id
+     */
     static delete(id) {
         globalThis.Store.database().delete(this.className(), id);
     }
 
+    /**
+     *
+     * @param id
+     * @return {*}
+     */
     static find(id) {
         return globalThis.Store.database().find(this.className(), id);
     }
 
+    /**
+     *
+     * @param id
+     * @return {*}
+     */
     static select(id) {
         try {
             return globalThis.Store.database().select(this.className(), id);
@@ -98,18 +219,26 @@ class Model {
         }
     }
 
+    /**
+     *
+     * @return {*}
+     */
     static all() {
         return globalThis.Store.database().all(this.className());
     }
 
+    /**
+     *
+     * @return {*[]|*}
+     */
     static ids() {
         return globalThis.Store.database().ids(this.className());
     }
 
-    get className() {
-        return this.constructor.className();
-    }
-
+    /**
+     *
+     * @param table
+     */
     tableSetup(table) {
         for (let i = 0; i < this.numberOfFields; i++) {
             if (this.originalFields[i] instanceof ForeignKey) {
@@ -122,6 +251,11 @@ class Model {
         }
     }
 
+    /**
+     *
+     * @param fieldName
+     * @return {boolean|*}
+     */
     isDirty(fieldName) {
         if (fieldName) {
             return this.dirtyFieldNames.includes(fieldName);
@@ -129,16 +263,25 @@ class Model {
         return this.dirtyFields.length > 0;
     }
 
+    /**
+     *
+     */
     resetDirty() {
         this.originalFields.filter((field) => !(field instanceof Relation)).forEach(field => {
             field.resetDirty();
         })
     }
 
+    /**
+     *
+     */
     delete() {
         this.constructor.delete(this.primaryKey);
     }
 
+    /**
+     *
+     */
     save() {
         const className = this.constructor.className();
         const currentDatabase = globalThis.Store.database();
@@ -162,19 +305,35 @@ class Model {
         currentDatabase.insert(className, this);
     }
 
+    /**
+     *
+     * @param name
+     */
     registerIndex(name) {
         Index.registerIndex(this, name);
     }
 
+    /**
+     *
+     * @param foreignKeyField
+     */
     removeFromIndex(foreignKeyField) {
         Index.removeIndex(this, foreignKeyField);
     }
 
+    /**
+     *
+     * @param foreignKeyField
+     */
     addToIndex(foreignKeyField) {
         Index.addIndex(this, foreignKeyField);
     }
 
-    fill (data) {
+    /**
+     *
+     * @param data
+     */
+    fill(data) {
         this.fillPrimaryKey(data);
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
@@ -186,6 +345,10 @@ class Model {
         }
     }
 
+    /**
+     *
+     * @param data
+     */
     fillPrimaryKey(data) {
         for (let i = 0; i < this.numberOfFields; i++) {
             if (this.originalFields[i].isPrimary === true) {
@@ -198,6 +361,10 @@ class Model {
         this.setPrimaryKey();
     }
 
+    /**
+     *
+     * @param data
+     */
     fillRelations(data) {
         // insert through relations after model insert;
         for (let i = 0; i < this.numberOfFields; i++) {
@@ -210,6 +377,9 @@ class Model {
         }
     }
 
+    /**
+     *
+     */
     setPrimaryKey() {
         if (this.primaryFields.length === 1) {
             this.primaryKeyValue = this[this.primaryFields[0].$name] ?? null;
@@ -228,22 +398,11 @@ class Model {
         this.primaryKeyValue = str;
     }
 
-    get primaryKey () {
-        return this.primaryKeyValue ?? this._tmpId ?? null;
-    }
-
-    get primaryKeyName() {
-        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
-    }
-
-    get dirtyFields() {
-        return this.originalFields.filter(field => field.isDirty);
-    }
-
-    get dirtyFieldNames() {
-        return this.dirtyFields.map(field => field.$name);
-    }
-
+    /**
+     *
+     * @param fields
+     * @return {*[]}
+     */
     addRelationFields(fields) {
         const fieldList = [...fields];
         fields.forEach((field, i) => {
@@ -256,6 +415,11 @@ class Model {
         return fieldList;
     }
 
+    /**
+     *
+     * @param fields
+     * @return {Model}
+     */
     setFields(fields) {
         this.originalFields = [...fields];
         this.numberOfFields = this.originalFields.length;
@@ -279,6 +443,11 @@ class Model {
         return this;
     }
 
+    /**
+     *
+     * @param fromRelation
+     * @return {{}}
+     */
     toJson(fromRelation) {
         const json = {};
 
@@ -296,7 +465,7 @@ class Model {
                 continue;
             }
 
-            if (json[field.$name]instanceof Array) {
+            if (json[field.$name] instanceof Array) {
                 json[field.$name] = [...json[field.$name].map((value) => {
                     return value?.toJson(true) ?? value
                 })];

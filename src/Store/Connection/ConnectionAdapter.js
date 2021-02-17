@@ -1,4 +1,11 @@
+/**
+ *
+ */
 export default class ConnectionAdapter {
+    /**
+     *
+     * @param options
+     */
     constructor(options) {
         this.options = options;
     }
@@ -13,18 +20,30 @@ export default class ConnectionAdapter {
         throw new Error('should be extended');
     }
 
+    /**
+     *
+     */
     put() {
         throw new Error('should be extended');
     }
 
+    /**
+     *
+     */
     patch() {
         throw new Error('should be extended');
     }
 
+    /**
+     *
+     */
     post() {
         throw new Error('should be extended');
     }
 
+    /**
+     *
+     */
     delete() {
         throw new Error('should be extended');
     }

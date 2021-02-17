@@ -1,12 +1,47 @@
 import Relation from "../Relation.js";
 
+/**
+ *
+ */
 export default class HasMany extends Relation {
 
+    /**
+     *
+     * @param model
+     * @param foreignKey
+     * @param localKey
+     */
     constructor(model, foreignKey, localKey) {
         super(model, foreignKey);
         this.localKey = localKey ?? 'id';
     }
 
+    /**
+     *
+     * @return {*|number}
+     */
+    get count() {
+        let indexes = globalThis.Store.database().indexes(this.model.className());
+        return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
+    }
+
+    /**
+     *
+     * @return {*}
+     */
+    get value() {
+        const className = this.model.className();
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
+
+        return globalThis.Store.database().find(className,
+            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
+        );
+    }
+
+    /**
+     *
+     * @return {HasMany}
+     */
     setName() {
         const parentClassName = this.$parent.constructor.snakeCaseClassName();
         const modelClassName = this.model.snakeCaseClassName();
@@ -16,10 +51,18 @@ export default class HasMany extends Relation {
         return this;
     }
 
+    /**
+     *
+     * @return {*[]}
+     */
     getRelationalFields() {
         return [];
     }
 
+    /**
+     *
+     * @return {HasMany}
+     */
     setParentProperties() {
         super.setParentProperties();
 
@@ -39,19 +82,5 @@ export default class HasMany extends Relation {
             }
         );
         return this;
-    }
-
-    get count() {
-        let indexes = globalThis.Store.database().indexes(this.model.className());
-        return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
-    }
-
-    get value() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
-
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
-        );
     }
 }

@@ -223,7 +223,6 @@ test('deleting relation should update relation key', () => {
     comment3.save();
     comment3.delete();
 
-
     Comment.delete(comment.primaryKey);
 
     expect(comment.user).toBeInstanceOf(User);

@@ -3,8 +3,17 @@ import ConnectionAdapterLocalStorage from "./Adapter/ConnectionAdapterLocalStora
 import ConnectionAdapterLocalArray from "./Adapter/ConnectionAdapterLocalStorage";
 import ConnectionAdapter from "./ConnectionAdapter";
 
+/**
+ *
+ */
 class ConnectionAdapterFactory {
 
+    /**
+     *
+     * @param name
+     * @param options
+     * @return {ConnectionAdapterLocalArray|ConnectionAdapterJsonRequest}
+     */
     static getAdapter (name, options) {
 
         if (name === 'jsonRequest') {

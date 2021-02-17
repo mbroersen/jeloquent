@@ -1,20 +1,40 @@
 import ConnectionAdapter from '../ConnectionAdapter.js';
 import QueueMessage from '../Queue/QueueMessage.js';
 
+/**
+ *
+ */
 export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
+    /**
+     *
+     * @param options
+     */
     constructor(options) {
         super(options);
     }
 
+    /**
+     *
+     * @return {boolean}
+     */
     get isRemote() {
         return true;
     }
 
+    /**
+     *
+     * @return {boolean}
+     */
     get isLocal() {
         return false;
     }
 
+    /**
+     *
+     * @param model
+     * @return {Promise<unknown>}
+     */
     load(model) {
         const promise = new Promise((resolve) => {
             const method = this.options.method ?? 'GET';
