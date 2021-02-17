@@ -6,6 +6,7 @@ export default class Field {
         this.$name = name;
         this.fieldValue = null;
         this.previousValue = undefined;
+        this.originalValue = undefined;
         this.$parent = null;
     }
 
@@ -33,6 +34,10 @@ export default class Field {
                         this.previousValue = JSON.parse(JSON.stringify(this.value ?? value));
                     }
 
+                    if (this.originalValue === undefined) {
+                        this.originalValue = JSON.parse(JSON.stringify(this.value ?? value));
+                    }
+
                     this.previousValue = JSON.parse(JSON.stringify(this.value));
                     this.value = value;
                 }
@@ -49,10 +54,13 @@ export default class Field {
             `_${this.$name}`,
             {
                 set: (value) => {
+                    if (this.originalValue === undefined) {
+                        this.originalValue = JSON.parse(JSON.stringify(this.value));
+                    }
                     this.previousValue = JSON.parse(JSON.stringify(this.value));
                     this.fieldValue = value;
                 }
-        });
+            });
     }
 
     get isDirty() {
@@ -60,6 +68,7 @@ export default class Field {
     }
 
     resetDirty() {
+        this.originalValue = JSON.parse(JSON.stringify(this.fieldValue));
         this.previousValue = JSON.parse(JSON.stringify(this.fieldValue));
     }
 
