@@ -1,8 +1,17 @@
 import Field from "./Field.js";
 import ForeignKey from "./Field/ForeignKey";
 
+/**
+ *
+ */
 export default class Relation extends Field {
 
+    /**
+     *
+     * @param model
+     * @param foreignKey
+     * @param name
+     */
     constructor(model, foreignKey, name) {
         let className = name ?? model.snakeCaseClassName();
         super(className);
@@ -10,21 +19,28 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
+    /**
+     *
+     * @param table
+     */
     tableSetup(table) {
         table.registerIndex(this.foreignKey);
     }
 
-    deleteRelationLookUpKey() {
-        let className = this.model.className();
-        globalThis.Store.database().unregisterLookUpKey(className, this.foreignKey, this.$parent.primaryKey);
-    }
-
+    /**
+     *
+     * @return {ForeignKey[]}
+     */
     getRelationalFields() {
         return [new ForeignKey(this.foreignKey)];
     }
 
+    /**
+     *
+     */
     setFillPropertyOnParent() {
-        Object.defineProperty(this.$parent,
+        Object.defineProperty(
+            this.$parent,
             `_${this.$name}`,
             {
                 set: (value) => {
@@ -36,9 +52,7 @@ export default class Relation extends Field {
                             this.model.insert(modelValue);
                         }
                     });
-
                 }
             });
     }
-
 }

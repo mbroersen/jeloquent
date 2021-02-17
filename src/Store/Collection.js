@@ -1,10 +1,23 @@
-
+/**
+ *
+ */
 export default class Collection extends Array {
 
+    /**
+     *
+     * @param items
+     */
     constructor(...items) {
         super(...items);
     }
 
+    /**
+     *
+     * @param row
+     * @param lookUpFields
+     * @return {{}|[]|*}
+     * @private
+     */
     _getRowFieldResult(row, lookUpFields) {
         let resultField = row[lookUpFields[0]] ?? null;
         for (let i = 1; i < lookUpFields.length; i++) {
@@ -24,6 +37,12 @@ export default class Collection extends Array {
         return resultField;
     }
 
+    /**
+     *
+     * @param field
+     * @param keyField
+     * @return {{}|[]}
+     */
     pluck(field, keyField) {
         const lookUpFields = field.split('.');
 
@@ -44,23 +63,45 @@ export default class Collection extends Array {
         return result;
     }
 
+    /**
+     *
+     * @return {T|null}
+     */
     first() {
         return this[0] ?? null;
     }
 
+    /**
+     *
+     * @return {T|null}
+     */
     last() {
         return this.slice(-1)[0] ?? null;
     }
 
+    /**
+     *
+     * @param array
+     * @return {Collection}
+     */
     merge(array) {
         this.push(...array);
         return this;
     }
 
+    /**
+     *
+     * @return {T}
+     */
     random() {
         return this[Math.round(((this.length - 1) * Math.random()))];
     }
 
+    /**
+     *
+     * @param field
+     * @return {Collection}
+     */
     unique(field) {
         const unique = {};
         for (let i in this) {
@@ -70,6 +111,12 @@ export default class Collection extends Array {
         return new Collection(...Object.values(unique));
     }
 
+    /**
+     *
+     * @param field
+     * @param whereIfFunction
+     * @return {Collection}
+     */
     whereIfFunction(field, whereIfFunction) {
         const reqister = new Collection();
         for (let i in this) {
@@ -80,6 +127,13 @@ export default class Collection extends Array {
         return reqister;
     }
 
+    /**
+     *
+     * @param field
+     * @param operator
+     * @param value
+     * @return {boolean|Collection}
+     */
     where(field, operator, value) {
         value = value ?? operator;
         operator = (operator === value) ? '==' : operator;
@@ -113,6 +167,12 @@ export default class Collection extends Array {
         })
     }
 
+    /**
+     *
+     * @param field
+     * @param values
+     * @return {Collection}
+     */
     whereBetween(field, values) {
         return this.whereIfFunction(field, (field, object) => {
             const fieldValue = object[field];
@@ -120,6 +180,12 @@ export default class Collection extends Array {
         });
     }
 
+    /**
+     *
+     * @param field
+     * @param values
+     * @return {Collection}
+     */
     whereNotBetween(field, values) {
         return this.whereIfFunction(field, (field, object) => {
             const fieldValue = object[field];
@@ -127,36 +193,68 @@ export default class Collection extends Array {
         });
     }
 
+    /**
+     *
+     * @param field
+     * @return {Collection}
+     */
     whereNull(field) {
         return this.whereIfFunction(field, (field, object) => {
             return object[field] === null;
         });
     }
 
+    /**
+     *
+     * @param field
+     * @return {Collection}
+     */
     whereNotNull(field) {
         return this.whereIfFunction(field, (field, object) => {
             return object[field] !== null;
         });
     }
 
+    /**
+     *
+     * @param field
+     * @param values
+     * @return {Collection}
+     */
     whereIn(field, values) {
         return this.whereIfFunction(field, (field, object) => {
             return values.includes(object[field]);
         });
     }
 
+    /**
+     *
+     * @param field
+     * @param values
+     * @return {Collection}
+     */
     whereNotIn(field, values) {
         return this.whereIfFunction(field, (field, object) => {
             return !values.includes(object[field]);
         });
     }
 
+    /**
+     *
+     * @param classInstance
+     * @return {Collection}
+     */
     whereInstanceOf(classInstance) {
         return this.whereIfFunction(null, (field, object) => {
             return object instanceof classInstance;
         });
     }
 
+    /**
+     *
+     * @param classInstance
+     * @return {Collection}
+     */
     whereNotInstanceOf(classInstance) {
         return this.whereIfFunction(null, (field, object) => {
             return !(object instanceof classInstance);

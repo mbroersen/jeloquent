@@ -3,7 +3,14 @@ import Table from "./Table.js";
 import Connection from "./Connection";
 import Index from "./Table/Index";
 
+/**
+ *
+ */
 class Store {
+
+    /**
+     *
+     */
     constructor() {
         this.classInstances = {};
         this.databases = {};
@@ -14,27 +21,52 @@ class Store {
         globalThis.Store = this;
     }
 
+    /**
+     *
+     * @param storeName
+     */
     use(storeName) {
         this.useDatabase = storeName;
         this.databases[this.useDatabase ?? 'default']?.setIndexes();
     }
 
+    /**
+     *
+     * @param database
+     */
     add(database) {
         this.databases[database.name] = database;
     }
 
+    /**
+     *
+     * @param connection
+     * @param name
+     */
     addConnections(connection, name) {
         this.connetions[name ?? 'default'] = connection;
     }
 
+    /**
+     *
+     * @param name
+     */
     useConnection(name) {
         this.useConnection = name ?? 'default';
     }
 
+    /**
+     *
+     * @return {*|null}
+     */
     database() {
         return this.databases[this.useDatabase] ?? null;
     }
 
+    /**
+     *
+     * @return {*}
+     */
     connection() {
         return this.connetions[this.useConnection];
     }

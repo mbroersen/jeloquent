@@ -2,12 +2,40 @@ import Relation from "../Relation";
 
 export default class HasOneThrough extends Relation {
 
+    /**
+     *
+     * @param model
+     * @param throughModel
+     * @param foreignKey
+     * @param localKey
+     */
     constructor(model, throughModel, foreignKey, localKey) {
         super(model, foreignKey);
         this.throughModel = throughModel;
         this.localKey = localKey ?? 'id';
     }
 
+    /**
+     *
+     * @return {*|null}
+     */
+    get value() {
+        const findModel = this.$parent[this._lcThroughModelClassName];
+        return findModel[this._lcModelClassName] ?? null;
+    }
+
+    /**
+     *
+     * @return {string}
+     */
+    get indexName() {
+        return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
+    }
+
+    /**
+     *
+     * @return {HasOneThrough}
+     */
     setName() {
         this._lcThroughModelClassName = this.throughModel.snakeCaseClassName();
         this._lcModelClassName = this.model.snakeCaseClassName();
@@ -17,16 +45,11 @@ export default class HasOneThrough extends Relation {
         return this;
     }
 
-    get indexName() {
-        return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
-    }
-
+    /**
+     *
+     * @return {*[]}
+     */
     getRelationalFields() {
         return [];
-    }
-
-    get value() {
-        const findModel = this.$parent[this._lcThroughModelClassName];
-        return findModel[this._lcModelClassName] ?? null;
     }
 }
