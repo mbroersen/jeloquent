@@ -160,3 +160,42 @@ test('changed model has dirty fields', () => {
     expect(user.dirtyFields.length).toStrictEqual(0);
 
 });
+
+
+test('model has original value', () => {
+    let user = new User();
+    user.name = 'Mark Man';
+    user.team_id = 1;
+    user.user_address_id = 22;
+    user.name = 'Mark Man2';
+
+    expect(user.originalFields[1].originalValue).toStrictEqual('Mark Man');
+    expect(user.originalFields[1].previousValue).toStrictEqual('Mark Man');
+
+    user.name = 'Mark Man3';
+    expect(user.originalFields[1].originalValue).toStrictEqual('Mark Man');
+    expect(user.originalFields[1].previousValue).toStrictEqual('Mark Man2');
+
+    user.save();
+    expect(user.originalFields[1].originalValue).toStrictEqual('Mark Man3');
+    expect(user.originalFields[1].previousValue).toStrictEqual('Mark Man3');
+
+
+    const foundUser = User.find(user.primaryKey);
+    expect(foundUser.originalFields[1].originalValue).toStrictEqual('Mark Man3');
+    foundUser.name = 'Mark Man4';
+    foundUser.name = 'Mark Man5';
+    expect(foundUser.originalFields[1].originalValue).toStrictEqual('Mark Man3');
+    expect(foundUser.originalFields[1].previousValue).toStrictEqual('Mark Man4');
+
+    let originalKeys = Object.keys(foundUser.originalValues);
+    expect(originalKeys).toContain('id');
+    expect(originalKeys).toContain('name');
+    expect(originalKeys).toContain('team_id');
+
+    let originalValues = Object.values(foundUser.originalValues);
+    expect(originalValues).toContain(null);
+    expect(originalValues).toContain('Mark Man3');
+    expect(originalValues).toContain(1);
+
+});

@@ -9,5 +9,8 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "curly": ["error", "all"],
+        "lines-between-class-members": ["error", "always"],
+        "indent": ["error", 4],
     }
 };
