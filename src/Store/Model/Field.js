@@ -1,6 +1,13 @@
-
+/**
+ *
+ */
 export default class Field {
 
+    /**
+     *
+     * @param name
+     * @param isPrimary
+     */
     constructor(name, isPrimary) {
         this.isPrimary = isPrimary ?? false;
         this.$name = name;
@@ -10,19 +17,59 @@ export default class Field {
         this.$parent = null;
     }
 
+    /**
+     *
+     * @return {boolean}
+     */
+    get isDirty() {
+        return this.fieldValue != this.previousValue;
+    }
+
+    /**
+     *
+     * @return {null}
+     */
+    get value() {
+        return this.fieldValue;
+    }
+
+    /**
+     *
+     * @param value
+     */
+    set value(value) {
+        this.fieldValue = value;
+    }
+
+    /**
+     *
+     * @return {Field}
+     */
     setName() {
         return this;
     }
 
+    /**
+     *
+     * @param parent
+     * @return {Field}
+     */
     setup(parent) {
         this.$parent = parent;
         return this.setName().setParentProperties();
     }
 
+    /**
+     *
+     */
     tableSetup() {
         //todo setup table;
     }
 
+    /**
+     *
+     * @return {Field}
+     */
     setParentProperties() {
         Object.defineProperty(this.$parent,
             this.$name, {
@@ -49,6 +96,9 @@ export default class Field {
         return this;
     }
 
+    /**
+     *
+     */
     setFillPropertyOnParent() {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
@@ -63,34 +113,21 @@ export default class Field {
             });
     }
 
-    get isDirty() {
-        return this.fieldValue != this.previousValue;
-    }
-
+    /**
+     *
+     */
     resetDirty() {
         this.originalValue = JSON.parse(JSON.stringify(this.fieldValue));
         this.previousValue = JSON.parse(JSON.stringify(this.fieldValue));
     }
 
+    /**
+     *
+     * @return {any}
+     */
     toJson() {
         const object = {};
         object[this.$name] = this.fieldValue;
         return JSON.parse(JSON.stringify(object));
-    }
-
-    get value() {
-        return this.fieldValue;
-    }
-
-    set value(value) {
-        this.fieldValue = value;
-
-        // todo fix entity store update
-        // const objectValue = {}
-        //
-        // globalThis.Store.database().update(
-        //     this.$parent.constructor.name,
-        //     {...value}
-        // );
     }
 }

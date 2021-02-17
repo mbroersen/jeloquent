@@ -1,18 +1,50 @@
 import Relation from "../Relation.js";
 
+/**
+ *
+ */
 export default class BelongsTo extends Relation {
 
+    /**
+     *
+     * @param model
+     * @param foreignKey
+     * @param name
+     */
     constructor(model, foreignKey, name) {
         super(model, (foreignKey ?? `${model.snakeCaseClassName()}_id`), name);
     }
 
+    /**
+     *
+     * @return {*}
+     */
+    get value() {
+        return this.model.find(this.$parent[this.foreignKey]);
+    }
+
+    /**
+     *
+     * @param value
+     */
+    set value(value) {
+
+    }
+
+    /**
+     *
+     * @return {BelongsTo}
+     */
     setName() {
         let className = this.model.snakeCaseClassName();
         this.$name = this.$name ?? `${className}`;
         return this;
     }
 
-
+    /**
+     *
+     * @return {BelongsTo}
+     */
     setParentProperties() {
         super.setParentProperties();
 
@@ -31,27 +63,4 @@ export default class BelongsTo extends Relation {
 
         return this;
     }
-
-    get value() {
-        return this.model.find(this.$parent[this.foreignKey]);
-    }
-
-    set value(value) {
-        //todo update entity store
-
-    }
-
-    // set value(value) {
-    //     const foreignKey = {};
-    //     foreignKey[this.foreignKey] = this.$parent[this.foreignKey];
-    //
-    //     if (foreignKey[this.foreignKey] === null) {
-    //         return;
-    //     }
-    //
-    //     this.model.update(
-    //        {...value, ...foreignKey}
-    //     );
-    // }
-
 }

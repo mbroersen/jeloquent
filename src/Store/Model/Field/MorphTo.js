@@ -19,20 +19,20 @@ export default class MorphTo extends Field {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
             {
-            set: (value) => {
-                if (!Array.isArray(value)) {
-                    value = [value];
-                }
+                set: (value) => {
+                    if (!Array.isArray(value)) {
+                        value = [value];
+                    }
 
-                const name = this.$parent.constructor.snakeCaseClassName()
-                const type = `${name}_type`;
-                const id = `${name}_id`;
+                    const name = this.$parent.constructor.snakeCaseClassName()
+                    const type = `${name}_type`;
+                    const id = `${name}_id`;
 
-                for (const record of value) {
-                    record['id'] = record[id];
-                    globalThis.Store.classInstances[record[type]].constructor.insert(record);
+                    for (const record of value) {
+                        record['id'] = record[id];
+                        globalThis.Store.classInstances[record[type]].constructor.insert(record);
+                    }
                 }
-            }
-        });
+            });
     }
 }
