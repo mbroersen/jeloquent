@@ -30,7 +30,7 @@ export default class Index {
     static updateAllDirtyIndexes(model) {
         let className = model.className;
         model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
-            globalThis.Store.database().removeIndex(className, field.$name, field.previousValue, model.primaryKey);
+            globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model.primaryKey);
             globalThis.Store.database().addIndex(className, field.$name, field.value, model.primaryKey);
         });
     }
@@ -42,7 +42,7 @@ export default class Index {
     static removeTmpIdFromIndex(model) {
         let className = model.className;
         model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
-            globalThis.Store.database().removeIndex(className, field.$name, field.previousValue, model._tmpId);
+            globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
         });
     }
 
