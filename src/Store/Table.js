@@ -1,4 +1,4 @@
-import {Model} from "./Model.js";
+import {ForeignKey, Model} from "./Model.js";
 import Collection from "./Collection.js";
 
 /**
@@ -161,6 +161,13 @@ export default class Table {
         if (!(model instanceof Model)) {
             throw new Error('Record should be instance of model');
         }
+
+        model.dirtyFields.forEach((field) => {
+            if (field instanceof ForeignKey) {
+                this.removeIndex(field.$name, field.originalValue, model.primaryKey);
+                this.addIndex(field.$name, field.value, model.primaryKey);
+            }
+        });
 
         model.resetDirty();
 

@@ -296,8 +296,6 @@ class Model {
             currentDatabase.delete(className, this._tmpId);
         }
 
-        Index.updateAllDirtyIndexes(this);
-
         if (tableIds.includes(this.primaryKey)) {
             currentDatabase.update(className, this);
             return;
