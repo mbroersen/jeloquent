@@ -32,7 +32,7 @@ export default class Relation extends Field {
      * @return {ForeignKey[]}
      */
     getRelationalFields() {
-        return [new ForeignKey(this.foreignKey)];
+        return [new ForeignKey(this.foreignKey).setRelation(this)];
     }
 
     /**

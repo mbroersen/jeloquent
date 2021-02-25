@@ -15,6 +15,11 @@ export default class ForeignKey extends Field {
         this.foreignKey = name ?? foreignKey;
     }
 
+    setRelation(relation) {
+        this.relation = relation;
+        return this;
+    }
+
     /**
      *
      * @return {null}
