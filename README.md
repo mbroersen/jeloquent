@@ -1,4 +1,7 @@
 # jeloquent
+[![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
+[![npm jeloquent](http://img.shields.io/npm/dt/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
+
 ### Is an orm memory store for javascript. 
 
 **Main goals are:** 
@@ -22,8 +25,6 @@ average speed in this test was `0.07ms` :smile:
 [Documentation](https://github.com/mbroersen/jeloquent/wiki/Home)
 
 ## Install
-[![npm jeloquent](http://img.shields.io/npm/v/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent) 
-
 ```bash
 npm install jeloquent
 ```
