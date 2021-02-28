@@ -21,6 +21,27 @@ export default class HasManyThrough extends Relation {
 
     /**
      *
+     * @return {string}
+     */
+    get indexName() {
+        return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
+    }
+
+    /**
+     *
+     * @return {*}
+     */
+    get value() {
+        const className = this.model.className();
+        const keyIndex = this.model.getIndexByKey(this.indexName);
+
+        return globalThis.Store.database().find(className,
+            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
+        );
+    }
+
+    /**
+     *
      * @return {HasManyThrough}
      */
     setName() {
@@ -52,26 +73,5 @@ export default class HasManyThrough extends Relation {
      */
     setParentProperties() {
         super.setParentProperties();
-    }
-
-    /**
-     *
-     * @return {string}
-     */
-    get indexName() {
-        return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
-    }
-
-    /**
-     *
-     * @return {*}
-     */
-    get value() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.indexName);
-
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
-        );
     }
 }
