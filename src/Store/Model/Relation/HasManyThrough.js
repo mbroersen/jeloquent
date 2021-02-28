@@ -7,8 +7,8 @@ export default class HasManyThrough extends Relation {
 
     /**
      *
-     * @param model
-     * @param throughModel
+     * @param {Model} model
+     * @param {Model} throughModel
      * @param foreignKey
      * @param localKey
      */

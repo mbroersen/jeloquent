@@ -5,10 +5,51 @@ import {ForeignKey} from "../Model";
  */
 export default class Index {
 
+    /**
+     *
+     */
     constructor() {
         this.indexes = new Map();
         this.indexedFields = new Set();
         this.splittedIndexNames = new Map();
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @param {string} indexName
+     */
+    static registerIndex(model, indexName) {
+        globalThis.Store.database().registerIndex(model.constructor.className(), indexName);
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @param {ForeignKey} foreignKeyField
+     */
+    static addIndex(model, foreignKeyField) {
+        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @param {ForeignKey} foreignKeyField
+     */
+    static removeIndex(model, foreignKeyField) {
+        globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
+    }
+
+    /**
+     *
+     * @param {Model} model
+     */
+    static removeTmpIdFromIndex(model) {
+        let className = model.className;
+        model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
+            globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
+        });
     }
 
     /**
@@ -37,7 +78,7 @@ export default class Index {
      *
      * @param indexName
      * @param lookUpKey
-     * @param value
+     * @param id
      */
     addIndex(indexName, lookUpKey, id) {
         if (!this.indexes.has(indexName) || id === null) {
@@ -58,13 +99,19 @@ export default class Index {
         current.add(id);
     }
 
+    /**
+     *
+     * @param {string} indexName
+     * @param lookUpKey
+     * @param id
+     */
     registerLookUpKey(indexName, lookUpKey, id) {
         this.indexes?.get(indexName)?.set(lookUpKey, new Set([id]));
     }
 
     /**
      *
-     * @param indexName
+     * @param {string} indexName
      * @param lookUpKey
      */
     unregisterLookUpKey(indexName, lookUpKey) {
@@ -73,9 +120,9 @@ export default class Index {
 
     /**
      *
-     * @param model
-     * @param fieldName
-     * @return {null}
+     * @param {Model} model
+     * @param {string} fieldName
+     * @return {*|null}
      */
     getIndexLookUpValue(model, fieldName) {
         const lookUpValue = this.splittedIndexNames.get(fieldName);
@@ -91,7 +138,7 @@ export default class Index {
 
     /**
      *
-     * @param model
+     * @param {Model} model
      */
     addValueToIndexes(model) {
         for (let [fieldName, value] of this.indexes) {
@@ -110,7 +157,7 @@ export default class Index {
 
     /**
      *
-     * @param model
+     * @param {Model} model
      */
     removeValueFromIndex(model) {
         for (let [fieldName, value] of this.indexes) {
@@ -122,6 +169,9 @@ export default class Index {
         }
     }
 
+    /**
+     *
+     */
     truncate() {
         for (let key in this.indexes) {
             this.indexes.get(key).clear();
@@ -130,49 +180,11 @@ export default class Index {
 
     /**
      *
-     * @param indexName
+     * @param {String} indexName
      * @param lookUpKey
      * @param id
      */
     removeIndex(indexName, lookUpKey, id) {
         this.indexes?.get(indexName)?.get(lookUpKey)?.delete(id);
-    }
-
-    /**
-     *
-     * @param model
-     * @param name
-     */
-    static registerIndex(model, name) {
-        globalThis.Store.database().registerIndex(model.constructor.className(), name);
-    }
-
-    /**
-     *
-     * @param model
-     * @param foreignKeyField
-     */
-    static addIndex(model, foreignKeyField) {
-        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
-    }
-
-    /**
-     *
-     * @param model
-     * @param foreignKeyField
-     */
-    static removeIndex(model, foreignKeyField) {
-        globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
-    }
-
-    /**
-     *
-     * @param model
-     */
-    static removeTmpIdFromIndex(model) {
-        let className = model.className;
-        model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
-            globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
-        });
     }
 }
