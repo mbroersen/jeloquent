@@ -1,5 +1,4 @@
 import Relation from "../Relation.js";
-import Model from "../../Model.js";
 
 /**
  *

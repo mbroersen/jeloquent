@@ -151,7 +151,7 @@ export default class Index {
      * @param {Model} model
      */
     addValueByModel(model) {
-        for (let [indexName, value] of this.indexes) {
+        for (let [indexName] of this.indexes) {
             this.addValue(
                 indexName,
                 this.getLookUpValue(model, indexName),
@@ -165,7 +165,7 @@ export default class Index {
      * @param {Model} model
      */
     removeValueByModel(model) {
-        for (let [indexName, value] of this.indexes) {
+        for (let [indexName] of this.indexes) {
             this.removeValue(
                 indexName,
                 this.getLookUpValue(model, indexName),

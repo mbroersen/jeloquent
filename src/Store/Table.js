@@ -1,4 +1,4 @@
-import {ForeignKey, Model} from "./Model.js";
+import {Model} from "./Model.js";
 import Collection from "./Collection.js";
 import Index from "./Table/Index";
 
