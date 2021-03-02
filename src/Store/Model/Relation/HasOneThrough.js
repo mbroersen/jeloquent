@@ -26,6 +26,14 @@ export default class HasOneThrough extends Relation {
 
     /**
      *
+     */
+    get originalValue() {
+        const findModel = this.$parent[`original_${this._lcThroughModelClassName}`];
+        return findModel[`original_${this._lcModelClassName}`] ?? null;
+    }
+
+    /**
+     *
      * @return {string}
      */
     get indexName() {

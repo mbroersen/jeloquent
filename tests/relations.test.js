@@ -120,7 +120,6 @@ test('HasOneThrough Relation is added to team model', () => {
 
 
 test('relation indexes should update on save', () => {
-
     const lComment = Comment.find(5); // is user 2 comment
     const lTeamOriginal = Team.find(123); //original team
     const lTeamNew = Team.find(1);
@@ -142,10 +141,8 @@ test('relation indexes should update on save', () => {
     expect(lUser.comments.length).toStrictEqual(3);
     expect(lComment.user.id).toStrictEqual(3);
 
-    //todo fix index update hasThrough relations;
-    //expect(lTeamNew.comments.length).toStrictEqual(3);
-    //expect(lTeamOriginal.comments.length).toStrictEqual(5);
-
+    expect(lTeamNew.comments.length).toStrictEqual(3);
+    expect(lTeamOriginal.comments.length).toStrictEqual(5);
 });
 
 

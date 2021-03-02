@@ -35,11 +35,30 @@ class Model {
 
     /**
      *
-     * @return {*|string|string|null}
+     * @return {string|null}
      */
     get primaryKey() {
-        return this.primaryKeyValue ?? this._tmpId ?? null;
+        return this.primaryFields.reduce((toValue, field, i) => {
+            if (i > 0) {
+                return `${toValue}-${field.value}`;
+            }
+            return field.value;
+        }, '') ?? this._tmpId ?? null;
     }
+
+    /**
+     *
+     * @return {string|null}
+     */
+    get originalPrimaryKey() {
+        return this.primaryFields.reduce((toValue, field, i) => {
+            if (i > 0) {
+                return `${toValue}-${field.originalValue}`;
+            }
+            return field.originalValue;
+        }, '') ?? this._tmpId ?? null;
+    }
+
 
     /**
      *
@@ -287,8 +306,6 @@ class Model {
         const currentDatabase = globalThis.Store.database();
         const tableIds = currentDatabase.ids(className);
 
-        this.setPrimaryKey();
-
         if (this.primaryKey[0] !== '_' && tableIds.includes(this._tmpId)) {
             //todo remove indexes for foreignKey
             //                                team_id  this.team_id
@@ -313,26 +330,9 @@ class Model {
 
     /**
      *
-     * @param foreignKeyField
-     */
-    removeFromIndex(foreignKeyField) {
-        Index.removeIndex(this, foreignKeyField);
-    }
-
-    /**
-     *
-     * @param foreignKeyField
-     */
-    addToIndex(foreignKeyField) {
-        Index.addIndex(this, foreignKeyField);
-    }
-
-    /**
-     *
      * @param data
      */
     fill(data) {
-        this.fillPrimaryKey(data);
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
                 const fieldName = this.originalFields[i].$name;
@@ -343,21 +343,6 @@ class Model {
         }
     }
 
-    /**
-     *
-     * @param data
-     */
-    fillPrimaryKey(data) {
-        for (let i = 0; i < this.numberOfFields; i++) {
-            if (this.originalFields[i].isPrimary === true) {
-                const fieldName = this.originalFields[i].$name;
-                if (data[fieldName] !== undefined) {
-                    this[`_${fieldName}`] = data[fieldName];
-                }
-            }
-        }
-        this.setPrimaryKey();
-    }
 
     /**
      *
@@ -373,27 +358,6 @@ class Model {
                 }
             }
         }
-    }
-
-    /**
-     *
-     */
-    setPrimaryKey() {
-        if (this.primaryFields.length === 1) {
-            this.primaryKeyValue = this[this.primaryFields[0].$name] ?? null;
-            return;
-        }
-
-        let str = '';
-
-        for (let i = 0; i < this.primaryFields.length; i++) {
-            if (i > 0) {
-                str += '-';
-            }
-            str += this[this.primaryFields[i].$name];
-        }
-
-        this.primaryKeyValue = str;
     }
 
     /**

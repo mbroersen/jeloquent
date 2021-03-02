@@ -1,4 +1,4 @@
-import {ForeignKey, Model} from "./Model.js";
+import {Model} from "./Model.js";
 import Collection from "./Collection.js";
 import Index from "./Table/Index";
 
@@ -47,11 +47,11 @@ export default class Table {
      * @param indexName
      */
     addIndex(indexName, lookUpKey, id) {
-        this.index.addIndex(indexName, lookUpKey, id);
+        this.index.addValue(indexName, lookUpKey, id);
     }
 
     removeIndex(indexName, lookUpKey, id) {
-        this.index.removeIndex(indexName, lookUpKey, id)
+        this.index.removeValue(indexName, lookUpKey, id)
     }
 
     getIndexByKey(key) {
@@ -112,7 +112,7 @@ export default class Table {
             this.models.set(model.primaryKey, model);
         }
 
-        this.index.addValueToIndexes(model);
+        this.index.addValueByModel(model);
     }
 
     /**
@@ -128,14 +128,11 @@ export default class Table {
             throw new Error('Record should be instance of model');
         }
 
-        model.dirtyFields.forEach((field) => {
-            if (field instanceof ForeignKey) {
-                this.index.removeIndex(field.$name, field.originalValue, model.primaryKey);
-                this.index.addIndex(field.$name, field.value, model.primaryKey);
-            }
-        });
+        this.index.removeValueByModel(model);
 
         model.resetDirty();
+
+        this.index.addValueByModel(model);
 
         this.models.set(model.primaryKey, model);
     }
@@ -149,7 +146,7 @@ export default class Table {
             throw new Error('Record doesn\'t exists');
         }
 
-        this.index.removeValueFromIndex(this.find(id));
+        this.index.removeValueByModel(this.find(id));
 
         this.models.delete(id);
     }
@@ -187,7 +184,7 @@ export default class Table {
     /**
      *
      * @param id
-     * @return {any|null|Collection}
+     * @return {Collection|Model|null}
      */
     find(id) {
         const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
@@ -216,7 +213,8 @@ export default class Table {
     /**
      *
      * @param id
-     * @return {Collection|*}
+     * @return {Collection|Model|null}
+     * @throws Error
      */
     select(id) {
         if (!this.models.has(id)) {
