@@ -80,7 +80,7 @@ export default class Index {
      * @param lookUpKey
      * @param id
      */
-    addIndex(indexName, lookUpKey, id) {
+    addValue(indexName, lookUpKey, id) {
         if (!this.indexes.has(indexName) || id === null) {
             return;
         }
@@ -97,6 +97,16 @@ export default class Index {
         }
 
         current.add(id);
+    }
+
+    /**
+     *
+     * @param {String} indexName
+     * @param lookUpKey
+     * @param id
+     */
+    removeValue(indexName, lookUpKey, id) {
+        this.indexes?.get(indexName)?.get(lookUpKey)?.delete(id);
     }
 
     /**
@@ -124,14 +134,14 @@ export default class Index {
      * @param {string} fieldName
      * @return {*|null}
      */
-    getIndexLookUpValue(model, fieldName) {
+    getLookUpValue(model, fieldName) {
         const lookUpValue = this.splittedIndexNames.get(fieldName);
         let indexLookUpValue = model;
         for (const lookUpField of lookUpValue) {
-            if (indexLookUpValue[lookUpField] === null) {
+            if (indexLookUpValue[`original_${lookUpField}`] === null) {
                 break;
             }
-            indexLookUpValue = indexLookUpValue[lookUpField];
+            indexLookUpValue = indexLookUpValue[`original_${lookUpField}`];
         }
         return indexLookUpValue ?? null;
     }
@@ -140,18 +150,13 @@ export default class Index {
      *
      * @param {Model} model
      */
-    addValueToIndexes(model) {
-        for (let [fieldName, value] of this.indexes) {
-            let indexLookUpValue = this.getIndexLookUpValue(model, fieldName);
-            if (indexLookUpValue === null) {
-                continue;
-            }
-
-            let current = value;
-            if (!(current.get(indexLookUpValue) instanceof Set)) {
-                current.set(indexLookUpValue, new Set());
-            }
-            current.get(indexLookUpValue)?.add(model.primaryKey);
+    addValueByModel(model) {
+        for (let [indexName, value] of this.indexes) {
+            this.addValue(
+                indexName,
+                this.getLookUpValue(model, indexName),
+                model.primaryKey
+            );
         }
     }
 
@@ -159,13 +164,13 @@ export default class Index {
      *
      * @param {Model} model
      */
-    removeValueFromIndex(model) {
-        for (let [fieldName, value] of this.indexes) {
-            let indexLookUpValue = this.getIndexLookUpValue(model, fieldName);
-            if (!indexLookUpValue || !value.has(indexLookUpValue)) {
-                continue;
-            }
-            value?.get(indexLookUpValue)?.delete(model.primaryKey);
+    removeValueByModel(model) {
+        for (let [indexName, value] of this.indexes) {
+            this.removeValue(
+                indexName,
+                this.getLookUpValue(model, indexName),
+                model.primaryKey
+            );
         }
     }
 
@@ -176,15 +181,5 @@ export default class Index {
         for (let key in this.indexes) {
             this.indexes.get(key).clear();
         }
-    }
-
-    /**
-     *
-     * @param {String} indexName
-     * @param lookUpKey
-     * @param id
-     */
-    removeIndex(indexName, lookUpKey, id) {
-        this.indexes?.get(indexName)?.get(lookUpKey)?.delete(id);
     }
 }
