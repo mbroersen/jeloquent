@@ -3,7 +3,7 @@
   "module": "dist/jeloquent.js",
   "unpkg": "dist/jeloquent.js",
   "main": "dist/jeloquent.js",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "description": "micro framework / memory orm model store",
   "scripts": {
     "build": "webpack --config webpack.config.js",
