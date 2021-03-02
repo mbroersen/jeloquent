@@ -23,6 +23,10 @@ export default class BelongsTo extends Relation {
         return this.model.find(this.$parent[this.foreignKey]);
     }
 
+    get originalValue() {
+        return this.model.find(this.$parent[`original_${this.foreignKey}`]);
+    }
+
     /**
      *
      * @param value

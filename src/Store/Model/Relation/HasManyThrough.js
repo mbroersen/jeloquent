@@ -1,4 +1,5 @@
 import Relation from "../Relation.js";
+import Model from "../../Model.js";
 
 /**
  *
@@ -39,6 +40,16 @@ export default class HasManyThrough extends Relation {
             [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
         );
     }
+
+    get originalValue() {
+        const className = this.model.className();
+        const keyIndex = this.model.getIndexByKey(this.indexName);
+
+        return globalThis.Store.database().find(className,
+            [...(keyIndex.get(this.$parent.originalPrimaryKey)?.values()) ?? []]
+        );
+    }
+
 
     /**
      *

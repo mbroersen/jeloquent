@@ -25,7 +25,7 @@ export default class ForeignKey extends Field {
      * @return {null}
      */
     get value() {
-        return this.fieldValue;
+        return this.$fieldValue;
     }
 
     /**
@@ -33,7 +33,7 @@ export default class ForeignKey extends Field {
      * @param value
      */
     set value(value) {
-        this.fieldValue = value;
+        this.$fieldValue = value;
     }
 
     /**
@@ -42,20 +42,5 @@ export default class ForeignKey extends Field {
      */
     tableSetup(table) {
         table.registerIndex(this.foreignKey);
-    }
-
-    /**
-     *
-     */
-    setFillPropertyOnParent() {
-        Object.defineProperty(this.$parent,
-            `_${this.$name}`,
-            {
-                set: (value) => {
-                    this.$parent.removeFromIndex(this);
-                    this.fieldValue = value;
-                    this.$parent.addToIndex(this);
-                }
-            });
     }
 }
