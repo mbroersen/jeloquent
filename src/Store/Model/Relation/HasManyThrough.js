@@ -9,8 +9,8 @@ export default class HasManyThrough extends Relation {
      *
      * @param {Model} model
      * @param {Model} throughModel
-     * @param foreignKey
-     * @param localKey
+     * @param {string} foreignKey
+     * @param {string} localKey
      */
     constructor(model, throughModel, foreignKey, localKey) {
         super(model, foreignKey);
@@ -29,35 +29,41 @@ export default class HasManyThrough extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Collection}
      */
     get value() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.indexName);
-
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
-        );
+        return this.getValueByParentKey('primaryKey');
     }
 
+    /**
+     *
+     * @return {Collection}
+     */
     get originalValue() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.indexName);
-
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.originalPrimaryKey)?.values()) ?? []]
-        );
+        return this.getValueByParentKey('originalPrimaryKey');
     }
 
+    /**
+     *
+     * @param {string} parentProperty
+     * @return {Collection}
+     */
+    getValueByParentKey(parentProperty) {
+        const keyIndex = this.model.getIndexByKey(this.indexName);
+
+        return globalThis.Store.database().find(this.model.className,
+            [...(keyIndex.get(this.$parent[parentProperty])?.values()) ?? []]
+        );
+    }
 
     /**
      *
      * @return {HasManyThrough}
      */
     setName() {
-        this._lcThroughModelClassName = this.throughModel.snakeCaseClassName();
-        this._lcModelClassName = this.model.snakeCaseClassName();
-        this._lcParentClassName = this.$parent.constructor.snakeCaseClassName();
+        this._lcThroughModelClassName = this.throughModel.snakeCaseClassName;
+        this._lcModelClassName = this.model.snakeCaseClassName;
+        this._lcParentClassName = this.$parent.snakeCaseClassName;
         this.foreignKey = `${this._lcThroughModelClassName}_id`;
         this.$name = `${this._lcModelClassName}s`;
         return this;
@@ -72,16 +78,9 @@ export default class HasManyThrough extends Relation {
 
     /**
      *
-     * @return {*[]}
+     * @return {array}
      */
     getRelationalFields() {
         return [];
-    }
-
-    /**
-     *
-     */
-    setParentProperties() {
-        super.setParentProperties();
     }
 }

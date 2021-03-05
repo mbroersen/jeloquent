@@ -7,7 +7,7 @@ export default class MorphOne extends Relation {
 
     /**
      *
-     * @param model
+     * @param {Model} model
      */
     constructor(model) {
         super(model);
@@ -15,28 +15,28 @@ export default class MorphOne extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Model|null}
      */
     get value() {
-        const type = this.$parent.constructor.className();
-        const id = this.$parent.primaryKey;
-        const idKeyName = `${this.$name}_id`;
-        const idTypeName = `${this.$name}_type`;
-
-        const lookUpKey = {};
-        lookUpKey[idKeyName] = id;
-        lookUpKey[idTypeName] = type;
-
-        return this.model.find(lookUpKey);
+        return this.getValueByParentKey('primaryKey');
     }
 
     /**
      *
-     * @return {*}
+     * @return {Model|null}
      */
     get originalValue() {
-        const type = this.$parent.constructor.className();
-        const id = this.$parent.originalPrimaryKey;
+        return this.getValueByParentKey('originalPrimaryKey');
+    }
+
+    /**
+     *
+     * @param {string} parentProperty
+     * @return {Model|null}
+     */
+    getValueByParentKey(parentProperty) {
+        const type = this.$parent.className;
+        const id = this.$parent[parentProperty];
         const idKeyName = `${this.$name}_id`;
         const idTypeName = `${this.$name}_type`;
 
@@ -46,7 +46,6 @@ export default class MorphOne extends Relation {
 
         return this.model.find(lookUpKey);
     }
-
 
     /**
      *

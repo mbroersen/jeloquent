@@ -20,7 +20,7 @@ export default class Index {
      * @param {string} indexName
      */
     static registerIndex(model, indexName) {
-        globalThis.Store.database().registerIndex(model.constructor.className(), indexName);
+        globalThis.Store.database().registerIndex(model.className, indexName);
     }
 
     /**

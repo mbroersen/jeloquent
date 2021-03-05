@@ -7,9 +7,9 @@ export default class HasMany extends Relation {
 
     /**
      *
-     * @param model
-     * @param foreignKey
-     * @param localKey
+     * @param {Model} model
+     * @param {string} foreignKey
+     * @param {string} localKey
      */
     constructor(model, foreignKey, localKey) {
         super(model, foreignKey);
@@ -18,32 +18,38 @@ export default class HasMany extends Relation {
 
     /**
      *
-     * @return {*|number}
+     * @return {number}
      */
     get count() {
-        let indexes = globalThis.Store.database().indexes(this.model.className());
+        let indexes = globalThis.Store.database().indexes(this.model.className);
         return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
     }
 
     /**
      *
-     * @return {*}
+     * @return {Collection}
      */
     get value() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
-
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.primaryKey)?.values()) ?? []]
-        );
+        return this.getValueByParentKey('primaryKey');
     }
 
+    /**
+     *
+     * @return {Collection}
+     */
     get originalValue() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
+        return this.getValueByParentKey('originalPrimaryKey');
+    }
 
-        return globalThis.Store.database().find(className,
-            [...(keyIndex.get(this.$parent.originalPrimaryKey)?.values()) ?? []]
+    /**
+     *
+     * @param {string} parentProperty
+     * @return {Collection}
+     */
+    getValueByParentKey(parentProperty) {
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
+        return globalThis.Store.database().find(this.model.className,
+            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
         );
     }
 
@@ -52,8 +58,8 @@ export default class HasMany extends Relation {
      * @return {HasMany}
      */
     setName() {
-        const parentClassName = this.$parent.constructor.snakeCaseClassName();
-        const modelClassName = this.model.snakeCaseClassName();
+        const parentClassName = this.$parent.snakeCaseClassName;
+        const modelClassName = this.model.snakeCaseClassName;
 
         this.foreignKey = `${parentClassName}_id`;
         this.$name = `${modelClassName}s`;
@@ -84,7 +90,7 @@ export default class HasMany extends Relation {
         );
 
         Object.defineProperty(this.$parent,
-            `has${this.model.className()}s`, {
+            `has${this.model.className}s`, {
                 get: () => {
                     return this.count > 0;
                 },

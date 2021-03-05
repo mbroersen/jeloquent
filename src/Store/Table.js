@@ -21,7 +21,7 @@ export default class Table {
      */
     setup(model) {
         this.model = model;
-        this.name = model.constructor.className();
+        this.name = model.className;
         this.models = new Map();
         this.index = new Index()
         this.primaryKeyFieldNames = model.primaryKeyName;
