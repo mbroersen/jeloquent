@@ -7,9 +7,9 @@ export default class BelongsTo extends Relation {
 
     /**
      *
-     * @param model
-     * @param foreignKey
-     * @param name
+     * @param {Model} model
+     * @param {string} foreignKey
+     * @param {string} name
      */
     constructor(model, foreignKey, name) {
         super(model, (foreignKey ?? `${model.snakeCaseClassName}_id`), name);
@@ -17,12 +17,16 @@ export default class BelongsTo extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Model|null}
      */
     get value() {
         return this.model.find(this.$parent[this.foreignKey]);
     }
 
+    /**
+     *
+     * @return {Model|null}
+     */
     get originalValue() {
         return this.model.find(this.$parent[`original_${this.foreignKey}`]);
     }
