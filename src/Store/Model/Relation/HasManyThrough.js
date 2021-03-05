@@ -52,7 +52,7 @@ export default class HasManyThrough extends Relation {
         const keyIndex = this.model.getIndexByKey(this.indexName);
 
         return globalThis.Store.database().find(this.model.className,
-            [...(keyIndex.get(this.$parent.originalPrimaryKey)?.values()) ?? []]
+            [...(keyIndex.get(this.$parent[parentProperty])?.values()) ?? []]
         );
     }
 
