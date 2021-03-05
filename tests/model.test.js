@@ -50,9 +50,9 @@ test('Avatar composed primary key can be found', () => {
 });
 
 test('Model returns classNames', () => {
-    expect(UserAddress.className()).toStrictEqual("UserAddress");
-    expect(UserAddress.kebabCaseClassName()).toStrictEqual("user-address");
-    expect(UserAddress.snakeCaseClassName()).toStrictEqual("user_address");
+    expect(UserAddress.className).toStrictEqual("UserAddress");
+    expect(UserAddress.kebabCaseClassName).toStrictEqual("user-address");
+    expect(UserAddress.snakeCaseClassName).toStrictEqual("user_address");
 });
 
 test('Model fetch all primaryKeys', () => {
