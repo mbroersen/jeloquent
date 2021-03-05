@@ -7,9 +7,9 @@ export default class HasMany extends Relation {
 
     /**
      *
-     * @param model
-     * @param foreignKey
-     * @param localKey
+     * @param {Model} model
+     * @param {string} foreignKey
+     * @param {string} localKey
      */
     constructor(model, foreignKey, localKey) {
         super(model, foreignKey);
@@ -18,7 +18,7 @@ export default class HasMany extends Relation {
 
     /**
      *
-     * @return {*|number}
+     * @return {number}
      */
     get count() {
         let indexes = globalThis.Store.database().indexes(this.model.className);
@@ -27,16 +27,25 @@ export default class HasMany extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Collection}
      */
     get value() {
         return this.getValueByParentKey('primaryKey');
     }
 
+    /**
+     *
+     * @return {Collection}
+     */
     get originalValue() {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
+    /**
+     *
+     * @param {string} parentProperty
+     * @return {Collection}
+     */
     getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,
