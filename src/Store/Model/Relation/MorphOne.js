@@ -7,7 +7,7 @@ export default class MorphOne extends Relation {
 
     /**
      *
-     * @param model
+     * @param {Model} model
      */
     constructor(model) {
         super(model);
@@ -15,10 +15,10 @@ export default class MorphOne extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Model|null}
      */
     get value() {
-        const type = this.$parent.constructor.className();
+        const type = this.$parent.className;
         const id = this.$parent.primaryKey;
         const idKeyName = `${this.$name}_id`;
         const idTypeName = `${this.$name}_type`;
@@ -32,10 +32,10 @@ export default class MorphOne extends Relation {
 
     /**
      *
-     * @return {*}
+     * @return {Model|null}
      */
     get originalValue() {
-        const type = this.$parent.constructor.className();
+        const type = this.$parent.className;
         const id = this.$parent.originalPrimaryKey;
         const idKeyName = `${this.$name}_id`;
         const idTypeName = `${this.$name}_type`;

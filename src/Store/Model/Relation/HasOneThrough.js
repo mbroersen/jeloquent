@@ -45,9 +45,9 @@ export default class HasOneThrough extends Relation {
      * @return {HasOneThrough}
      */
     setName() {
-        this._lcThroughModelClassName = this.throughModel.snakeCaseClassName();
-        this._lcModelClassName = this.model.snakeCaseClassName();
-        this._lcParentClassName = this.$parent.constructor.snakeCaseClassName();
+        this._lcThroughModelClassName = this.throughModel.snakeCaseClassName;
+        this._lcModelClassName = this.model.snakeCaseClassName;
+        this._lcParentClassName = this.$parent.snakeCaseClassName;
         this.foreignKey = `${this._lcThroughModelClassName}_id`;
         this.$name = `${this._lcModelClassName}`;
         return this;

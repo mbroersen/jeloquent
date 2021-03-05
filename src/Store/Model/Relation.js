@@ -13,7 +13,7 @@ export default class Relation extends Field {
      * @param name
      */
     constructor(model, foreignKey, name) {
-        let className = name ?? model.snakeCaseClassName();
+        let className = name ?? model.snakeCaseClassName;
         super(className);
         this.model = model;
         this.foreignKey = foreignKey;

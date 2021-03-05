@@ -12,7 +12,7 @@ export default class BelongsTo extends Relation {
      * @param name
      */
     constructor(model, foreignKey, name) {
-        super(model, (foreignKey ?? `${model.snakeCaseClassName()}_id`), name);
+        super(model, (foreignKey ?? `${model.snakeCaseClassName}_id`), name);
     }
 
     /**
@@ -40,7 +40,7 @@ export default class BelongsTo extends Relation {
      * @return {BelongsTo}
      */
     setName() {
-        let className = this.model.snakeCaseClassName();
+        let className = this.model.snakeCaseClassName;
         this.$name = this.$name ?? `${className}`;
         return this;
     }

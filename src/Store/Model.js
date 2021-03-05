@@ -30,7 +30,7 @@ class Model {
      * @return {*}
      */
     get className() {
-        return this.constructor.className();
+        return this.constructor.className;
     }
 
     /**
@@ -99,23 +99,25 @@ class Model {
 
     /**
      *
-     * @return {Model}
+     * @return {string}
      */
-    static getInstance() {
-        const original = globalThis.Store.classInstances[this.className()] ?? (globalThis.Store.classInstances[this.className()] = new this())
-        const fieldsClone = original.originalFields.reduce((obj, field) => {
-            obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
-            return obj;
-        }, [])
-
-        return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
+    get snakeCaseClassName() {
+        return this.constructor.snakeCaseClassName;
     }
 
     /**
      *
-     * @return {*|string}
+     * @return {string}
      */
-    static snakeCaseClassName() {
+    get kebabCaseClassName() {
+        return this.constructor.kebabCaseClassName;
+    }
+
+    /**
+     *
+     * @return {string}
+     */
+    static get snakeCaseClassName() {
         if (!this.snakeCaseName) {
             this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
         }
@@ -125,9 +127,9 @@ class Model {
 
     /**
      *
-     * @return {*|string}
+     * @return {string}
      */
-    static kebabCaseClassName() {
+    static get kebabCaseClassName() {
         if (!this.kebabCaseName) {
             this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
         }
@@ -137,11 +139,26 @@ class Model {
 
     /**
      *
-     * @return {*}
+     * @return {string}
      */
-    static className() {
+    static get className() {
         return this.name;
     }
+
+    /**
+     *
+     * @return {Model}
+     */
+    static getInstance() {
+        const original = globalThis.Store.classInstances[this.className] ?? (globalThis.Store.classInstances[this.className] = new this())
+        const fieldsClone = original.originalFields.reduce((obj, field) => {
+            obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
+            return obj;
+        }, [])
+
+        return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
+    }
+
 
     /**
      *
@@ -157,7 +174,7 @@ class Model {
      * @return {*}
      */
     static getIndexByKey(indexName) {
-        const className = this.className();
+        const className = this.className;
         const currentDatabase = globalThis.Store.database();
 
         return currentDatabase.getIndexByKey(className, indexName);
@@ -188,7 +205,7 @@ class Model {
             const modelData = data[i];
             const model = this.getInstance();
             model.fill(modelData);
-            globalThis.Store.database().insert(this.className(), model);
+            globalThis.Store.database().insert(this.className, model);
             model.fillRelations(modelData);
             data[i] = model;
         }
@@ -203,7 +220,7 @@ class Model {
     static update(data) {
         const model = new this();
         model.fill(data);
-        globalThis.Store.database().update(this.className(), model);
+        globalThis.Store.database().update(this.className, model);
 
         return model;
     }
@@ -213,7 +230,7 @@ class Model {
      * @param id
      */
     static delete(id) {
-        globalThis.Store.database().delete(this.className(), id);
+        globalThis.Store.database().delete(this.className, id);
     }
 
     /**
@@ -222,7 +239,7 @@ class Model {
      * @return {*}
      */
     static find(id) {
-        return globalThis.Store.database().find(this.className(), id);
+        return globalThis.Store.database().find(this.className, id);
     }
 
     /**
@@ -232,7 +249,7 @@ class Model {
      */
     static select(id) {
         try {
-            return globalThis.Store.database().select(this.className(), id);
+            return globalThis.Store.database().select(this.className, id);
         } catch (e) {
             console.error(e);
         }
@@ -243,7 +260,7 @@ class Model {
      * @return {*}
      */
     static all() {
-        return globalThis.Store.database().all(this.className());
+        return globalThis.Store.database().all(this.className);
     }
 
     /**
@@ -251,7 +268,7 @@ class Model {
      * @return {*[]|*}
      */
     static ids() {
-        return globalThis.Store.database().ids(this.className());
+        return globalThis.Store.database().ids(this.className);
     }
 
     /**
@@ -302,7 +319,7 @@ class Model {
      *
      */
     save() {
-        const className = this.constructor.className();
+        const className = this.className;
         const currentDatabase = globalThis.Store.database();
         const tableIds = currentDatabase.ids(className);
 
