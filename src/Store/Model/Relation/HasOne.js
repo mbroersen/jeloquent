@@ -7,7 +7,7 @@ export default class HasOne extends Relation {
 
     /**
      *
-     * @param model
+     * @param {Model} model
      */
     constructor(model) {
         super(model);
@@ -18,28 +18,17 @@ export default class HasOne extends Relation {
      * @return {null|*}
      */
     get value() {
-        const className = this.model.className();
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
-
-        if (!keyIndex.has(this.$parent.primaryKey)) {
-            return null;
-        }
-
-        return globalThis.Store.database().find(className,
-            [...keyIndex.get(this.$parent.primaryKey).values()] ?? null
-        ).first();
+        return this.getValueByParentKey('primaryKey');
     }
 
     get originalValue() {
-        const className = this.model.className();
+        return this.getValueByParentKey('originalPrimaryKey');
+    }
+
+    getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
-
-        if (!keyIndex.has(this.$parent.originalPrimaryKey)) {
-            return null;
-        }
-
-        return globalThis.Store.database().find(className,
-            [...keyIndex.get(this.$parent.originalPrimaryKey).values()] ?? null
+        return globalThis.Store.database().find(this.model.className,
+            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
         ).first();
     }
 
@@ -48,7 +37,7 @@ export default class HasOne extends Relation {
      * @return {HasOne}
      */
     setName() {
-        this.foreignKey = `${this.$parent.constructor.snakeCaseClassName()}_id`;
+        this.foreignKey = `${this.$parent.snakeCaseClassName}_id`;
         return this;
     }
 
@@ -68,7 +57,7 @@ export default class HasOne extends Relation {
         super.setParentProperties();
 
         Object.defineProperty(this.$parent,
-            `has${this.model.className()}`, {
+            `has${this.model.className}`, {
                 get: () => {
                     return this.value !== null;
                 },
