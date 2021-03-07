@@ -1,50 +1,83 @@
 /**
  *
  */
+import ConnectionSettings from "./ConnectionSettings";
+
 export default class ConnectionAdapter {
     /**
      *
-     * @param options
+     * @param {ConnectionSettings|Object} connectionSettings
      */
-    constructor(options) {
-        this.options = options;
+    constructor(connectionSettings) {
+
+        if (!(connectionSettings instanceof ConnectionSettings)) {
+            this.connectionSettings = new ConnectionSettings()
+                .setBaseUrl(connectionSettings.url);
+        }
+
+        this.connectionSettings = connectionSettings;
     }
 
     /**
      *
-     * @param model
+     * @param {Model} model
      * @return Promise
      */
     load(model) {
-        model.className();
         throw new Error('should be extended');
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    put() {
+    all(model) {
         throw new Error('should be extended');
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    patch() {
+    get(model) {
         throw new Error('should be extended');
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    post() {
+    put(model) {
         throw new Error('should be extended');
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    delete() {
+    patch(model) {
+        throw new Error('should be extended');
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    post(model) {
+        throw new Error('should be extended');
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    delete(model) {
         throw new Error('should be extended');
     }
 }
