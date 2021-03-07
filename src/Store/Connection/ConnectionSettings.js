@@ -11,7 +11,7 @@ export default class ConnectionSettings {
         this.mode = 'cors';
         this.cache = 'no-cache';
         this.headers = {};
-        this.baseUrl = '';
+        this.baseUrl = 'http://localhost';
     }
 
     /**
@@ -20,7 +20,7 @@ export default class ConnectionSettings {
      * @return {ConnectionSettings}
      */
     setBaseUrl(baseUrl) {
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl ?? 'http://localhost';
         return this;
     }
 
