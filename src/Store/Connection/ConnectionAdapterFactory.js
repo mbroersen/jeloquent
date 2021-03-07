@@ -10,25 +10,25 @@ class ConnectionAdapterFactory {
 
     /**
      *
-     * @param name
-     * @param options
-     * @return {ConnectionAdapterLocalArray|ConnectionAdapterJsonRequest}
+     * @param {String} name
+     * @param {ConnectionSettings} connectionSettings
+     * @return {ConnectionAdapterLocalArray|ConnectionAdapterJsonRequest|ConnectionAdapterLocalStorage}
      */
-    static getAdapter (name, options) {
+    static getAdapter (name, connectionSettings) {
 
         if (name === 'jsonRequest') {
-            return new ConnectionAdapterJsonRequest(options);
+            return new ConnectionAdapterJsonRequest(connectionSettings);
         }
 
         if (name === 'localStorage') {
-            return new ConnectionAdapterLocalStorage(options);
+            return new ConnectionAdapterLocalStorage(connectionSettings);
         }
 
         if (name === 'localArray') {
-            return new ConnectionAdapterLocalArray(options);
+            return new ConnectionAdapterLocalArray(connectionSettings);
         }
 
-        return new ConnectionAdapterJsonRequest(options);
+        return new ConnectionAdapterJsonRequest(connectionSettings);
     }
 }
 
