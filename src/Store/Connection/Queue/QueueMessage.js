@@ -17,7 +17,7 @@ export default class QueueMessage {
 
     /**
      *
-     * @param callback
+     * @param {function} callback
      */
     addCallback(callback) {
         this.callback = callback;
