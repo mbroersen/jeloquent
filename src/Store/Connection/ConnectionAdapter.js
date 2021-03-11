@@ -25,7 +25,7 @@ export default class ConnectionAdapter {
      * @return Promise
      */
     load(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -34,7 +34,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     all(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -43,7 +43,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     get(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -52,7 +52,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     put(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -61,7 +61,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     patch(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -70,7 +70,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     post(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
@@ -79,7 +79,7 @@ export default class ConnectionAdapter {
      * @return {Promise}
      */
     delete(model) {
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 }
 
