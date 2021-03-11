@@ -74,7 +74,7 @@ export default class Connection {
      */
     all(model) {
         return new Promise((resolve) => {
-            this.adapter.load(model)
+            this.adapter.all(model)
                 .then((queueMessage) => {
                     queueMessage.addCallback(resolve);
                     this.addToQueue(queueMessage);
