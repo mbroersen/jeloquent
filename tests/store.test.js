@@ -20,7 +20,7 @@ test('Store can load dataset through connection adapter', async () => {
             super(options);
         }
 
-        load(model) {
+        all(model) {
             return new Promise((resolve) => {
                 const modelData = [
                     {id: 1, name: 'test'},

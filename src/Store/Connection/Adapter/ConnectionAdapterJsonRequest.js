@@ -1,5 +1,6 @@
 import ConnectionAdapter from '../ConnectionAdapter.js';
 import QueueMessage from '../Queue/QueueMessage.js';
+import ConnectionRequest from "../ConnectionRequest";
 
 /**
  *
@@ -8,7 +9,7 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
-     * @param options
+     * @param {ConnectionSettings} options
      */
     constructor(options) {
         super(options);
@@ -31,28 +32,121 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     }
 
     /**
+     * @deprecated
+     * @param {Model} model
+     * @return {Promise}
+     */
+    load(model) {
+        return this.all(model);
+    }
+
+    /**
+     *
+     * @param {Response} response
+     */
+    responseJson(response) {
+        return response.json();
+    }
+
+    /**
      *
      * @param model
      * @return {Promise<unknown>}
      */
-    load(model) {
-        const promise = new Promise((resolve) => {
-            const method = this.options.method ?? 'GET';
-            const url = `${this.options.url}/${model.kebabCaseClassName()}`;
-            const formatter = this.options?.formatter ?? ((data) => data);
-
-            const request = new XMLHttpRequest();
-            request.open(method, url, true);
-            request.addEventListener('load', () => {
-                if (request.readyState == 4) {
-                    const modelData = formatter(JSON.parse(request.responseText));
-                    const message = new QueueMessage(model, 'insert', modelData);
+    all(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .all(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'insert', data);
                     resolve(message);
-                }
-            })
-            request.send(null);
-        });
+                });
+        }));
+    }
 
-        return promise;
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    get(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .get(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
+        }))
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    post(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .post(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
+        }))
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    put(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .put(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
+        }));
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    patch(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .patch(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
+        }));
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    delete(model) {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .delete(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'delete', data);
+                    resolve(message);
+                });
+        }));
     }
 }

@@ -1,51 +1,85 @@
 /**
  *
  */
+import ConnectionSettings from "./ConnectionSettings";
+
 export default class ConnectionAdapter {
     /**
      *
-     * @param options
+     * @param {ConnectionSettings|Object} connectionSettings
      */
-    constructor(options) {
-        this.options = options;
+    constructor(connectionSettings) {
+
+        if (!(connectionSettings instanceof ConnectionSettings)) {
+            this.connectionSettings = new ConnectionSettings()
+                .setBaseUrl(connectionSettings?.url);
+            return;
+        }
+
+        this.connectionSettings = connectionSettings;
     }
 
     /**
      *
-     * @param model
+     * @param {Model} model
      * @return Promise
      */
     load(model) {
-        model.className();
-        throw new Error('should be extended');
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    put() {
-        throw new Error('should be extended');
+    all(model) {
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    patch() {
-        throw new Error('should be extended');
+    get(model) {
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    post() {
-        throw new Error('should be extended');
+    put(model) {
+        throw new Error(`should be extended called for ${model.className}`);
     }
 
     /**
      *
+     * @param {Model} model
+     * @return {Promise}
      */
-    delete() {
-        throw new Error('should be extended');
+    patch(model) {
+        throw new Error(`should be extended called for ${model.className}`);
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    post(model) {
+        throw new Error(`should be extended called for ${model.className}`);
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {Promise}
+     */
+    delete(model) {
+        throw new Error(`should be extended called for ${model.className}`);
     }
 }
 
