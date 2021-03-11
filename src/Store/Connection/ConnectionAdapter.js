@@ -13,6 +13,7 @@ export default class ConnectionAdapter {
         if (!(connectionSettings instanceof ConnectionSettings)) {
             this.connectionSettings = new ConnectionSettings()
                 .setBaseUrl(connectionSettings.url);
+            return;
         }
 
         this.connectionSettings = connectionSettings;

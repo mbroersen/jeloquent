@@ -42,6 +42,14 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
+     * @param {Response} response
+     */
+    responseJson(response) {
+        return response.json();
+    }
+
+    /**
+     *
      * @param model
      * @return {Promise<unknown>}
      */
@@ -49,8 +57,9 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .all(model)
-                .then(response => {
-                    const message = new QueueMessage(model, 'insert', response.json());
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'insert', data);
                     resolve(message);
                 });
         }));
@@ -65,9 +74,9 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .get(model)
-                .then(response => {
-                    const message = new QueueMessage(model, 'fill', response.json());
-                    message.addCallback(() => {model.save()});
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
                     resolve(message);
                 });
         }))
@@ -82,11 +91,11 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .post(model)
-                .then(response => {
-                    const message = new QueueMessage(model, 'fill', response.json());
-                    message.addCallback(() => {model.save()});
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
                     resolve(message);
-            });
+                });
         }))
     }
 
@@ -98,12 +107,12 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     put(model) {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
-            .put(model)
-            .then(response => {
-                const message = new QueueMessage(model, 'fill', response.json());
-                message.addCallback(() => {model.save()});
-                resolve(message);
-            });
+                .put(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
         }));
     }
 
@@ -115,12 +124,12 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     patch(model) {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
-            .patch(model)
-            .then(response => {
-                const message = new QueueMessage(model, 'fill', response.json());
-                message.addCallback(() => {model.save()});
-                resolve(message);
-            });
+                .patch(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
         }));
     }
 
@@ -132,11 +141,12 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     delete(model) {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
-            .delete(model)
-            .then(response => {
-                const message = new QueueMessage(model, 'delete', response.json());
-                resolve(message);
-            });
+                .delete(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'delete', data);
+                    resolve(message);
+                });
         }));
     }
 }

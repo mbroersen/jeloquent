@@ -42,6 +42,7 @@ export default class ConnectionSettings {
             cache: this.cache, // *default, no-cache, reload, force-cache, only-if-cached
             //credentials: 'same-origin', // include, *same-origin, omit
             headers: {
+                'Accept': this.contentType,
                 'Content-Type': this.contentType,
                 ...this.headers
             },

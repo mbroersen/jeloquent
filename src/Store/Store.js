@@ -57,7 +57,7 @@ class Store {
 
     /**
      *
-     * @return {*|null}
+     * @return {Database|null}
      */
     database() {
         return this.databases[this.useDatabase] ?? null;
@@ -65,7 +65,7 @@ class Store {
 
     /**
      *
-     * @return {*}
+     * @return {Connection}
      */
     connection() {
         return this.connetions[this.useConnection];
