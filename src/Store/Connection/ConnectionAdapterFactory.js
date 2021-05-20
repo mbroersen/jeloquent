@@ -2,7 +2,6 @@ import JsonRequestAdapter from "./Adapter/JsonRequestAdapter";
 import LocalStorageAdapter from "./Adapter/LocalStorageAdapter";
 import ConnectionAdapter from "./ConnectionAdapter";
 import LocalArrayAdapter from "./Adapter/LocalArrayAdapter";
-import ObjectSocketAdapter from "./Adapter/ObjectSocketAdapter";
 
 /**
  *
@@ -37,7 +36,6 @@ export {
     ConnectionAdapterFactory,
     LocalStorageAdapter,
     LocalArrayAdapter,
-    ObjectSocketAdapter,
     JsonRequestAdapter,
     ConnectionAdapter
 }
