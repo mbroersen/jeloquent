@@ -1,7 +1,7 @@
-import ConnectionAdapterJsonRequest from "./Adapter/ConnectionAdapterJsonRequest";
-import ConnectionAdapterLocalStorage from "./Adapter/ConnectionAdapterLocalStorage";
-import ConnectionAdapterLocalArray from "./Adapter/ConnectionAdapterLocalStorage";
+import JsonRequestAdapter from "./Adapter/JsonRequestAdapter";
+import LocalStorageAdapter from "./Adapter/LocalStorageAdapter";
 import ConnectionAdapter from "./ConnectionAdapter";
+import LocalArrayAdapter from "./Adapter/LocalArrayAdapter";
 
 /**
  *
@@ -12,30 +12,30 @@ class ConnectionAdapterFactory {
      *
      * @param {String} name
      * @param {ConnectionSettings} connectionSettings
-     * @return {ConnectionAdapterLocalArray|ConnectionAdapterJsonRequest|ConnectionAdapterLocalStorage}
+     * @return {ConnectionAdapter}
      */
     static getAdapter (name, connectionSettings) {
 
         if (name === 'jsonRequest') {
-            return new ConnectionAdapterJsonRequest(connectionSettings);
+            return new JsonRequestAdapter(connectionSettings);
         }
 
         if (name === 'localStorage') {
-            return new ConnectionAdapterLocalStorage(connectionSettings);
+            return new LocalStorageAdapter(connectionSettings);
         }
 
         if (name === 'localArray') {
-            return new ConnectionAdapterLocalArray(connectionSettings);
+            return new LocalArrayAdapter(connectionSettings);
         }
 
-        return new ConnectionAdapterJsonRequest(connectionSettings);
+        return new JsonRequestAdapter(connectionSettings);
     }
 }
 
 export {
     ConnectionAdapterFactory,
-    ConnectionAdapterLocalStorage,
-    ConnectionAdapterLocalArray,
-    ConnectionAdapterJsonRequest,
+    LocalStorageAdapter,
+    LocalArrayAdapter,
+    JsonRequestAdapter,
     ConnectionAdapter
 }

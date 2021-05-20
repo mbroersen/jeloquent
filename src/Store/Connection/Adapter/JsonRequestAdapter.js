@@ -5,7 +5,7 @@ import ConnectionRequest from "../ConnectionRequest";
 /**
  *
  */
-export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
+export default class JsonRequestAdapter extends ConnectionAdapter {
 
     /**
      *
@@ -34,7 +34,7 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     /**
      * @deprecated
      * @param {Model} model
-     * @return {Promise}
+     * @return {Promise<QueueMessage>}
      */
     load(model) {
         return this.all(model);
@@ -51,7 +51,7 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     /**
      *
      * @param model
-     * @return {Promise<unknown>}
+     * @return {Promise<QueueMessage>}
      */
     all(model) {
         return new Promise((resolve => {
@@ -67,8 +67,8 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
-     * @return {Promise}
+     * @param {Model|Collection} model
+     * @return {Promise<QueueMessage>}
      */
     get(model) {
         return new Promise((resolve => {
@@ -84,8 +84,8 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
-     * @return {Promise}
+     * @param {Model|Collection} model
+     * @return {Promise<QueueMessage>}
      */
     post(model) {
         return new Promise((resolve => {
@@ -101,8 +101,8 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
-     * @return {Promise}
+     * @param {Model|Collection} model
+     * @return {Promise<QueueMessage>}
      */
     put(model) {
         return new Promise((resolve => {
@@ -118,8 +118,8 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
-     * @return {Promise}
+     * @param {Model|Collection} model
+     * @return {Promise<QueueMessage>}
      */
     patch(model) {
         return new Promise((resolve => {
@@ -136,7 +136,7 @@ export default class ConnectionAdapterJsonRequest extends ConnectionAdapter {
     /**
      *
      * @param {Model} model
-     * @return {Promise}
+     * @return {Promise<QueueMessage>}
      */
     delete(model) {
         return new Promise((resolve => {

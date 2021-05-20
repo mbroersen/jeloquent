@@ -5,11 +5,11 @@
       {
         "modules": "umd",
         "targets": {
-          "chrome": "85",
-          "firefox": "80"
+          "chrome": "90",
+          "firefox": "88"
         },
         "useBuiltIns": "usage",
-        "corejs": "3.6.4"
+        "corejs": "3.12.1"
       }
     ]
   ]

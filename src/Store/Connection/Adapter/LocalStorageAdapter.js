@@ -4,7 +4,7 @@ import QueueMessage from '../Queue/QueueMessage.js';
 /**
  *
  */
-export default class ConnectionAdapterLocalArray extends ConnectionAdapter {
+export default class LocalStorageAdapter extends ConnectionAdapter {
 
     /**
      *

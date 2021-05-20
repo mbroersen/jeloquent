@@ -112,6 +112,13 @@ export default class Collection extends Array {
     }
 
     /**
+     * @return {string}
+     */
+    jsonStringify() {
+        return JSON.stringify(this);
+    }
+
+    /**
      *
      * @param field
      * @param whereIfFunction
