@@ -29,10 +29,6 @@ class ConnectionAdapterFactory {
             return new LocalArrayAdapter(connectionSettings);
         }
 
-        if (name === 'ObjectSocket') {
-            return new ObjectSocketAdapter(connectionSettings);
-        }
-
         return new JsonRequestAdapter(connectionSettings);
     }
 }
