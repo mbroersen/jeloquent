@@ -423,11 +423,26 @@ class Model {
     }
 
     /**
+     * @return {string}
+     */
+    jsonStringify() {
+        return JSON.stringify(this.toObject());
+    }
+
+    /**
+     * @deprecated
+     * @return {{}}
+     */
+    toJson() {
+        return this.toObject();
+    }
+
+    /**
      *
      * @param fromRelation
      * @return {{}}
      */
-    toJson(fromRelation) {
+    toObject(fromRelation) {
         const json = {};
 
         for (let i = 0; i < this.originalFields.length; i++) {
@@ -440,19 +455,21 @@ class Model {
             json[field.$name] = field.value;
 
             if (json[field.$name] instanceof Model) {
-                json[field.$name] = json[field.$name].toJson(true);
+                json[field.$name] = json[field.$name].toObject(true);
                 continue;
             }
 
             if (json[field.$name] instanceof Array) {
                 json[field.$name] = [...json[field.$name].map((value) => {
-                    return value?.toJson(true) ?? value
+                    return value?.toObject(true) ?? value
                 })];
             }
         }
 
         return {...json};
     }
+
+
 }
 
 export {
