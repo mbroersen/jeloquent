@@ -15,6 +15,20 @@ export default class ConnectionSettings {
     }
 
     /**
+     * @param {ConnectionResponseData} requestData
+     */
+    responseData (requestData) {
+
+    }
+
+    /**
+     *@param {ConnectionRequestData} responseData
+     */
+    requestData(responseData) {
+
+    }
+
+    /**
      *
      * @param {string} baseUrl
      * @return {ConnectionSettings}

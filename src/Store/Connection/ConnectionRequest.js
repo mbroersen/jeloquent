@@ -20,17 +20,15 @@ export default class ConnectionRequest {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
     post(model) {
-        console.log(model.toJson());
-
         return fetch(
             this.modelApiLocation(model),
             {
                 method: 'POST',
-                body: JSON.stringify(model.toJson()),
+                body: JSON.stringify(model.jsonStringify()),
                 ...this.connectionRequestSettings.getSettings(),
             }
         );
@@ -68,7 +66,7 @@ export default class ConnectionRequest {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
     patch(model) {
@@ -84,7 +82,7 @@ export default class ConnectionRequest {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
     put(model) {
@@ -92,7 +90,7 @@ export default class ConnectionRequest {
             `${this.modelApiLocation(model)}/`,
             {
                 method: 'PUT',
-                body: JSON.stringify(model.toJson()), //todo get dirty field values
+                body: JSON.stringify(model.jsonStringify()), //todo get dirty field values
                 ...this.connectionRequestSettings.getSettings(),
             }
         );
@@ -100,7 +98,7 @@ export default class ConnectionRequest {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
     delete(model) {
