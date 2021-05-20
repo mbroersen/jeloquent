@@ -87,7 +87,7 @@ export default class Connection {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<unknown>}
      */
     post(model) {
@@ -105,7 +105,7 @@ export default class Connection {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<unknown>}
      */
     put(model) {
@@ -123,7 +123,7 @@ export default class Connection {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<unknown>}
      */
     patch(model) {
@@ -141,7 +141,7 @@ export default class Connection {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise<unknown>}
      */
     delete(model) {
