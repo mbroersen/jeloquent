@@ -20,7 +20,7 @@ export default class ConnectionAdapter {
     }
 
     /**
-     *
+     * @deprecated
      * @param {Model} model
      * @return Promise
      */
@@ -48,7 +48,7 @@ export default class ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise}
      */
     put(model) {
@@ -57,7 +57,7 @@ export default class ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise}
      */
     patch(model) {
@@ -66,7 +66,7 @@ export default class ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise}
      */
     post(model) {
@@ -75,7 +75,7 @@ export default class ConnectionAdapter {
 
     /**
      *
-     * @param {Model} model
+     * @param {Model|Collection} model
      * @return {Promise}
      */
     delete(model) {
