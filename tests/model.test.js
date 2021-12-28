@@ -138,7 +138,7 @@ test('two belongsTo relation of same type can be saved', () => {
 
     expect(team.user_two).toBeInstanceOf(User);
     expect(team.user_two.id).toStrictEqual(2);
-
+    expect(JSON.stringify(Team.all().first())).toStrictEqual("{\"id\":1,\"name\":\"team relation 1\",\"users\":[{\"id\":1,\"name\":\"name\",\"team_id\":1},null,null,{\"id\":2,\"name\":\"name\",\"team_id\":1}],\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1}],\"avatar\":null}");
 })
 
 
