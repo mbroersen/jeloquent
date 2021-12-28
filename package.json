@@ -3,11 +3,11 @@
   "module": "dist/jeloquent.js",
   "unpkg": "dist/jeloquent.js",
   "main": "dist/jeloquent.js",
-  "version": "2.14.3",
+  "version": "3.0.1",
   "description": "micro framework / memory orm model store",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "watch": "webpack --config webpack.config.js --watch",
+    "build": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js",
+    "watch": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js --watch",
     "test": "jest",
     "lint": "eslint src/*/** --fix-dry-run"
   },
@@ -37,20 +37,14 @@
   "author": "Mark Broersen",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.14.2",
-    "babel-jest": "^26.6.3",
-    "babel-loader": "^8.2.2",
-    "core-js": "^3.12.1",
     "eslint": "^7.18.0",
     "jest": "^26.6.3",
-    "terser-webpack-plugin": "^5.1.2",
-    "webpack": "^5.18.0",
-    "webpack-cli": "^4.4.0"
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "babel-jest": "^27.4.5"
   },
   "dependencies": {
+    "esbuild": "^0.14.8",
     "typescript": "^4.2.4"
   }
 }
