@@ -29,6 +29,10 @@
   "bugs": {
     "url": "https://github.com/mbroersen/jeloquent/issues"
   },
+  "funding": {
+    "type" : "patreon",
+    "url" : "https://www.patreon.com/mbroersen"
+  },
   "homepage": "https://github.com/mbroersen/jeloquent#readme",
   "author": "Mark Broersen",
   "license": "MIT",
