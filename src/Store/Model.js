@@ -430,10 +430,10 @@ class Model {
     }
 
     /**
-     * @deprecated
+     *
      * @return {{}}
      */
-    toJson() {
+    toJSON() {
         return this.toObject();
     }
 
