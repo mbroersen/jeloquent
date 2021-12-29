@@ -3,7 +3,7 @@
   "module": "dist/jeloquent.js",
   "unpkg": "dist/jeloquent.js",
   "main": "dist/jeloquent.js",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "micro framework / memory orm model store",
   "scripts": {
     "build": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js",
@@ -30,8 +30,8 @@
     "url": "https://github.com/mbroersen/jeloquent/issues"
   },
   "funding": {
-    "type" : "patreon",
-    "url" : "https://www.patreon.com/mbroersen"
+    "type": "patreon",
+    "url": "https://www.patreon.com/mbroersen"
   },
   "homepage": "https://github.com/mbroersen/jeloquent#readme",
   "author": "Mark Broersen",
