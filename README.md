@@ -3,6 +3,7 @@
 [![npm jeloquent](http://img.shields.io/npm/dt/jeloquent.svg?style=flat)](https://www.npmjs.com/package/jeloquent)
 ![npm jeloquent](https://img.shields.io/github/license/mbroersen/jeloquent?style=flat)
 ![npm jeloquent](https://img.shields.io/snyk/vulnerabilities/npm/jeloquent)
+[![Node.js CI](https://github.com/mbroersen/jeloquent/actions/workflows/node.js.yml/badge.svg)](https://github.com/mbroersen/jeloquent/actions/workflows/node.js.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mbroersen/jeloquent/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mbroersen/jeloquent/?branch=master)
 
 ### Is an orm memory store for javascript. 
