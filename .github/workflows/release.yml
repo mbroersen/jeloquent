@@ -17,7 +17,7 @@ jobs:
       - run: npm run build
       - run: npm run test
       - run: git config --global user.email ${{ secrets.EMAIL }}
-      - run: git config --global user.name "Mark Broersen"
+      - run: git config --global user.name "mark.broersen"
       - run: npm version ${{ github.event.release.tag_name }}
       - run: npm publish
       - run: git push
