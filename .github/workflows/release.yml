@@ -21,6 +21,5 @@ jobs:
       - run: npm version ${{ github.event.release.tag_name }}
       - run: npm config set '//registry.npmjs.org/:_authToken' "${{ secrets.NPM_TOKEN }}"
       - run: npm publish
-      - run: git push
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
