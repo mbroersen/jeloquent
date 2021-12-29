@@ -14,8 +14,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: echo ${{ github.event.release.tag_name }}
       - run: npm ci
-      - run: npm build
-      - run: npm test
+      - run: npm run build
+      - run: npm run test
       - run: npm version ${{ github.event.release.tag_name }}
       - run: npm publish
         env:
