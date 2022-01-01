@@ -6,8 +6,8 @@
   "version": "3.0.9",
   "description": "micro framework / memory orm model store",
   "scripts": {
-    "build": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js",
-    "watch": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js --watch",
+    "build": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js --loader:.js=jsx",
+    "watch": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js --loader:.js=jsx --watch",
     "test": "jest",
     "lint": "eslint src/*/** --fix-dry-run"
   },

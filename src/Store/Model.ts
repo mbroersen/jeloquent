@@ -10,17 +10,25 @@ import Field from "./Model/Field.js";
 import Relation from "./Model/Relation.js";
 import ForeignKey from "./Model/Field/ForeignKey.js";
 import Index from "./Table/Index";
+import {ModelInterface} from "../JeloquentInterfaces";
 
 /**
  *
  */
-class Model {
+class Model implements ModelInterface {
+
+    _tmpId:string;
+    primaryFields:Array<Field>;
+    originalFields:Array<Field>;
+    numberOfFields:number;
+
+    ['constructor']: typeof Model;
 
     /**
      *
      * @param fields
      */
-    constructor(fields) {
+    constructor(fields:Array<Field> = []) {
         this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
     }
@@ -29,7 +37,7 @@ class Model {
      *
      * @return {*}
      */
-    get className() {
+    get className(): string {
         return this.constructor.className;
     }
 
@@ -101,7 +109,7 @@ class Model {
      *
      * @return {string}
      */
-    get snakeCaseClassName() {
+    get snakeCaseClassName(): string {
         return this.constructor.snakeCaseClassName;
     }
 
@@ -109,7 +117,7 @@ class Model {
      *
      * @return {string}
      */
-    get kebabCaseClassName() {
+    get kebabCaseClassName(): string {
         return this.constructor.kebabCaseClassName;
     }
 
@@ -117,7 +125,7 @@ class Model {
      *
      * @return {string}
      */
-    static get snakeCaseClassName() {
+    static get snakeCaseClassName(): string {
         if (!this.snakeCaseName) {
             this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
         }
@@ -129,8 +137,8 @@ class Model {
      *
      * @return {string}
      */
-    static get kebabCaseClassName() {
-        if (!this.kebabCaseName) {
+    static get kebabCaseClassName(): string {
+        if (! this.kebabCaseName) {
             this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
         }
 
@@ -141,7 +149,7 @@ class Model {
      *
      * @return {string}
      */
-    static get className() {
+    static get className() : string{
         return this.name;
     }
 
@@ -149,7 +157,7 @@ class Model {
      *
      * @return {Model}
      */
-    static getInstance() {
+    static getInstance(): string {
         const original = globalThis.Store.classInstances[this.className] ?? (globalThis.Store.classInstances[this.className] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
             obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
@@ -425,24 +433,15 @@ class Model {
     /**
      * @return {string}
      */
-    jsonStringify() {
+    jsonStringify(): string {
         return JSON.stringify(this.toObject());
     }
 
-    /**
-     *
-     * @return {{}}
-     */
-    toJSON() {
+    toJSON(): Object {
         return this.toObject();
     }
 
-    /**
-     *
-     * @param fromRelation
-     * @return {{}}
-     */
-    toObject(fromRelation) {
+    toObject(fromRelation: boolean = false): Object {
         const json = {};
 
         for (let i = 0; i < this.originalFields.length; i++) {
@@ -468,8 +467,6 @@ class Model {
 
         return {...json};
     }
-
-
 }
 
 export {

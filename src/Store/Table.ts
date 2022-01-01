@@ -1,88 +1,64 @@
 import {Model} from "./Model.js";
 import Collection from "./Collection.js";
 import Index from "./Table/Index";
+import {TableInterface, ModelInterface, IndexInterface} from "../JeloquentInterfaces";
 
 /**
  *
  */
-export default class Table {
+export default class Table implements TableInterface {
 
-    /**
-     *
-     * @param model
-     */
-    constructor(model) {
+    model: ModelInterface;
+    name: string;
+    index: IndexInterface;
+    primaryKeyFieldNames: Array<string>;
+    models: Map<string, ModelInterface>;
+
+    constructor(model: ModelInterface) {
         this.setup(model.getInstance());
     }
 
-    /**
-     *
-     * @param model
-     */
-    setup(model) {
+    private setup(model: ModelInterface) {
         this.model = model;
         this.name = model.className;
         this.models = new Map();
-        this.index = new Index()
+        this.index = new Index();
         this.primaryKeyFieldNames = model.primaryKeyName;
     }
 
-    /**
-     *
-     */
-    setupIndexes() {
+    public setupIndexes(): void {
         this.model.tableSetup(this);
     }
 
-    /**
-     *
-     * @param indexName
-     */
-    registerIndex(indexName) {
+    public registerIndex(indexName:string): void {
         this.index.registerIndex(indexName);
     }
 
-    /**
-     *
-     * @param indexName
-     */
-    addIndex(indexName, lookUpKey, id) {
+    public addIndex(indexName:string, lookUpKey:string, id:string): void {
         this.index.addValue(indexName, lookUpKey, id);
     }
 
-    removeIndex(indexName, lookUpKey, id) {
+    public removeIndex(indexName:string, lookUpKey:string, id:string): void {
         this.index.removeValue(indexName, lookUpKey, id)
     }
 
-    getIndexByKey(key) {
+    public getIndexByKey(key): string {
         return this.index.getIndexByKey(key);
     }
 
-    get indexes () {
+    get indexes (): Map<string, Map<string, Map<number, Set<string>>>> {
         return this.index.indexes;
     }
 
-    /**
-     *
-     * @return {Map<any, any>}
-     */
-    allModels() {
+    public allModels(): Map<any, any> {
         return this.models;
     }
 
-    /**
-     *
-     * @return {any[]}
-     */
-    ids() {
+    public ids():Array<string> {
         return [...this.models.keys()];
     }
 
-    /**
-     *
-     * @return {Collection}
-     */
-    all() {
+    public all(): Collection {
         const values = [...this.models.values()];
         const numberOfValues = values.length;
         const collection = new Collection();
@@ -93,11 +69,7 @@ export default class Table {
         return collection;
     }
 
-    /**
-     *
-     * @param model
-     */
-    insert(model) {
+    public insert(model: Model): void {
         if (this.models.has(model.primaryKey)) {
             throw new Error('Record already exists');
         }
@@ -119,7 +91,7 @@ export default class Table {
      *
      * @param model
      */
-    update(model) {
+    public update(model): void {
         if (!this.models.has(model.primaryKey)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -137,11 +109,7 @@ export default class Table {
         this.models.set(model.primaryKey, model);
     }
 
-    /**
-     *
-     * @param id
-     */
-    delete(id) {
+    public delete(id:string): void {
         if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -151,20 +119,12 @@ export default class Table {
         this.models.delete(id);
     }
 
-    /**
-     *
-     */
-    truncate() {
+    public truncate(): void {
         this.models.clear();
         this.index.truncate();
     }
 
-    /**
-     *
-     * @param id
-     * @return {string|null}
-     */
-    getKey(id) {
+    public getKey(id:number|string|Array<string|number>): string|null {
         if (typeof id === 'string') {
             return id;
         }
@@ -181,16 +141,11 @@ export default class Table {
         return key.join('-');
     }
 
-    /**
-     *
-     * @param id
-     * @return {Collection|Model|null}
-     */
-    find(id) {
+    public find(id:number|string|Array<string|number>):Collection|Model|null {
         const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
         if (Array.isArray(id)) {
             const result = [];
-            let pushFunction = hasComposedPrimaryKey ? (i) => {
+            let pushFunction = hasComposedPrimaryKey ? (i:number) => {
                 result.push(this.models.get(this.getKey(id[i])) ?? null);
             } : (i) => {
                 result.push(this.models.get(id[i]) ?? null);
@@ -210,13 +165,7 @@ export default class Table {
         return this.models.get(id) ?? null;
     }
 
-    /**
-     *
-     * @param id
-     * @return {Collection|Model|null}
-     * @throws Error
-     */
-    select(id) {
+    public select(id:string): Collection {
         if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }

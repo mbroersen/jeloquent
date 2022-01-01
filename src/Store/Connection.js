@@ -1,4 +1,3 @@
-import ConnectionAdapter from "./Connection/ConnectionAdapter";
 import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
 
 /**
@@ -12,10 +11,10 @@ export default class Connection {
      * @param options
      */
     constructor(adapter, options) {
-        if (adapter instanceof ConnectionAdapter) {
-            this.adapter = adapter;
-        } else {
+        if (adapter instanceof String) {
             this.adapter = ConnectionAdapterFactory.getAdapter(adapter, options);
+        } else {
+            this.adapter = adapter;
         }
 
         this.updateQueue = [];

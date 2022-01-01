@@ -1,9 +1,14 @@
 import {ForeignKey} from "../Model";
+import {IndexInterface} from "../../JeloquentInterfaces";
 
 /**
  *
  */
-export default class Index {
+export default class Index implements IndexInterface {
+
+    indexes:Map<string, Map<string, Map<number, Set<string>>>>;
+    indexedFields:Set<string>;
+    splitIndexNames:Map<string, Array<string>>
 
     /**
      *
@@ -11,7 +16,7 @@ export default class Index {
     constructor() {
         this.indexes = new Map();
         this.indexedFields = new Set();
-        this.splittedIndexNames = new Map();
+        this.splitIndexNames = new Map();
     }
 
     /**
@@ -69,7 +74,7 @@ export default class Index {
     registerIndex(indexName) {
         if (!this.indexes.has(indexName)) {
             this.indexedFields.add(indexName);
-            this.splittedIndexNames.set(indexName, indexName.split('.'));
+            this.splitIndexNames.set(indexName, indexName.split('.'));
             this.indexes.set(indexName, new Map());
         }
     }
@@ -134,8 +139,8 @@ export default class Index {
      * @param {string} fieldName
      * @return {*|null}
      */
-    getLookUpValue(model, fieldName) {
-        const lookUpValue = this.splittedIndexNames.get(fieldName);
+    getLookUpValue(model, fieldName: string) {
+        const lookUpValue = this.splitIndexNames.get(fieldName);
         let indexLookUpValue = model;
         for (const lookUpField of lookUpValue) {
             if (indexLookUpValue[`original_${lookUpField}`] === null) {
