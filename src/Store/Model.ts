@@ -149,7 +149,7 @@ class Model implements ModelInterface {
      *
      * @return {string}
      */
-    static get className() : string{
+    static get className() : string {
         return this.name;
     }
 
@@ -437,11 +437,11 @@ class Model implements ModelInterface {
         return JSON.stringify(this.toObject());
     }
 
-    toJSON(): Object {
+    toJSON(): object {
         return this.toObject();
     }
 
-    toObject(fromRelation: boolean = false): Object {
+    toObject(fromRelation = false): object {
         const json = {};
 
         for (let i = 0; i < this.originalFields.length; i++) {

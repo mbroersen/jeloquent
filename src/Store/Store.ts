@@ -10,11 +10,15 @@ import {ConnectionInterface, DatabaseInterface, StoreInterface} from "../Jeloque
 class Store implements StoreInterface {
 
     classInstances: object;
+
     numberOfModelCreated: number;
 
     private useDatabase: string;
+
     private useConnectionName: string;
+
     private connections: Map<string, ConnectionInterface>;
+
     private databases: Map<string, DatabaseInterface>;
 
     constructor() {
@@ -27,7 +31,7 @@ class Store implements StoreInterface {
         globalThis.Store = this;
     }
 
-    use(storeName: string = 'default'): void {
+    use(storeName = 'default'): void {
         this.useDatabase = storeName;
         this.databases.get(this.useDatabase)?.setIndexes();
     }
@@ -36,19 +40,18 @@ class Store implements StoreInterface {
         this.databases.set(database.name, database);
     }
 
-    addConnection(connection: ConnectionInterface, name: string = 'default'): void {
-        this.connections.set('default', connection);
+    addConnection(connection: ConnectionInterface, name = 'default'): void {
+        this.connections.set(name, connection);
     }
 
     /**
-     *
      * @deprecated
      */
     useConnections(name:string): void {
         this.useConnection(name);
     }
 
-    useConnection(name:string = 'default'): void {
+    useConnection(name = 'default'): void {
         this.useConnectionName = name;
     }
 

@@ -28,6 +28,6 @@ export default class QueueMessage {
      */
     execute() {
         this.model[this.action](this.data);
-        (this.callback ?? (() => {}))();
+        (this.callback ?? (() => null))();
     }
 }

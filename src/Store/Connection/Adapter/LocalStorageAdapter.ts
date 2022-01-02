@@ -5,7 +5,6 @@ import {Connection, CollectionInterface, ModelInterface} from "../../../Jeloquen
  *
  */
 export default class LocalStorageAdapter implements Connection.AdapterInterface {
-
     connectionSettings: Connection.AdapterSettings;
 
     constructor (connectionSettings: Connection.AdapterSettings) {
@@ -42,12 +41,13 @@ export default class LocalStorageAdapter implements Connection.AdapterInterface 
         });
     }
 
-    /**
-     *
-     * @param model
-     * @return {Promise<unknown>}
-     */
-    load(model) {
+    load(model: ModelInterface | CollectionInterface): Promise<Connection.QueueMessage> {
+        return Promise.resolve(new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
+        }));
+    }
+
+    post (model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
         return new Promise((resolve) => {
             resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
         });
@@ -58,7 +58,7 @@ export default class LocalStorageAdapter implements Connection.AdapterInterface 
      * @param model
      * @return {string}
      */
-    getLocalStorageKey(model) {
+    private getLocalStorageKey(model) {
         return `jeloquent-${globalThis.Store.useDatabase}-${model.className}`;
     }
 
@@ -67,11 +67,9 @@ export default class LocalStorageAdapter implements Connection.AdapterInterface 
      * @param model
      * @return {any}
      */
-    getTableFromLocalStorage(model) {
+    private getTableFromLocalStorage(model) {
         return JSON.parse(localStorage.getItem(this.getLocalStorageKey(model)) ?? '[]');
     }
 
-    post (model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
+
 }

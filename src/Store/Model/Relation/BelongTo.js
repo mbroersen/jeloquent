@@ -35,6 +35,7 @@ export default class BelongsTo extends Relation {
      *
      * @param value
      */
+    // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures,@typescript-eslint/no-empty-function
     set value(value) {
 
     }

@@ -1,9 +1,4 @@
-
 export default class ConnectionRequestQuery {
-
-    constructor() {
-
-    }
 
     page(number, size) {
         this.$pageNumber = number;

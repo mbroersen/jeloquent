@@ -3,13 +3,18 @@ module.exports = {
         "browser": true,
         "es2021": true
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
+    root: true,
+    parser: '@typescript-eslint/parser',
+    plugins: [
+        '@typescript-eslint',
+    ],
+    extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+    ],
     "rules": {
         "curly": ["error", "all"],
+        "@typescript-eslint/no-namespace": "off",
         "lines-between-class-members": ["error", "always"],
         "indent": ["error", 4],
     }

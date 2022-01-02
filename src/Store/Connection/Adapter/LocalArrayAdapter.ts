@@ -6,7 +6,7 @@ import {Connection, CollectionInterface, ModelInterface} from "../../../Jeloquen
  */
 export default class LocalArrayAdapter implements Connection.AdapterInterface {
     connectionSettings: Connection.AdapterSettings;
-    options:Array<any>
+    options:object;
 
     constructor (connectionSettings: Connection.AdapterSettings) {
         this.connectionSettings = connectionSettings;
@@ -17,33 +17,45 @@ export default class LocalArrayAdapter implements Connection.AdapterInterface {
      * @param model
      * @return {Promise<unknown>}
      */
-    load(model) {
+    load(model:ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className]));
+        });
+    }
+
+    all(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className]));
+        });
+    }
+
+    delete(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className]));
+        });
+    }
+
+    get(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className]));
+        });
+    }
+
+    patch(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className]));
+        });
+    }
+
+    post(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
         return new Promise((resolve) => {
             resolve(new QueueMessage(model, 'insert', this.options[model.className()]));
         });
     }
 
-    all(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
-
-    delete(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
-
-    get(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
-
-    patch(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
-
-    post(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
-    }
-
     put(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve(undefined);
+        return new Promise((resolve) => {
+            resolve(new QueueMessage(model, 'insert', this.options[model.className()]));
+        });
     }
 }

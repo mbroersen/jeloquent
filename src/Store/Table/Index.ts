@@ -1,5 +1,6 @@
 import {ForeignKey} from "../Model";
-import {IndexInterface} from "../../JeloquentInterfaces";
+import {IndexInterface, ModelInterface} from "../../JeloquentInterfaces";
+import Field from "../Model/Field";
 
 /**
  *
@@ -20,29 +21,35 @@ export default class Index implements IndexInterface {
     }
 
     /**
-     *
-     * @param {Model} model
-     * @param {string} indexName
+     * @deprecated
      */
     static registerIndex(model, indexName) {
+        this.register(model, indexName)
+    }
+
+    static register(model: ModelInterface, indexName: string): void {
         globalThis.Store.database().registerIndex(model.className, indexName);
     }
 
     /**
-     *
-     * @param {Model} model
-     * @param {ForeignKey} foreignKeyField
+     * @deprecated
      */
     static addIndex(model, foreignKeyField) {
+        this.add(model, foreignKeyField);
+    }
+
+    static add(model:ModelInterface, foreignKeyField: Field): void {
         globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
     }
 
     /**
-     *
-     * @param {Model} model
-     * @param {ForeignKey} foreignKeyField
+     * @deprecated
      */
     static removeIndex(model, foreignKeyField) {
+        this.remove(model, foreignKeyField);
+    }
+
+    static remove(model:ModelInterface, foreignKeyField: Field): void {
         globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
     }
 
@@ -51,7 +58,7 @@ export default class Index implements IndexInterface {
      * @param {Model} model
      */
     static removeTmpIdFromIndex(model) {
-        let className = model.className;
+        const className = model.className;
         model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
             globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
         });

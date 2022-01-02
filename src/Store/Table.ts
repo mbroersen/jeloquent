@@ -50,7 +50,7 @@ export default class Table implements TableInterface {
         return this.index.indexes;
     }
 
-    public allModels(): Map<any, any> {
+    public allModels(): Map<string, ModelInterface> {
         return this.models;
     }
 
