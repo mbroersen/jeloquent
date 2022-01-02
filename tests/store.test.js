@@ -46,7 +46,7 @@ test('Store can load dataset through connection adapter', async () => {
     const database = new Database('default', [User]);
     const connection = new Connection(new MockAdapter());
     store.add(database);
-    store.addConnections(connection);
+    store.addConnection(connection);
     store.use('default');
     await store.connection().load(User);
 

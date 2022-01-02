@@ -27,6 +27,29 @@ export interface TableInterface {
     registerIndex(indexName:string): void;
 }
 
+
+
+export interface StoreInterface {
+    use(storeName:String):void;
+    useConnection(connectionName:string):void;
+    add(database:DatabaseInterface):void;
+    addConnection(connection: ConnectionInterface, name: string): void;
+
+    connection(): ConnectionInterface|null;
+    database(): DatabaseInterface|null;
+
+}
+
+export interface DatabaseInterface {
+    name: string;
+    setIndexes():void;
+}
+
+
+export interface ConnectionInterface {
+
+}
+
 export interface IndexInterface {
 
 }
