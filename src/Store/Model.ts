@@ -11,16 +11,20 @@ import Relation from "./Model/Relation.js";
 import ForeignKey from "./Model/Field/ForeignKey.js";
 import Index from "./Table/Index";
 import {ModelInterface} from "../JeloquentInterfaces";
+import Collection from "./Collection";
 
 /**
  *
  */
 class Model implements ModelInterface {
 
-    _tmpId:string;
-    primaryFields:Array<Field>;
-    originalFields:Array<Field>;
-    numberOfFields:number;
+    _tmpId: string;
+
+    primaryFields: Array<Field>;
+
+    originalFields: Array<Field>;
+
+    numberOfFields: number;
 
     ['constructor']: typeof Model;
 
@@ -28,7 +32,7 @@ class Model implements ModelInterface {
      *
      * @param fields
      */
-    constructor(fields:Array<Field> = []) {
+    constructor(fields: Array<Field> = []) {
         this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
     }
@@ -157,7 +161,7 @@ class Model implements ModelInterface {
      *
      * @return {Model}
      */
-    static getInstance(): string {
+    static getInstance(): ModelInterface {
         const original = globalThis.Store.classInstances[this.className] ?? (globalThis.Store.classInstances[this.className] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
             obj.push(Object.assign(Object.create(Object.getPrototypeOf(field)), field));
@@ -206,18 +210,19 @@ class Model implements ModelInterface {
      * @param data
      * @return {*|*[]}
      */
-    static insert(data) {
-        data = Array.isArray(data) ? data : [data];
-        const length = data.length;
+    static insert(data: object|Array<object>): Collection {
+        const modelsData = Array.isArray(data) ? data : [data];
+        const length = modelsData.length;
+        const models = new Collection();
         for (let i = 0; i < length; i++) {
-            const modelData = data[i];
+            const modelData = modelsData[i];
             const model = this.getInstance();
             model.fill(modelData);
             globalThis.Store.database().insert(this.className, model);
             model.fillRelations(modelData);
-            data[i] = model;
+            models.push(model);
         }
-        return data;
+        return models;
     }
 
     /**
@@ -225,10 +230,11 @@ class Model implements ModelInterface {
      * @param data
      * @return {Model}
      */
-    static update(data) {
+    static update(data: object) {
         const model = new this();
         model.fill(data);
         globalThis.Store.database().update(this.className, model);
+        model.fillRelations(data);
 
         return model;
     }
@@ -350,7 +356,7 @@ class Model implements ModelInterface {
      * @param name
      */
     registerIndex(name) {
-        Index.registerIndex(this, name);
+        Index.register(this, name);
     }
 
     /**
@@ -368,12 +374,7 @@ class Model implements ModelInterface {
         }
     }
 
-
-    /**
-     *
-     * @param data
-     */
-    fillRelations(data) {
+    fillRelations(data: object): void {
         // insert through relations after model insert;
         for (let i = 0; i < this.numberOfFields; i++) {
             if ((this.originalFields[i] instanceof Relation)) {

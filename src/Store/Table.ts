@@ -9,13 +9,21 @@ import {TableInterface, ModelInterface, IndexInterface} from "../JeloquentInterf
 export default class Table implements TableInterface {
 
     model: ModelInterface;
-    name: string;
-    index: IndexInterface;
-    primaryKeyFieldNames: Array<string>;
-    models: Map<string, ModelInterface>;
 
-    constructor(model: ModelInterface) {
+    name: string;
+
+    index: IndexInterface;
+
+    primaryKeyFieldNames: Array<string>;
+
+    models: Map<string|number, ModelInterface>;
+
+    constructor (model: ModelInterface) {
         this.setup(model.getInstance());
+    }
+
+    static make(model: ModelInterface): Table {
+        return new Table(model);
     }
 
     private setup(model: ModelInterface) {
@@ -34,19 +42,19 @@ export default class Table implements TableInterface {
         this.index.registerIndex(indexName);
     }
 
-    public addIndex(indexName:string, lookUpKey:string, id:string): void {
+    public addIndex(indexName:string, lookUpKey:string, id:string|number): void {
         this.index.addValue(indexName, lookUpKey, id);
     }
 
-    public removeIndex(indexName:string, lookUpKey:string, id:string): void {
+    public removeIndex(indexName:string, lookUpKey:string, id:string|number): void {
         this.index.removeValue(indexName, lookUpKey, id)
     }
 
-    public getIndexByKey(key): string {
+    public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
         return this.index.getIndexByKey(key);
     }
 
-    get indexes (): Map<string, Map<string, Map<number, Set<string>>>> {
+    get indexes(): Map<string, Map<string, Set<string>>> {
         return this.index.indexes;
     }
 
@@ -54,7 +62,7 @@ export default class Table implements TableInterface {
         return this.models;
     }
 
-    public ids():Array<string> {
+    public get ids():Array<string|number> {
         return [...this.models.keys()];
     }
 
@@ -69,7 +77,7 @@ export default class Table implements TableInterface {
         return collection;
     }
 
-    public insert(model: Model): void {
+    public insert(model: ModelInterface): void {
         if (this.models.has(model.primaryKey)) {
             throw new Error('Record already exists');
         }
@@ -91,7 +99,7 @@ export default class Table implements TableInterface {
      *
      * @param model
      */
-    public update(model): void {
+    public update(model: ModelInterface): void {
         if (!this.models.has(model.primaryKey)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -109,7 +117,7 @@ export default class Table implements TableInterface {
         this.models.set(model.primaryKey, model);
     }
 
-    public delete(id:string): void {
+    public delete(id:string|number): void {
         if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -165,7 +173,7 @@ export default class Table implements TableInterface {
         return this.models.get(id) ?? null;
     }
 
-    public select(id:string): Collection {
+    public select(id:string|number) {
         if (!this.models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }

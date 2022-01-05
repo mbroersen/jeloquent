@@ -7,17 +7,27 @@ import Field from "../Model/Field";
  */
 export default class Index implements IndexInterface {
 
-    indexes:Map<string, Map<string, Map<number, Set<string>>>>;
-    indexedFields:Set<string>;
-    splitIndexNames:Map<string, Array<string>>
+    private _indexes: Map<string, Map<string|number, Set<string|number>>>;
+
+    indexedFields: Set<string>;
+
+    splitIndexNames: Map<string, Array<string>>
 
     /**
      *
      */
     constructor() {
-        this.indexes = new Map();
+        this._indexes = new Map();
         this.indexedFields = new Set();
         this.splitIndexNames = new Map();
+    }
+
+    private index(index: string): Map<string|number, Set<string|number>> {
+        return this._indexes.get(index);
+    }
+
+    private indexLookUpKey(index: string, key: string): Set<string|number> {
+        return this.index(index).get(key);
     }
 
     /**
@@ -64,25 +74,29 @@ export default class Index implements IndexInterface {
         });
     }
 
+    get indexes(): Map<string, Map<string|number, Set<string|number>>> {
+        return this._indexes;
+    }
+
     /**
      *
      * @param key
      * @return {any}
      */
-    getIndexByKey(key) {
-        return this.indexes.get(key);
+    getIndexByKey(key: string): Map<string|number, Set<string|number>> {
+        return this.index(key);
     }
 
-    /**
-     *
-     * @param model
-     * @param name
-     */
+    /** @deprecated **/
     registerIndex(indexName) {
-        if (!this.indexes.has(indexName)) {
+        this.register(indexName);
+    }
+
+    register(indexName: string): void {
+        if (!this._indexes.has(indexName)) {
             this.indexedFields.add(indexName);
             this.splitIndexNames.set(indexName, indexName.split('.'));
-            this.indexes.set(indexName, new Map());
+            this._indexes.set(indexName, new Map());
         }
     }
 
@@ -92,23 +106,21 @@ export default class Index implements IndexInterface {
      * @param lookUpKey
      * @param id
      */
-    addValue(indexName, lookUpKey, id) {
-        if (!this.indexes.has(indexName) || id === null) {
+    addValue(indexName, lookUpKey, id): void {
+        if (!this._indexes.has(indexName) || id === null) {
             return;
         }
 
-        let current = this.indexes?.get(indexName);
-        if (!(current.has(lookUpKey))) {
+        const index = this.index(indexName);
+        if (!(index.has(lookUpKey))) {
             this.registerLookUpKey(indexName, lookUpKey, id);
             return;
         }
-        current = current?.get(lookUpKey);
-
-        if (current.has(id)) {
+        const keys = this.indexLookUpKey(indexName, lookUpKey);
+        if (keys.has(id)) {
             return;
         }
-
-        current.add(id);
+        keys.add(id);
     }
 
     /**
@@ -118,7 +130,7 @@ export default class Index implements IndexInterface {
      * @param id
      */
     removeValue(indexName, lookUpKey, id) {
-        this.indexes?.get(indexName)?.get(lookUpKey)?.delete(id);
+        this.indexLookUpKey(indexName, lookUpKey).delete(id);
     }
 
     /**
@@ -128,7 +140,7 @@ export default class Index implements IndexInterface {
      * @param id
      */
     registerLookUpKey(indexName, lookUpKey, id) {
-        this.indexes?.get(indexName)?.set(lookUpKey, new Set([id]));
+        this.index(indexName).set(lookUpKey, new Set([id]));
     }
 
     /**
@@ -137,7 +149,7 @@ export default class Index implements IndexInterface {
      * @param lookUpKey
      */
     unregisterLookUpKey(indexName, lookUpKey) {
-        this.indexes?.get(indexName)?.delete(lookUpKey);
+        this.index(indexName).delete(lookUpKey);
     }
 
     /**
@@ -158,12 +170,8 @@ export default class Index implements IndexInterface {
         return indexLookUpValue ?? null;
     }
 
-    /**
-     *
-     * @param {Model} model
-     */
-    addValueByModel(model) {
-        for (let [indexName] of this.indexes) {
+    addValueByModel(model: ModelInterface) {
+        for (const [indexName] of this._indexes) {
             this.addValue(
                 indexName,
                 this.getLookUpValue(model, indexName),
@@ -177,7 +185,7 @@ export default class Index implements IndexInterface {
      * @param {Model} model
      */
     removeValueByModel(model) {
-        for (let [indexName] of this.indexes) {
+        for (const [indexName] of this._indexes) {
             this.removeValue(
                 indexName,
                 this.getLookUpValue(model, indexName),
@@ -190,8 +198,8 @@ export default class Index implements IndexInterface {
      *
      */
     truncate() {
-        for (let key in this.indexes) {
-            this.indexes.get(key).clear();
+        for (const key in this._indexes) {
+            this.index(key).clear();
         }
     }
 }
