@@ -47,6 +47,7 @@ export default class Database implements DatabaseInterface {
         return this._tables.keys();
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ids(table): Array<string|number> {
         return this.table(table).ids;
@@ -73,11 +74,14 @@ export default class Database implements DatabaseInterface {
     }
 
     getIndexByKey(table: string, indexName: string): Map<string|number, Set<string>> {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return this.table(table).getIndexByKey(indexName);
     }
 
     indexes(table): Map<string, Map<string, Set<string>>>  {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return this.table(table).indexes;
     }
 

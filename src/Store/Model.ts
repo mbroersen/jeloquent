@@ -125,6 +125,9 @@ class Model implements ModelInterface {
         return this.constructor.kebabCaseClassName;
     }
 
+    static snakeCaseName: string;
+    static kebabCaseName: string;
+
     /**
      *
      * @return {string}
@@ -177,7 +180,7 @@ class Model implements ModelInterface {
      * @param name
      */
     static registerIndex(name) {
-        Index.registerIndex(this.getInstance(), name);
+        Index.register(this.getInstance(), name);
     }
 
     /**

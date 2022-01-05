@@ -4,24 +4,18 @@ import Table from "./Store/Table";
 import Index from "./Store/Table/Index";
 
 
-export interface ModelInterface extends ApiInterface {
-    primaryKeyName: Array<string>;
-
-    model: ModelInterface;
-    name: string;
-    index: IndexInterface;
-    primaryKeyFieldNames: Array<string>;
-    models: Map<string, ModelInterface>;
-
-    getInstance(): ModelInterface;
+export interface ModelInterface {
     fill(data: object): void;
     fillRelations(data: object): void;
 
     tableSetup(table: Table):void;
 
     get primaryKey(): string|null;
+
     get className(): string;
-    get kebabCaseName(): string;
+    get kebabCaseClassName(): string;
+    get snakeCaseClassName(): string;
+
     //get kebabCaseName(): String
     //get kebabCaseName(): String
 }
@@ -92,7 +86,6 @@ export interface IndexInterface extends Truncateable {
     removeValueByModel(model: ModelInterface): void;
 
     getIndexByKey(key: string): Map<string|number, Set<string|number>>
-    _indexes(): Map<string, Map<string, Set<string>>>
 }
 
 export interface CollectionInterface {
