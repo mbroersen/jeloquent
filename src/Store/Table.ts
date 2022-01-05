@@ -1,7 +1,7 @@
 import {Model} from "./Model.js";
 import Collection from "./Collection.js";
 import Index from "./Table/Index";
-import {TableInterface, ModelInterface, IndexInterface} from "../JeloquentInterfaces";
+import {TableInterface, ModelInterface} from "../JeloquentInterfaces";
 
 /**
  *
@@ -12,7 +12,7 @@ export default class Table implements TableInterface {
 
     name: string;
 
-    index: IndexInterface;
+    index: Index;
 
     primaryKeyFieldNames: Array<string>;
 
@@ -39,7 +39,7 @@ export default class Table implements TableInterface {
     }
 
     public registerIndex(indexName:string): void {
-        this.index.registerIndex(indexName);
+        this.index.register(indexName);
     }
 
     public addIndex(indexName:string, lookUpKey:string, id:string|number): void {
@@ -50,15 +50,17 @@ export default class Table implements TableInterface {
         this.index.removeValue(indexName, lookUpKey, id)
     }
 
+    //@ts-ignore
     public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
         return this.index.getIndexByKey(key);
     }
 
-    get indexes(): Map<string, Map<string, Set<string>>> {
+    // @ts-ignore
+    get indexes(): Map<string, Map<string | number, Set<string | number>>> {
         return this.index.indexes;
     }
 
-    public allModels(): Map<string, ModelInterface> {
+    public allModels(): Map<string | number, ModelInterface> {
         return this.models;
     }
 
@@ -153,7 +155,7 @@ export default class Table implements TableInterface {
         const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
         if (Array.isArray(id)) {
             const result = [];
-            let pushFunction = hasComposedPrimaryKey ? (i:number) => {
+            const pushFunction = hasComposedPrimaryKey ? (i:number) => {
                 result.push(this.models.get(this.getKey(id[i])) ?? null);
             } : (i) => {
                 result.push(this.models.get(id[i]) ?? null);

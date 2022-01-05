@@ -1,5 +1,7 @@
 import Collection from "./Store/Collection";
 import {Model} from "./Store/Model";
+import Table from "./Store/Table";
+import Index from "./Store/Table/Index";
 
 
 export interface ModelInterface extends ApiInterface {
@@ -14,6 +16,8 @@ export interface ModelInterface extends ApiInterface {
     getInstance(): ModelInterface;
     fill(data: object): void;
     fillRelations(data: object): void;
+
+    tableSetup(table: Table):void;
 
     get primaryKey(): string|null;
     get className(): string;
@@ -47,12 +51,13 @@ export interface ApiInterface {
 export interface TableInterface extends ApiInterface, Indexable, Truncateable {
     model:ModelInterface;
     name:string;
-    index: IndexInterface;
+    index: Index;
     primaryKeyFieldNames: Array<string>;
-    models: Map<string, ModelInterface>;
+    models: Map<string|number, ModelInterface>;
 
     get ids(): Array<string|number>;
-    allModels(): Map<string, ModelInterface>;
+
+    allModels(): Map<string | number, ModelInterface>;
 }
 
 
@@ -82,8 +87,6 @@ export interface ConnectionInterface {
 
 export interface IndexInterface extends Truncateable {
     register(indexName: string): void;
-    add():void
-    remove(): void;
 
     addValueByModel(model: ModelInterface): void;
     removeValueByModel(model: ModelInterface): void;
