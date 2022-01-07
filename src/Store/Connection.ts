@@ -1,21 +1,36 @@
 import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
+import {Connection as NSConnection} from "../JeloquentInterfaces";
+import QueueMessage from "./Connection/Queue/QueueMessage";
+import AdapterInterface = NSConnection.AdapterInterface;
 
 /**
  *
  */
 export default class Connection {
 
+    adapter: AdapterInterface;
+
+    paused: boolean;
+
+    updateQueue: Array<QueueMessage>;
+
     /**
      *
      * @param adapter
      * @param options
      */
-    constructor(adapter, options) {
+    constructor(adapter:AdapterInterface|string, options) {
+
+        let interfaceAdapter;
+        let stringAdapter;
+
         if (adapter instanceof String) {
-            this.adapter = ConnectionAdapterFactory.getAdapter(adapter, options);
+            stringAdapter = adapter;
         } else {
-            this.adapter = adapter;
+            interfaceAdapter = adapter;
         }
+
+        this.adapter = interfaceAdapter ?? ConnectionAdapterFactory.getAdapter(stringAdapter, options);
 
         this.updateQueue = [];
         this.paused = false;

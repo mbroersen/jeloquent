@@ -147,6 +147,8 @@ export namespace Connection {
 
     export interface QueueMessage {
         execute(): void;
+
+        addCallback(callback: CallableFunction);
     }
 }
 
