@@ -76,20 +76,20 @@ export default class Collection extends Array {
      * @param keyField
      * @return {{}|[]}
      */
-    pluck(field, keyField) {
+    pluck(field, keyField = '') {
         const lookUpFields = field.split('.');
 
         if (keyField) {
             const lookUpKeyField = keyField.split('.');
             const result = {};
-            for (let i in this) {
+            for (const i in this) {
                 result[this._getRowFieldResult(this[i], lookUpKeyField)] = this._getRowFieldResult(this[i], lookUpFields);
             }
             return result;
         }
 
         const result = [];
-        for (let i in this) {
+        for (const i in this) {
             result.push(this._getRowFieldResult(this[i], lookUpFields));
         }
 
@@ -111,7 +111,7 @@ export default class Collection extends Array {
      */
     unique(field) {
         const unique = {};
-        for (let i in this) {
+        for (const i in this) {
             unique[this[i][field]] = this[i];
         }
 
@@ -179,7 +179,7 @@ export default class Collection extends Array {
      */
     whereIfFunction(field, whereIfFunction) {
         const reqister = new Collection();
-        for (let i in this) {
+        for (const i in this) {
             if (whereIfFunction(field, this[i])) {
                 reqister.push(this[i]);
             }
