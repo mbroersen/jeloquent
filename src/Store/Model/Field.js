@@ -1,6 +1,3 @@
-/**
- *
- */
 export default class Field {
 
     /**
@@ -57,34 +54,6 @@ export default class Field {
         this.$fieldValue = value;
     }
 
-    /**
-     *
-     * @return {Field}
-     */
-    setName() {
-        return this;
-    }
-
-    /**
-     *
-     * @param parent
-     * @return {Field}
-     */
-    setup(parent) {
-        this.$parent = parent;
-        return this.setName().setParentProperties();
-    }
-
-    /**
-     *
-     */
-    tableSetup() {
-        //todo setup table;
-    }
-
-    /**
-     *
-     */
     addParentFieldValueLookUp() {
         Object.defineProperty(this.$parent,
             this.$name, {
@@ -117,21 +86,11 @@ export default class Field {
         )
     }
 
-    /**
-     *
-     * @return {Field}
-     */
-    setParentProperties() {
-        this.addParentFieldValueLookUp();
-        this.addParentOriginalValueLookUp();
-        this.setFillPropertyOnParent();
-
-        return this;
+    resetDirty() {
+        this.$originalValue = JSON.parse(JSON.stringify(this.$fieldValue));
+        this.$previousValue = JSON.parse(JSON.stringify(this.$fieldValue));
     }
 
-    /**
-     *
-     */
     setFillPropertyOnParent() {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
@@ -149,10 +108,39 @@ export default class Field {
 
     /**
      *
+     * @return {Field}
      */
-    resetDirty() {
-        this.$originalValue = JSON.parse(JSON.stringify(this.$fieldValue));
-        this.$previousValue = JSON.parse(JSON.stringify(this.$fieldValue));
+    setName() {
+        return this;
+    }
+
+    /**
+     *
+     * @return {Field}
+     */
+    setParentProperties() {
+        this.addParentFieldValueLookUp();
+        this.addParentOriginalValueLookUp();
+        this.setFillPropertyOnParent();
+
+        return this;
+    }
+
+    /**
+     *
+     * @param parent
+     * @return {Field}
+     */
+    setup(parent) {
+        this.$parent = parent;
+        return this.setName().setParentProperties();
+    }
+
+    /**
+     *
+     */
+    tableSetup() {
+        //todo setup table;
     }
 
     /**

@@ -27,6 +27,10 @@ export default class HasManyThrough extends Relation {
         return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
     }
 
+    get originalValue() {
+        return this.getValueByParentKey('originalPrimaryKey');
+    }
+
     /**
      *
      * @return {Collection}
@@ -35,12 +39,8 @@ export default class HasManyThrough extends Relation {
         return this.getValueByParentKey('primaryKey');
     }
 
-    /**
-     *
-     * @return {Collection}
-     */
-    get originalValue() {
-        return this.getValueByParentKey('originalPrimaryKey');
+    getRelationalFields() {
+        return [];
     }
 
     /**
@@ -69,18 +69,7 @@ export default class HasManyThrough extends Relation {
         return this;
     }
 
-    /**
-     *
-     */
     tableSetup() {
         this.model.registerIndex(this.indexName);
-    }
-
-    /**
-     *
-     * @return {array}
-     */
-    getRelationalFields() {
-        return [];
     }
 }

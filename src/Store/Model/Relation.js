@@ -19,13 +19,6 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
-    /**
-     *
-     * @param table
-     */
-    tableSetup(table) {
-        table.registerIndex(this.foreignKey);
-    }
 
     /**
      *
@@ -35,9 +28,6 @@ export default class Relation extends Field {
         return [new ForeignKey(this.foreignKey).setRelation(this)];
     }
 
-    /**
-     *
-     */
     setFillPropertyOnParent() {
         Object.defineProperty(
             this.$parent,
@@ -54,5 +44,13 @@ export default class Relation extends Field {
                     });
                 }
             });
+    }
+
+    /**
+     *
+     * @param table
+     */
+    tableSetup(table) {
+        table.registerIndex(this.foreignKey);
     }
 }

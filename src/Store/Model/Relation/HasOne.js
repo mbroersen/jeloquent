@@ -13,26 +13,18 @@ export default class HasOne extends Relation {
         super(model);
     }
 
-    /**
-     *
-     * @return {Model|null}
-     */
-    get value() {
-        return this.getValueByParentKey('primaryKey');
-    }
-
-    /**
-     *
-     * @return {Model|null}
-     */
     get originalValue() {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    /**
-     *
-     * @return {Model|null}
-     */
+    get value() {
+        return this.getValueByParentKey('primaryKey');
+    }
+
+    getRelationalFields() {
+        return [];
+    }
+
     getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,
@@ -47,14 +39,6 @@ export default class HasOne extends Relation {
     setName() {
         this.foreignKey = `${this.$parent.snakeCaseClassName}_id`;
         return this;
-    }
-
-    /**
-     *
-     * @return {*[]}
-     */
-    getRelationalFields() {
-        return [];
     }
 
     /**

@@ -15,26 +15,14 @@ export default class BelongsTo extends Relation {
         super(model, (foreignKey ?? `${model.snakeCaseClassName}_id`), name);
     }
 
-    /**
-     *
-     * @return {Model|null}
-     */
-    get value() {
-        return this.model.find(this.$parent[this.foreignKey]);
-    }
-
-    /**
-     *
-     * @return {Model|null}
-     */
     get originalValue() {
         return this.model.find(this.$parent[`original_${this.foreignKey}`]);
     }
 
-    /**
-     *
-     * @param value
-     */
+    get value() {
+        return this.model.find(this.$parent[this.foreignKey]);
+    }
+
     // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures,@typescript-eslint/no-empty-function
     set value(value) {
 

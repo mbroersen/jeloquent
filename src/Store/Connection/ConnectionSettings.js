@@ -16,16 +16,6 @@ export default class ConnectionSettings {
 
     /**
      *
-     * @param {string} baseUrl
-     * @return {ConnectionSettings}
-     */
-    setBaseUrl(baseUrl) {
-        this.baseUrl = baseUrl ?? 'http://localhost';
-        return this;
-    }
-
-    /**
-     *
      * @return {string}
      */
     getBaseUrl() {
@@ -49,5 +39,15 @@ export default class ConnectionSettings {
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         };
+    }
+
+    /**
+     *
+     * @param {string} baseUrl
+     * @return {ConnectionSettings}
+     */
+    setBaseUrl(baseUrl) {
+        this.baseUrl = baseUrl ?? 'http://localhost';
+        return this;
     }
 }

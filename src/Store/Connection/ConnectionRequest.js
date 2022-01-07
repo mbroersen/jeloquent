@@ -12,31 +12,6 @@ export default class ConnectionRequest {
     /**
      *
      * @param {Model} model
-     * @return {string}
-     */
-    modelApiLocation(model) {
-        return `${this.connectionRequestSettings.getBaseUrl()}/${model.kebabCaseClassName}`;
-    }
-
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<Response>}
-     */
-    post(model) {
-        return fetch(
-            this.modelApiLocation(model),
-            {
-                method: 'POST',
-                body: JSON.stringify(model.jsonStringify()),
-                ...this.connectionRequestSettings.getSettings(),
-            }
-        );
-    }
-
-    /**
-     *
-     * @param {Model} model
      * @return {Promise<Response>}
      */
     all(model) {
@@ -44,6 +19,21 @@ export default class ConnectionRequest {
             `${this.modelApiLocation(model)}`,
             {
                 method: 'GET',
+                ...this.connectionRequestSettings.getSettings(),
+            }
+        );
+    }
+
+    /**
+     *
+     * @param {Model|Collection} model
+     * @return {Promise<Response>}
+     */
+    delete(model) {
+        return fetch(
+            `${this.modelApiLocation(model)}/${model.primaryKey}`,
+            {
+                method: 'DELETE',
                 ...this.connectionRequestSettings.getSettings(),
             }
         );
@@ -62,6 +52,15 @@ export default class ConnectionRequest {
                 ...this.connectionRequestSettings.getSettings(),
             }
         );
+    }
+
+    /**
+     *
+     * @param {Model} model
+     * @return {string}
+     */
+    modelApiLocation(model) {
+        return `${this.connectionRequestSettings.getBaseUrl()}/${model.kebabCaseClassName}`;
     }
 
     /**
@@ -85,12 +84,12 @@ export default class ConnectionRequest {
      * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
-    put(model) {
+    post(model) {
         return fetch(
-            `${this.modelApiLocation(model)}/`,
+            this.modelApiLocation(model),
             {
-                method: 'PUT',
-                body: JSON.stringify(model.jsonStringify()), //todo get dirty field values
+                method: 'POST',
+                body: JSON.stringify(model.jsonStringify()),
                 ...this.connectionRequestSettings.getSettings(),
             }
         );
@@ -101,11 +100,12 @@ export default class ConnectionRequest {
      * @param {Model|Collection} model
      * @return {Promise<Response>}
      */
-    delete(model) {
+    put(model) {
         return fetch(
-            `${this.modelApiLocation(model)}/${model.primaryKey}`,
+            `${this.modelApiLocation(model)}/`,
             {
-                method: 'DELETE',
+                method: 'PUT',
+                body: JSON.stringify(model.jsonStringify()), //todo get dirty field values
                 ...this.connectionRequestSettings.getSettings(),
             }
         );

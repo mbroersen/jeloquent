@@ -5,35 +5,22 @@ import Relation from "../Relation";
  */
 export default class MorphOne extends Relation {
 
-    /**
-     *
-     * @param {Model} model
-     */
     constructor(model) {
         super(model);
     }
 
-    /**
-     *
-     * @return {Model|null}
-     */
-    get value() {
-        return this.getValueByParentKey('primaryKey');
-    }
-
-    /**
-     *
-     * @return {Model|null}
-     */
     get originalValue() {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    /**
-     *
-     * @param {string} parentProperty
-     * @return {Model|null}
-     */
+    get value() {
+        return this.getValueByParentKey('primaryKey');
+    }
+
+    getRelationalFields() {
+        return [];
+    }
+
     getValueByParentKey(parentProperty) {
         const type = this.$parent.className;
         const id = this.$parent[parentProperty];
@@ -45,13 +32,5 @@ export default class MorphOne extends Relation {
         lookUpKey[idTypeName] = type;
 
         return this.model.find(lookUpKey);
-    }
-
-    /**
-     *
-     * @return {*[]}
-     */
-    getRelationalFields() {
-        return [];
     }
 }

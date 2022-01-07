@@ -91,16 +91,19 @@ export default class Index implements IndexInterface {
         return this.index(key);
     }
 
-    public getLookUpValue(model: ModelInterface, fieldName: string): any {
+    public getLookUpValue(model: ModelInterface, fieldName: string): string|number|null {
         const lookUpValue = this.splitIndexNames.get(fieldName);
+        let returnValue = null;
         let indexLookUpValue = model;
         for (const lookUpField of lookUpValue) {
             if (indexLookUpValue[`original_${lookUpField}`] === null) {
                 break;
             }
             indexLookUpValue = indexLookUpValue[`original_${lookUpField}`];
+            returnValue = indexLookUpValue;
         }
-        return indexLookUpValue ?? null;
+
+        return returnValue ?? null;
     }
 
     public register(indexName: string): void {

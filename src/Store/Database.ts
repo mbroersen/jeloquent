@@ -55,11 +55,11 @@ export default class Database implements DatabaseInterface {
         return this.table(table).getIndexByKey(indexName);
     }
 
-    ids(table): Array<string|number> {
+    ids(table: string): Array<string|number> {
         return this.table(table).ids;
     }
 
-    indexes(table): Map<string, Map<string|number, Set<string|number>>>  {
+    indexes(table: string): Map<string, Map<string|number, Set<string|number>>>  {
         return this.table(table).indexes;
     }
 

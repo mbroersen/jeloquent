@@ -15,31 +15,19 @@ export default class ForeignKey extends Field {
         this.foreignKey = name ?? foreignKey;
     }
 
+    get value() {
+        return this.$fieldValue;
+    }
+
+    set value(value) {
+        this.$fieldValue = value;
+    }
+
     setRelation(relation) {
         this.relation = relation;
         return this;
     }
 
-    /**
-     *
-     * @return {null}
-     */
-    get value() {
-        return this.$fieldValue;
-    }
-
-    /**
-     *
-     * @param value
-     */
-    set value(value) {
-        this.$fieldValue = value;
-    }
-
-    /**
-     *
-     * @param table
-     */
     tableSetup(table) {
         table.registerIndex(this.foreignKey);
     }

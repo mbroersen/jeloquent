@@ -29,27 +29,27 @@ export default class LocalStorageAdapter implements Connection.AdapterInterface 
         });
     }
 
-    patch(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve((resolve) => {
-            resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
-        });
-    }
-
-    put(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
-        return Promise.resolve((resolve) => {
-            resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
-        });
-    }
-
     load(model: ModelInterface | CollectionInterface): Promise<Connection.QueueMessage> {
         return Promise.resolve(new Promise((resolve) => {
             resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
         }));
     }
 
+    patch(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
+        return Promise.resolve((resolve) => {
+            resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
+        });
+    }
+
     post (model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
         return new Promise((resolve) => {
             resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
+        });
+    }
+
+    put(model: ModelInterface | CollectionInterface): Promise<QueueMessage> {
+        return Promise.resolve((resolve) => {
+            resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
         });
     }
 
@@ -70,6 +70,4 @@ export default class LocalStorageAdapter implements Connection.AdapterInterface 
     private getTableFromLocalStorage(model) {
         return JSON.parse(localStorage.getItem(this.getLocalStorageKey(model)) ?? '[]');
     }
-
-
 }

@@ -16,36 +16,23 @@ export default class HasMany extends Relation {
         this.localKey = localKey ?? 'id';
     }
 
-    /**
-     *
-     * @return {number}
-     */
     get count() {
         let indexes = globalThis.Store.database().indexes(this.model.className);
         return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
     }
 
-    /**
-     *
-     * @return {Collection}
-     */
-    get value() {
-        return this.getValueByParentKey('primaryKey');
-    }
-
-    /**
-     *
-     * @return {Collection}
-     */
     get originalValue() {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    /**
-     *
-     * @param {string} parentProperty
-     * @return {Collection}
-     */
+    get value() {
+        return this.getValueByParentKey('primaryKey');
+    }
+
+    getRelationalFields() {
+        return [];
+    }
+
     getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,
@@ -53,10 +40,6 @@ export default class HasMany extends Relation {
         );
     }
 
-    /**
-     *
-     * @return {HasMany}
-     */
     setName() {
         const parentClassName = this.$parent.snakeCaseClassName;
         const modelClassName = this.model.snakeCaseClassName;
@@ -66,18 +49,6 @@ export default class HasMany extends Relation {
         return this;
     }
 
-    /**
-     *
-     * @return {*[]}
-     */
-    getRelationalFields() {
-        return [];
-    }
-
-    /**
-     *
-     * @return {HasMany}
-     */
     setParentProperties() {
         super.setParentProperties();
 

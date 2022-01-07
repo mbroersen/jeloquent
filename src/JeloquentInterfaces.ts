@@ -100,7 +100,7 @@ export interface DatabaseInterface {
     all(tableName:string): CollectionInterface;
     select(tableName:string, id:number|string): ModelInterface;
 
-
+    indexes(table:string): Map<string, Map<string|number, Set<string|number>>>;
 }
 
 

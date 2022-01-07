@@ -21,56 +21,10 @@ export default class Connection {
         this.paused = false;
     }
 
-    /**
-     *
-     */
-    processQueue() {
-        const nextMessage = (this.updateQueue ?? []).shift();
-        if (!nextMessage) {
-            return;
-        }
-        nextMessage.execute();
-        setTimeout(() => {
-            this.processQueue()
-        }, 1);
-    }
-
-    /**
-     *
-     * @param queueMessage
-     */
     addToQueue(...queueMessage) {
         this.updateQueue.push(...queueMessage);
     }
 
-    /**
-     *
-     */
-    pause() {
-        this.paused = true;
-    }
-
-    /**
-     *
-     */
-    resume() {
-        this.paused = false;
-    }
-
-    /**
-     * @deprecated
-     * @param {Model} model
-     * @return {Promise<unknown>}
-     */
-    load(model) {
-        return this.all(model)
-    }
-
-    /**
-     *
-     * @param {Model} model
-     * @return {Promise<unknown>}
-     */
     all(model) {
         return new Promise((resolve) => {
             this.adapter.all(model)
@@ -84,65 +38,6 @@ export default class Connection {
         });
     }
 
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<unknown>}
-     */
-    post(model) {
-        return new Promise((resolve) => {
-            this.adapter.post(model)
-                .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
-                });
-        });
-    }
-
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<unknown>}
-     */
-    put(model) {
-        return new Promise((resolve) => {
-            this.adapter.put(model)
-                .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
-                });
-        });
-    }
-
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<unknown>}
-     */
-    patch(model) {
-        return new Promise((resolve) => {
-            this.adapter.patch(model)
-                .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
-                });
-        });
-    }
-
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<unknown>}
-     */
     delete(model) {
         return new Promise((resolve) => {
             this.adapter.delete(model)
@@ -156,4 +51,68 @@ export default class Connection {
         });
     }
 
+    /**
+     * @deprecated
+     */
+    load(model) {
+        return this.all(model)
+    }
+
+    patch(model) {
+        return new Promise((resolve) => {
+            this.adapter.patch(model)
+                .then((queueMessage) => {
+                    queueMessage.addCallback(resolve);
+                    this.addToQueue(queueMessage);
+                    setTimeout(() => {
+                        this.processQueue()
+                    }, 1);
+                });
+        });
+    }
+
+    pause() {
+        this.paused = true;
+    }
+
+    post(model) {
+        return new Promise((resolve) => {
+            this.adapter.post(model)
+                .then((queueMessage) => {
+                    queueMessage.addCallback(resolve);
+                    this.addToQueue(queueMessage);
+                    setTimeout(() => {
+                        this.processQueue()
+                    }, 1);
+                });
+        });
+    }
+
+    processQueue() {
+        const nextMessage = (this.updateQueue ?? []).shift();
+        if (!nextMessage) {
+            return;
+        }
+        nextMessage.execute();
+        setTimeout(() => {
+            this.processQueue()
+        }, 1);
+    }
+
+    put(model) {
+        return new Promise((resolve) => {
+            this.adapter.put(model)
+                .then((queueMessage) => {
+                    queueMessage.addCallback(resolve);
+                    this.addToQueue(queueMessage);
+                    setTimeout(() => {
+                        this.processQueue()
+                    }, 1);
+                });
+        });
+    }
+
+    resume() {
+        this.paused = false;
+    }
 }
