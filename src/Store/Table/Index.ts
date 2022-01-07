@@ -2,39 +2,33 @@ import {ForeignKey} from "../Model";
 import {IndexInterface, ModelInterface} from "../../JeloquentInterfaces";
 import Field from "../Model/Field";
 
-/**
- *
- */
 export default class Index implements IndexInterface {
 
     private _indexes: Map<string, Map<string|number, Set<string|number>>>;
 
-    indexedFields: Set<string>;
+    private indexedFields: Set<string>;
 
-    splitIndexNames: Map<string, Array<string>>
+    private splitIndexNames: Map<string, Array<string>>;
 
-    /**
-     *
-     */
     constructor() {
         this._indexes = new Map();
         this.indexedFields = new Set();
         this.splitIndexNames = new Map();
     }
 
-    private index(index: string): Map<string|number, Set<string|number>> {
-        return this._indexes.get(index);
+    get indexes(): Map<string, Map<string|number, Set<string|number>>> {
+        return this._indexes;
     }
 
-    private indexLookUpKey(index: string, key: string): Set<string|number> {
-        return this.index(index).get(key);
+    static add(model: ModelInterface, foreignKeyField: Field): void {
+        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
     }
 
     /**
      * @deprecated
      */
-    static registerIndex(model, indexName) {
-        this.register(model, indexName)
+    static addIndex(model: ModelInterface, foreignKeyField:Field): void {
+        this.add(model, foreignKeyField);
     }
 
     static register(model: ModelInterface, indexName: string): void {
@@ -44,69 +38,29 @@ export default class Index implements IndexInterface {
     /**
      * @deprecated
      */
-    static addIndex(model, foreignKeyField) {
-        this.add(model, foreignKeyField);
+    static registerIndex(model: ModelInterface, indexName: string): void {
+        this.register(model, indexName)
     }
 
-    static add(model:ModelInterface, foreignKeyField: Field): void {
-        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
+    static remove(model: ModelInterface, foreignKeyField: Field): void {
+        globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
     }
 
     /**
      * @deprecated
      */
-    static removeIndex(model, foreignKeyField) {
+    static removeIndex(model: ModelInterface, foreignKeyField: Field): void {
         this.remove(model, foreignKeyField);
     }
 
-    static remove(model:ModelInterface, foreignKeyField: Field): void {
-        globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
-    }
-
-    /**
-     *
-     * @param {Model} model
-     */
-    static removeTmpIdFromIndex(model) {
+    static removeTmpIdFromIndex(model: ModelInterface) {
         const className = model.className;
         model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
             globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
         });
     }
 
-    get indexes(): Map<string, Map<string|number, Set<string|number>>> {
-        return this._indexes;
-    }
-
-    /**
-     *
-     * @param key
-     * @return {any}
-     */
-    getIndexByKey(key: string): Map<string|number, Set<string|number>> {
-        return this.index(key);
-    }
-
-    /** @deprecated **/
-    registerIndex(indexName) {
-        this.register(indexName);
-    }
-
-    register(indexName: string): void {
-        if (!this._indexes.has(indexName)) {
-            this.indexedFields.add(indexName);
-            this.splitIndexNames.set(indexName, indexName.split('.'));
-            this._indexes.set(indexName, new Map());
-        }
-    }
-
-    /**
-     *
-     * @param indexName
-     * @param lookUpKey
-     * @param id
-     */
-    addValue(indexName, lookUpKey, id): void {
+    public addValue(indexName: string, lookUpKey:string|number, id:string|number): void {
         if (!this._indexes.has(indexName) || id === null) {
             return;
         }
@@ -123,42 +77,21 @@ export default class Index implements IndexInterface {
         keys.add(id);
     }
 
-    /**
-     *
-     * @param {String} indexName
-     * @param lookUpKey
-     * @param id
-     */
-    removeValue(indexName, lookUpKey, id) {
-        this.indexLookUpKey(indexName, lookUpKey).delete(id);
+    public addValueByModel(model: ModelInterface) {
+        for (const [indexName] of this._indexes) {
+            this.addValue(
+                indexName,
+                this.getLookUpValue(model, indexName),
+                model.primaryKey
+            );
+        }
     }
 
-    /**
-     *
-     * @param {string} indexName
-     * @param lookUpKey
-     * @param id
-     */
-    registerLookUpKey(indexName, lookUpKey, id) {
-        this.index(indexName).set(lookUpKey, new Set([id]));
+    public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
+        return this.index(key);
     }
 
-    /**
-     *
-     * @param {string} indexName
-     * @param lookUpKey
-     */
-    unregisterLookUpKey(indexName, lookUpKey) {
-        this.index(indexName).delete(lookUpKey);
-    }
-
-    /**
-     *
-     * @param {Model} model
-     * @param {string} fieldName
-     * @return {*|null}
-     */
-    getLookUpValue(model, fieldName: string) {
+    public getLookUpValue(model: ModelInterface, fieldName: string): any {
         const lookUpValue = this.splitIndexNames.get(fieldName);
         let indexLookUpValue = model;
         for (const lookUpField of lookUpValue) {
@@ -170,21 +103,30 @@ export default class Index implements IndexInterface {
         return indexLookUpValue ?? null;
     }
 
-    addValueByModel(model: ModelInterface) {
-        for (const [indexName] of this._indexes) {
-            this.addValue(
-                indexName,
-                this.getLookUpValue(model, indexName),
-                model.primaryKey
-            );
+    public register(indexName: string): void {
+        if (!this._indexes.has(indexName)) {
+            this.indexedFields.add(indexName);
+            this.splitIndexNames.set(indexName, indexName.split('.'));
+            this._indexes.set(indexName, new Map());
         }
     }
 
     /**
-     *
-     * @param {Model} model
+     * @deprecated
      */
-    removeValueByModel(model) {
+    public registerIndex(indexName: string): void {
+        this.register(indexName);
+    }
+
+    public registerLookUpKey(indexName, lookUpKey, id) {
+        this.index(indexName).set(lookUpKey, new Set([id]));
+    }
+
+    public removeValue(indexName: string, lookUpKey:string|number, id:string|number): void {
+        this.indexLookUpKey(indexName, lookUpKey).delete(id);
+    }
+
+    public removeValueByModel(model: ModelInterface): void {
         for (const [indexName] of this._indexes) {
             this.removeValue(
                 indexName,
@@ -194,12 +136,21 @@ export default class Index implements IndexInterface {
         }
     }
 
-    /**
-     *
-     */
-    truncate() {
+    public truncate(): void {
         for (const key in this._indexes) {
             this.index(key).clear();
         }
+    }
+
+    public unregisterLookUpKey(indexName:string, lookUpKey:string|number): void {
+        this.index(indexName).delete(lookUpKey);
+    }
+
+    private index(index: string): Map<string|number, Set<string|number>> {
+        return this._indexes.get(index);
+    }
+
+    private indexLookUpKey(index: string, key: string|number): Set<string|number> {
+        return this.index(index).get(key);
     }
 }

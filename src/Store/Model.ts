@@ -10,58 +10,66 @@ import Field from "./Model/Field.js";
 import Relation from "./Model/Relation.js";
 import ForeignKey from "./Model/Field/ForeignKey.js";
 import Index from "./Table/Index";
-import {ModelInterface} from "../JeloquentInterfaces";
+import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
 
-/**
- *
- */
 class Model implements ModelInterface {
+
+    private static kebabCaseName: string;
+
+    private static snakeCaseName: string;
 
     _tmpId: string;
 
-    primaryFields: Array<Field>;
-
-    originalFields: Array<Field>;
+    ['constructor']: ModelStaticInterface;
 
     numberOfFields: number;
 
-    ['constructor']: typeof Model;
+    originalFields: Array<Field>;
 
-    /**
-     *
-     * @param fields
-     */
+    primaryFields: Array<Field>;
+
     constructor(fields: Array<Field> = []) {
         this.setFields(this.addRelationFields(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
     }
 
-    /**
-     *
-     * @return {*}
-     */
+    static get className() : string {
+        return this.name;
+    }
+
+    static get kebabCaseClassName(): string {
+        if (! this.kebabCaseName) {
+            this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
+        }
+
+        return this.kebabCaseName;
+    }
+
+    static get snakeCaseClassName(): string {
+        if (!this.snakeCaseName) {
+            this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
+        }
+
+        return this.snakeCaseName;
+    }
+
     get className(): string {
         return this.constructor.className;
     }
 
-    /**
-     *
-     * @return {string|null}
-     */
-    get primaryKey() {
-        return this.primaryFields.reduce((toValue, field, i) => {
-            if (i > 0) {
-                return `${toValue}-${field.value}`;
-            }
-            return field.value;
-        }, '') ?? this._tmpId ?? null;
+    get dirtyFieldNames() {
+        return this.dirtyFields.map(field => field.$name);
     }
 
-    /**
-     *
-     * @return {string|null}
-     */
+    get dirtyFields() {
+        return this.originalFields.filter(field => field.isDirty);
+    }
+
+    get kebabCaseClassName(): string {
+        return this.constructor.kebabCaseClassName;
+    }
+
     get originalPrimaryKey() {
         return this.primaryFields.reduce((toValue, field, i) => {
             if (i > 0) {
@@ -71,19 +79,6 @@ class Model implements ModelInterface {
         }, '') ?? this._tmpId ?? null;
     }
 
-
-    /**
-     *
-     * @return {(string|*)[]}
-     */
-    get primaryKeyName() {
-        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
-    }
-
-    /**
-     *
-     * @return {T}
-     */
     get originalValues() {
         return this.originalFields.reduce((originalValues, field) => {
             if (field.originalValue !== undefined) {
@@ -93,77 +88,50 @@ class Model implements ModelInterface {
         }, {});
     }
 
-    /**
-     *
-     * @return {T[]}
-     */
-    get dirtyFields() {
-        return this.originalFields.filter(field => field.isDirty);
+    get primaryKey() {
+        return this.primaryFields.reduce((toValue, field, i) => {
+            if (i > 0) {
+                return `${toValue}-${field.value}`;
+            }
+            return field.value;
+        }, '') ?? this._tmpId ?? null;
     }
 
-    /**
-     *
-     * @return {*}
-     */
-    get dirtyFieldNames() {
-        return this.dirtyFields.map(field => field.$name);
+    get primaryKeyName(): Array<string> {
+        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
     }
 
-    /**
-     *
-     * @return {string}
-     */
     get snakeCaseClassName(): string {
         return this.constructor.snakeCaseClassName;
     }
 
-    /**
-     *
-     * @return {string}
-     */
-    get kebabCaseClassName(): string {
-        return this.constructor.kebabCaseClassName;
+    static aSyncInsert(data: object): Promise<Collection<ModelInterface>> {
+        return new Promise((resolve) => {
+            requestAnimationFrame(() => {
+                resolve(this.insert(data));
+            })
+        });
     }
 
-    static snakeCaseName: string;
-    static kebabCaseName: string;
-
-    /**
-     *
-     * @return {string}
-     */
-    static get snakeCaseClassName(): string {
-        if (!this.snakeCaseName) {
-            this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
-        }
-
-        return this.snakeCaseName;
+    static all(): Collection<ModelInterface> {
+        return globalThis.Store.database().all(this.className);
     }
 
-    /**
-     *
-     * @return {string}
-     */
-    static get kebabCaseClassName(): string {
-        if (! this.kebabCaseName) {
-            this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
-        }
-
-        return this.kebabCaseName;
+    static delete(id): void {
+        globalThis.Store.database().delete(this.className, id);
     }
 
-    /**
-     *
-     * @return {string}
-     */
-    static get className() : string {
-        return this.name;
+    static find(id) {
+        return globalThis.Store.database().find(this.className, id);
     }
 
-    /**
-     *
-     * @return {Model}
-     */
+    static getIndexByKey(indexName) {
+        const className = this.className;
+        const currentDatabase = globalThis.Store.database();
+
+        return currentDatabase.getIndexByKey(className, indexName);
+    }
+
     static getInstance(): ModelInterface {
         const original = globalThis.Store.classInstances[this.className] ?? (globalThis.Store.classInstances[this.className] = new this())
         const fieldsClone = original.originalFields.reduce((obj, field) => {
@@ -174,46 +142,12 @@ class Model implements ModelInterface {
         return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
     }
 
-
-    /**
-     *
-     * @param name
-     */
-    static registerIndex(name) {
-        Index.register(this.getInstance(), name);
+    static ids() {
+        return globalThis.Store.database().ids(this.className);
     }
 
-    /**
-     *
-     * @param indexName
-     * @return {*}
-     */
-    static getIndexByKey(indexName) {
-        const className = this.className;
-        const currentDatabase = globalThis.Store.database();
 
-        return currentDatabase.getIndexByKey(className, indexName);
-    }
-
-    /**
-     *
-     * @param data
-     * @return {Promise<unknown>}
-     */
-    static aSyncInsert(data) {
-        return new Promise((resolve) => {
-            requestAnimationFrame(() => {
-                resolve(this.insert(data));
-            })
-        });
-    }
-
-    /**
-     *
-     * @param data
-     * @return {*|*[]}
-     */
-    static insert(data: object|Array<object>): Collection {
+    static insert(data: object|Array<object>): Collection<ModelInterface> {
         const modelsData = Array.isArray(data) ? data : [data];
         const length = modelsData.length;
         const models = new Collection();
@@ -228,42 +162,10 @@ class Model implements ModelInterface {
         return models;
     }
 
-    /**
-     *
-     * @param data
-     * @return {Model}
-     */
-    static update(data: object) {
-        const model = new this();
-        model.fill(data);
-        globalThis.Store.database().update(this.className, model);
-        model.fillRelations(data);
-
-        return model;
+    static registerIndex(name) {
+        Index.register(this.getInstance(), name);
     }
 
-    /**
-     *
-     * @param id
-     */
-    static delete(id) {
-        globalThis.Store.database().delete(this.className, id);
-    }
-
-    /**
-     *
-     * @param id
-     * @return {*}
-     */
-    static find(id) {
-        return globalThis.Store.database().find(this.className, id);
-    }
-
-    /**
-     *
-     * @param id
-     * @return {*}
-     */
     static select(id) {
         try {
             return globalThis.Store.database().select(this.className, id);
@@ -272,100 +174,31 @@ class Model implements ModelInterface {
         }
     }
 
-    /**
-     *
-     * @return {*}
-     */
-    static all() {
-        return globalThis.Store.database().all(this.className);
+    static update(data: object): ModelInterface {
+        const model = new this();
+        model.fill(data);
+        globalThis.Store.database().update(this.className, model);
+        model.fillRelations(data);
+
+        return model;
     }
 
-    /**
-     *
-     * @return {*[]|*}
-     */
-    static ids() {
-        return globalThis.Store.database().ids(this.className);
-    }
-
-    /**
-     *
-     * @param table
-     */
-    tableSetup(table) {
-        for (let i = 0; i < this.numberOfFields; i++) {
-            if (this.originalFields[i] instanceof ForeignKey) {
-                this.originalFields[i].tableSetup(table);
+    addRelationFields(fields) {
+        const fieldList = [...fields];
+        fields.forEach((field, i) => {
+            if (field instanceof Relation) {
+                fieldList.splice(i, 0, ...field.getRelationalFields());
             }
+        });
 
-            if (this.originalFields[i] instanceof HasManyThrough) {
-                this.originalFields[i].tableSetup(table);
-            }
-        }
+        this.numberOfFields = fieldList.length;
+        return fieldList;
     }
 
-    /**
-     *
-     * @param fieldName
-     * @return {boolean|*}
-     */
-    isDirty(fieldName) {
-        if (fieldName) {
-            return this.dirtyFieldNames.includes(fieldName);
-        }
-        return this.dirtyFields.length > 0;
-    }
-
-    /**
-     *
-     */
-    resetDirty() {
-        this.originalFields.filter((field) => !(field instanceof Relation)).forEach(field => {
-            field.resetDirty();
-        })
-    }
-
-    /**
-     *
-     */
     delete() {
         this.constructor.delete(this.primaryKey);
     }
 
-    /**
-     *
-     */
-    save() {
-        const className = this.className;
-        const currentDatabase = globalThis.Store.database();
-        const tableIds = currentDatabase.ids(className);
-
-        if (this.primaryKey[0] !== '_' && tableIds.includes(this._tmpId)) {
-            //todo remove indexes for foreignKey
-            //                                team_id  this.team_id
-            Index.removeTmpIdFromIndex(this);
-            currentDatabase.delete(className, this._tmpId);
-        }
-
-        if (tableIds.includes(this.primaryKey)) {
-            currentDatabase.update(className, this);
-            return;
-        }
-        currentDatabase.insert(className, this);
-    }
-
-    /**
-     *
-     * @param name
-     */
-    registerIndex(name) {
-        Index.register(this, name);
-    }
-
-    /**
-     *
-     * @param data
-     */
     fill(data) {
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
@@ -389,28 +222,46 @@ class Model implements ModelInterface {
         }
     }
 
-    /**
-     *
-     * @param fields
-     * @return {*[]}
-     */
-    addRelationFields(fields) {
-        const fieldList = [...fields];
-        fields.forEach((field, i) => {
-            if (field instanceof Relation) {
-                fieldList.splice(i, 0, ...field.getRelationalFields());
-            }
-        });
-
-        this.numberOfFields = fieldList.length;
-        return fieldList;
+    isDirty(fieldName) {
+        if (fieldName) {
+            return this.dirtyFieldNames.includes(fieldName);
+        }
+        return this.dirtyFields.length > 0;
     }
 
-    /**
-     *
-     * @param fields
-     * @return {Model}
-     */
+    jsonStringify(): string {
+        return JSON.stringify(this.toObject());
+    }
+
+    registerIndex(name) {
+        Index.register(this, name);
+    }
+
+    resetDirty() {
+        this.originalFields.filter((field) => !(field instanceof Relation)).forEach(field => {
+            field.resetDirty();
+        })
+    }
+
+    save() {
+        const className = this.className;
+        const currentDatabase = globalThis.Store.database();
+        const tableIds = currentDatabase.ids(className);
+
+        if (this.primaryKey[0] !== '_' && tableIds.includes(this._tmpId)) {
+            //todo remove indexes for foreignKey
+            //                                team_id  this.team_id
+            Index.removeTmpIdFromIndex(this);
+            currentDatabase.delete(className, this._tmpId);
+        }
+
+        if (tableIds.includes(this.primaryKey)) {
+            currentDatabase.update(className, this);
+            return;
+        }
+        currentDatabase.insert(className, this);
+    }
+
     setFields(fields) {
         this.originalFields = [...fields];
         this.numberOfFields = this.originalFields.length;
@@ -434,11 +285,16 @@ class Model implements ModelInterface {
         return this;
     }
 
-    /**
-     * @return {string}
-     */
-    jsonStringify(): string {
-        return JSON.stringify(this.toObject());
+    tableSetup(table) {
+        for (let i = 0; i < this.numberOfFields; i++) {
+            if (this.originalFields[i] instanceof ForeignKey) {
+                this.originalFields[i].tableSetup(table);
+            }
+
+            if (this.originalFields[i] instanceof HasManyThrough) {
+                this.originalFields[i].tableSetup(table);
+            }
+        }
     }
 
     toJSON(): object {

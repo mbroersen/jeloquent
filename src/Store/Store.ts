@@ -13,13 +13,13 @@ class Store implements StoreInterface {
 
     numberOfModelCreated: number;
 
-    private useDatabase: string;
-
-    private useConnectionName: string;
-
     private connections: Map<string, ConnectionInterface>;
 
     private databases: Map<string, DatabaseInterface>;
+
+    private useConnectionName: string;
+
+    private useDatabase: string;
 
     constructor() {
         this.classInstances = {};
@@ -31,11 +31,6 @@ class Store implements StoreInterface {
         globalThis.Store = this;
     }
 
-    use(storeName = 'default'): void {
-        this.useDatabase = storeName;
-        this.databases.get(this.useDatabase)?.setIndexes();
-    }
-
     add(database: DatabaseInterface): void {
         this.databases.set(database.name, database);
     }
@@ -44,23 +39,28 @@ class Store implements StoreInterface {
         this.connections.set(name, connection);
     }
 
-    /**
-     * @deprecated
-     */
-    useConnections(name:string): void {
-        this.useConnection(name);
+    connection(): ConnectionInterface|null {
+        return this.connections.get(this.useConnectionName) ?? null;
+    }
+
+    database(): DatabaseInterface|null {
+        return this.databases.get(this.useDatabase) ?? null;
+    }
+
+    use(storeName = 'default'): void {
+        this.useDatabase = storeName;
+        this.databases.get(this.useDatabase)?.setIndexes();
     }
 
     useConnection(name = 'default'): void {
         this.useConnectionName = name;
     }
 
-    database(): Database|null {
-        return this.databases.get(this.useDatabase) ?? null;
-    }
-
-    connection(): Connection|null {
-        return this.connections.get(this.useConnectionName) ?? null;
+    /**
+     * @deprecated
+     */
+    useConnections(name:string): void {
+        this.useConnection(name);
     }
 }
 

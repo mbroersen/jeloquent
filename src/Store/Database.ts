@@ -1,11 +1,11 @@
 
-import {DatabaseInterface, ModelInterface} from "../JeloquentInterfaces";
+import {DatabaseInterface, ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
 import Table from "./Table";
 
 export default class Database implements DatabaseInterface {
 
-    _name: string;
+    private _name: string;
 
     private _tables: Map<string, Table>;
 
@@ -14,13 +14,12 @@ export default class Database implements DatabaseInterface {
      * @param name
      * @param models
      */
-    constructor(name, models:Array<ModelInterface>) {
+    constructor(name, models:Array<ModelStaticInterface>) {
         this._name = name;
         this._tables = new Map();
 
-        models.forEach((model) => {
-            const table = new Table(model);
-            this._tables.set(table.name, table);
+        models.forEach((model: ModelStaticInterface) => {
+            this.register(model);
         });
     }
 
@@ -28,29 +27,8 @@ export default class Database implements DatabaseInterface {
         return this._name;
     }
 
-    register(model: ModelInterface) {
-        const table = new Table(model);
-        this._tables.set(table.name, table);
-    }
-
-    private table(name:string): Table {
-        return this._tables.get(name);
-    }
-
-    setIndexes(): void {
-        this._tables.forEach((table) => {
-            table.setupIndexes();
-        });
-    }
-
-    showTables(): IterableIterator<string> {
-        return this._tables.keys();
-    }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ids(table): Array<string|number> {
-        return this.table(table).ids;
+    addIndex(table:string, indexName:string, lookUpKey:string, id:string|number): void {
+        this.table(table).addIndex(indexName, lookUpKey, id)
     }
 
     all(table): Collection {
@@ -61,62 +39,36 @@ export default class Database implements DatabaseInterface {
         return this.table(table).allModels();
     }
 
-    registerIndex(table: string, name: string): void {
-        this.table(table).registerIndex(name);
-    }
-
-    addIndex(table:string, indexName:string, lookUpKey:string, id:string|number): void {
-        this.table(table).addIndex(indexName, lookUpKey, id)
-    }
-
-    removeIndex(table: string, indexName: string, lookUpKey: string, id:string|number): void {
-        this.table(table).removeIndex(indexName, lookUpKey, id);
-    }
-
-    getIndexByKey(table: string, indexName: string): Map<string|number, Set<string>> {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return this.table(table).getIndexByKey(indexName);
-    }
-
-    indexes(table): Map<string, Map<string, Set<string>>>  {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return this.table(table).indexes;
-    }
-
-    insert(table: string, model: ModelInterface) {
-        return this.table(table).insert(model);
-    }
-
-    update(table: string, model: ModelInterface) {
-        return this.table(table).update(model);
-    }
-
-    find(table:string, id:number|string): Collection<ModelInterface> {
-        return this.table(table).find(id);
-    }
-
-    select(table: string, id:number|string) {
-        return this.table(table).select(id);
-    }
-
-    delete(table:string, id:number|string) {
-        return this.table(table).delete(id);
+    delete(table:string, id:number|string): void {
+        this.table(table).delete(id);
     }
 
     drop(table: string): void {
         this._tables.delete(table);
     }
 
-    truncate(table: string): void {
-        this.table(table).truncate();
+    find(table:string, id:number|string|Array<string|number>): Collection<ModelInterface>|ModelInterface|null {
+        return this.table(table).find(id);
+    }
+
+    getIndexByKey(table: string, indexName: string): Map<string|number, Set<string|number>> {
+        return this.table(table).getIndexByKey(indexName);
+    }
+
+    ids(table): Array<string|number> {
+        return this.table(table).ids;
+    }
+
+    indexes(table): Map<string, Map<string|number, Set<string|number>>>  {
+        return this.table(table).indexes;
+    }
+
+    insert(table: string, model: ModelInterface): void {
+        this.table(table).insert(model);
     }
 
     /**
-     * Todo Build better way of parsing queries;
-     * @param sql
-     * @returns {null|*}
+     * @todo Build better way of parsing queries;
      */
     query(sql) {
         const sqlParts = sql.match(/^((SELECT)|(INSERT)|(DELETE))\s+(.*)\s+FROM\s+([^\s]+)(\s+WHERE\s+([^\s]+)\s+(=)\s+([^\s+]))?((\s+)|;)?$/i);
@@ -140,5 +92,44 @@ export default class Database implements DatabaseInterface {
         }
 
         return null;
+    }
+
+    register(model: ModelStaticInterface) {
+        const table = new Table(model);
+        this._tables.set(table.name, table);
+    }
+
+    registerIndex(table: string, name: string): void {
+        this.table(table).registerIndex(name);
+    }
+
+    removeIndex(table: string, indexName: string, lookUpKey: string, id:string|number): void {
+        this.table(table).removeIndex(indexName, lookUpKey, id);
+    }
+
+    select(table: string, id:number|string): ModelInterface {
+        return this.table(table).select(id);
+    }
+
+    setIndexes(): void {
+        this._tables.forEach((table) => {
+            table.setupIndexes();
+        });
+    }
+
+    showTables(): Array<string> {
+        return [...this._tables.keys()];
+    }
+
+    truncate(table: string): void {
+        this.table(table).truncate();
+    }
+
+    update(table: string, model: ModelInterface): void {
+        this.table(table).update(model);
+    }
+
+    private table(name:string): Table {
+        return this._tables.get(name);
     }
 }

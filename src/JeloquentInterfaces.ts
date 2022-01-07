@@ -1,18 +1,42 @@
 import Collection from "./Store/Collection";
 import {Model} from "./Store/Model";
 import Table from "./Store/Table";
-import Index from "./Store/Table/Index";
+import Field from "./Store/Model/Field";
+
+
+export interface ModelStaticInterface {
+
+    get className(): string;
+    get snakeCaseClassName(): string;
+    get kebabCaseClassName(): string;
+
+    all(): Collection<ModelInterface>;
+    aSyncInsert(data: object): Promise<Collection<ModelInterface>>;
+    delete(id: string|number);
+    find(id: string|number|Array<string|number>):Collection<ModelInterface>|ModelInterface|null;
+    getIndexByKey(indexName: string);
+    getInstance(): ModelInterface;
+    insert(data: object): ModelInterface;
+    registerIndex(): void;
+    update(data: object): ModelInterface;
+}
 
 
 export interface ModelInterface {
+    _tmpId: string;
+
     fill(data: object): void;
     fillRelations(data: object): void;
 
     tableSetup(table: Table):void;
 
-    get primaryKey(): string|null;
-
     get className(): string;
+    get dirtyFields():Array<Field>
+
+    get primaryKey(): string|number|null;
+    get primaryKeyName(): Array<string>;
+
+
     get kebabCaseClassName(): string;
     get snakeCaseClassName(): string;
 
@@ -24,9 +48,10 @@ export interface Indexable {
     setupIndexes(): void;
     addIndex(indexName: string, lookUpKey: string, id: string|number): void;
     removeIndex(indexName: string, lookUpKey: string, id: string|number):void;
-    getIndexByKey(indexName: string): Map<string, Set<string>>
+    getIndexByKey(indexName: string): Map<string|number, Set<string|number>>
     registerIndex(indexName:string): void;
-    get indexes(): Map<string, Map<string, Set<string>>>;
+    get indexes(): Map<string, Map<string|number, Set<string|number>>>;
+    get models(): Map<string|number, ModelInterface>
 }
 
 export interface Truncateable {
@@ -43,15 +68,10 @@ export interface ApiInterface {
 }
 
 export interface TableInterface extends ApiInterface, Indexable, Truncateable {
-    model:ModelInterface;
     name:string;
-    index: Index;
     primaryKeyFieldNames: Array<string>;
-    models: Map<string|number, ModelInterface>;
 
     get ids(): Array<string|number>;
-
-    allModels(): Map<string | number, ModelInterface>;
 }
 
 
@@ -69,8 +89,17 @@ export interface StoreInterface {
 export interface DatabaseInterface {
     get name(): string;
 
+
     setIndexes():void;
-    ids(tableName:string): Array<string>;
+
+    ids(tableName:string): Array<string|number>;
+    insert(tableName:string, model: ModelInterface): void;
+    update(tableName:string, model: ModelInterface): void;
+    delete(tableName:string, id:number|string);
+    find(tableName:string, id:number|string|Array<string|number>):Collection<ModelInterface>|Model|null;
+    all(tableName:string): CollectionInterface;
+    select(tableName:string, id:number|string): ModelInterface;
+
 
 }
 

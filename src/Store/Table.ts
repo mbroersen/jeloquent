@@ -1,75 +1,49 @@
 import {Model} from "./Model.js";
 import Collection from "./Collection.js";
 import Index from "./Table/Index";
-import {TableInterface, ModelInterface} from "../JeloquentInterfaces";
+import {TableInterface, ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 
 /**
  *
  */
 export default class Table implements TableInterface {
 
-    model: ModelInterface;
-
     name: string;
-
-    index: Index;
 
     primaryKeyFieldNames: Array<string>;
 
-    models: Map<string|number, ModelInterface>;
+    private _index: Index;
 
-    constructor (model: ModelInterface) {
+    private _model: ModelInterface;
+
+    private _models: Map<string|number, ModelInterface>;
+
+    constructor (model: ModelStaticInterface) {
         this.setup(model.getInstance());
     }
 
-    static make(model: ModelInterface): Table {
+    get ids():Array<string|number> {
+        return [...this._models.keys()];
+    }
+
+    get indexes(): Map<string, Map<string|number, Set<string|number>>> {
+        return this._index.indexes;
+    }
+
+    get models(): Map<string|number, ModelInterface> {
+        return this._models;
+    }
+
+    static make(model: ModelStaticInterface): Table {
         return new Table(model);
     }
 
-    private setup(model: ModelInterface) {
-        this.model = model;
-        this.name = model.className;
-        this.models = new Map();
-        this.index = new Index();
-        this.primaryKeyFieldNames = model.primaryKeyName;
-    }
-
-    public setupIndexes(): void {
-        this.model.tableSetup(this);
-    }
-
-    public registerIndex(indexName:string): void {
-        this.index.register(indexName);
-    }
-
     public addIndex(indexName:string, lookUpKey:string, id:string|number): void {
-        this.index.addValue(indexName, lookUpKey, id);
-    }
-
-    public removeIndex(indexName:string, lookUpKey:string, id:string|number): void {
-        this.index.removeValue(indexName, lookUpKey, id)
-    }
-
-    //@ts-ignore
-    public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
-        return this.index.getIndexByKey(key);
-    }
-
-    // @ts-ignore
-    get indexes(): Map<string, Map<string | number, Set<string | number>>> {
-        return this.index.indexes;
-    }
-
-    public allModels(): Map<string | number, ModelInterface> {
-        return this.models;
-    }
-
-    public get ids():Array<string|number> {
-        return [...this.models.keys()];
+        this._index.addValue(indexName, lookUpKey, id);
     }
 
     public all(): Collection {
-        const values = [...this.models.values()];
+        const values = [...this._models.values()];
         const numberOfValues = values.length;
         const collection = new Collection();
         for (let i = 0; i < numberOfValues; i += 10000) {
@@ -79,59 +53,49 @@ export default class Table implements TableInterface {
         return collection;
     }
 
-    public insert(model: ModelInterface): void {
-        if (this.models.has(model.primaryKey)) {
-            throw new Error('Record already exists');
-        }
-
-        if (!(model instanceof Model)) {
-            throw new Error('Record should be instance of model');
-        }
-
-        model.resetDirty();
-
-        if (model.primaryKey != null) {
-            this.models.set(model.primaryKey, model);
-        }
-
-        this.index.addValueByModel(model);
-    }
-
     /**
-     *
-     * @param model
+     * @deprecated
      */
-    public update(model: ModelInterface): void {
-        if (!this.models.has(model.primaryKey)) {
-            throw new Error('Record doesn\'t exists');
-        }
-
-        if (!(model instanceof Model)) {
-            throw new Error('Record should be instance of model');
-        }
-
-        this.index.removeValueByModel(model);
-
-        model.resetDirty();
-
-        this.index.addValueByModel(model);
-
-        this.models.set(model.primaryKey, model);
+    public allModels(): Map<string | number, ModelInterface> {
+        return this.models;
     }
 
     public delete(id:string|number): void {
-        if (!this.models.has(id)) {
+        if (!this._models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
 
-        this.index.removeValueByModel(this.find(id));
+        this._index.removeValueByModel(this.find(id));
 
-        this.models.delete(id);
+        this._models.delete(id);
     }
 
-    public truncate(): void {
-        this.models.clear();
-        this.index.truncate();
+    public find(id:number|string|Array<string|number>): Collection<ModelInterface>|ModelInterface|null {
+        const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
+        if (Array.isArray(id)) {
+            const result = [];
+            const pushFunction = hasComposedPrimaryKey ? (i:number) => {
+                result.push(this._models.get(this.getKey(id[i])) ?? null);
+            } : (i) => {
+                result.push(this._models.get(id[i]) ?? null);
+            }
+
+            for (let i = 0; i < id.length; i++) {
+                pushFunction(i);
+            }
+
+            return new Collection(...result);
+        }
+
+        if (hasComposedPrimaryKey) {
+            return this._models.get(this.getKey(id)) ?? null;
+        }
+
+        return this._models.get(id) ?? null;
+    }
+
+    public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
+        return this._index.getIndexByKey(key);
     }
 
     public getKey(id:number|string|Array<string|number>): string|null {
@@ -151,35 +115,73 @@ export default class Table implements TableInterface {
         return key.join('-');
     }
 
-    public find(id:number|string|Array<string|number>):Collection|Model|null {
-        const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
-        if (Array.isArray(id)) {
-            const result = [];
-            const pushFunction = hasComposedPrimaryKey ? (i:number) => {
-                result.push(this.models.get(this.getKey(id[i])) ?? null);
-            } : (i) => {
-                result.push(this.models.get(id[i]) ?? null);
-            }
-
-            for (let i = 0; i < id.length; i++) {
-                pushFunction(i);
-            }
-
-            return new Collection(...result);
+    public insert(model: ModelInterface): void {
+        if (this._models.has(model.primaryKey)) {
+            throw new Error('Record already exists');
         }
 
-        if (hasComposedPrimaryKey) {
-            return this.models.get(this.getKey(id)) ?? null;
+        if (!(model instanceof Model)) {
+            throw new Error('Record should be instance of model');
         }
 
-        return this.models.get(id) ?? null;
+        model.resetDirty();
+
+        if (model.primaryKey != null) {
+            this._models.set(model.primaryKey, model);
+        }
+
+        this._index.addValueByModel(model);
     }
 
-    public select(id:string|number) {
-        if (!this.models.has(id)) {
+    public registerIndex(indexName:string): void {
+        this._index.register(indexName);
+    }
+
+    public removeIndex(indexName:string, lookUpKey:string, id:string|number): void {
+        this._index.removeValue(indexName, lookUpKey, id)
+    }
+
+    public select(id:string|number): Collection<ModelInterface>|ModelInterface|null {
+        if (!this._models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
 
         return this.find(id);
+    }
+
+    public setupIndexes(): void {
+        this._model.tableSetup(this);
+    }
+
+    public truncate(): void {
+        this._models.clear();
+        this._index.truncate();
+    }
+
+    public update(model: ModelInterface): void {
+        if (!this.models.has(model.primaryKey)) {
+            throw new Error('Record doesn\'t exists');
+        }
+
+        if (!(model instanceof Model)) {
+            throw new Error('Record should be instance of model');
+        }
+
+        this._index.removeValueByModel(model);
+
+        model.resetDirty();
+
+        this._index.addValueByModel(model);
+
+        this._models.set(model.primaryKey, model);
+    }
+
+    private setup(model: ModelInterface) {
+        this.name = model.className;
+        this.primaryKeyFieldNames = model.primaryKeyName;
+
+        this._model = model;
+        this._models = new Map();
+        this._index = new Index();
     }
 }

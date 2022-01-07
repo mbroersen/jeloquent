@@ -6,6 +6,7 @@ import {Connection, CollectionInterface, ModelInterface} from "../../../Jeloquen
  */
 export default class LocalArrayAdapter implements Connection.AdapterInterface {
     connectionSettings: Connection.AdapterSettings;
+
     options:object;
 
     constructor (connectionSettings: Connection.AdapterSettings) {
