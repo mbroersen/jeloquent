@@ -1,7 +1,6 @@
 import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
-import {Connection as NSConnection} from "../JeloquentInterfaces";
 import QueueMessage from "./Connection/Queue/QueueMessage";
-import AdapterInterface = NSConnection.AdapterInterface;
+import {AdapterInterface} from "../JeloquentInterfaces";
 
 /**
  *

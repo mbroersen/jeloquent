@@ -10,10 +10,10 @@ export interface ModelStaticInterface {
     get snakeCaseClassName(): string;
     get kebabCaseClassName(): string;
 
-    all(): Collection<ModelInterface>;
-    aSyncInsert(data: object): Promise<Collection<ModelInterface>>;
+    all(): Collection;
+    aSyncInsert(data: object): Promise<Collection>;
     delete(id: string|number);
-    find(id: string|number|Array<string|number>):Collection<ModelInterface>|ModelInterface|null;
+    find(id: string|number|Array<string|number>):Collection|ModelInterface|null;
     getIndexByKey(indexName: string);
     getInstance(): ModelInterface;
     insert(data: object): ModelInterface;
@@ -96,7 +96,7 @@ export interface DatabaseInterface {
     insert(tableName:string, model: ModelInterface): void;
     update(tableName:string, model: ModelInterface): void;
     delete(tableName:string, id:number|string);
-    find(tableName:string, id:number|string|Array<string|number>):Collection<ModelInterface>|Model|null;
+    find(tableName:string, id:number|string|Array<string|number>):Collection|Model|null;
     all(tableName:string): CollectionInterface;
     select(tableName:string, id:number|string): ModelInterface;
 
@@ -121,34 +121,34 @@ export interface CollectionInterface {
     pluck(field:string, keyField:string): Array<ModelInterface>
 }
 
-export namespace Connection {
 
-    export interface AdapterInterface {
-        connectionSettings: AdapterSettings;
 
-        load(model: ModelInterface): Promise<QueueMessage>
+export interface AdapterInterface {
+    connectionSettings: AdapterSettings;
 
-        all(model: ModelInterface): Promise<QueueMessage>
+    load(model: ModelInterface): Promise<QueueMessage>
 
-        get(model: ModelInterface): Promise<QueueMessage>
+    all(model: ModelInterface): Promise<QueueMessage>
 
-        put(model: ModelInterface): Promise<QueueMessage>
+    get(model: ModelInterface): Promise<QueueMessage>
 
-        patch(model: ModelInterface): Promise<QueueMessage>
+    put(model: ModelInterface): Promise<QueueMessage>
 
-        post(model: ModelInterface): Promise<QueueMessage>
+    patch(model: ModelInterface): Promise<QueueMessage>
 
-        delete(model: ModelInterface): Promise<QueueMessage>
-    }
+    post(model: ModelInterface): Promise<QueueMessage>
 
-    export interface AdapterSettings {
-        getSettings(): object;
-    }
-
-    export interface QueueMessage {
-        execute(): void;
-
-        addCallback(callback: CallableFunction);
-    }
+    delete(model: ModelInterface): Promise<QueueMessage>
 }
+
+export interface AdapterSettings {
+    getSettings(): object;
+}
+
+export interface QueueMessage {
+    execute(): void;
+
+    addCallback(callback: CallableFunction);
+}
+
 
