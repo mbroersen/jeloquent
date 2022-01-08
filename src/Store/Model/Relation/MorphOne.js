@@ -24,8 +24,8 @@ export default class MorphOne extends Relation {
     getValueByParentKey(parentProperty) {
         const type = this.$parent.className;
         const id = this.$parent[parentProperty];
-        const idKeyName = `${this.$name}_id`;
-        const idTypeName = `${this.$name}_type`;
+        const idKeyName = `${this.name}_id`;
+        const idTypeName = `${this.name}_type`;
 
         const lookUpKey = {};
         lookUpKey[idKeyName] = id;

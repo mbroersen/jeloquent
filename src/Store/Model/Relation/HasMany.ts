@@ -1,46 +1,37 @@
 import Relation from "../Relation.js";
+import {ModelStaticInterface} from "../../../JeloquentInterfaces";
+import Collection from "../../Collection";
 
 /**
  *
  */
 export default class HasMany extends Relation {
 
-    /**
-     *
-     * @param {Model} model
-     * @param {string} foreignKey
-     * @param {string} localKey
-     */
-    constructor(model, foreignKey, localKey) {
+    localKey: string;
+
+    constructor(model: ModelStaticInterface, foreignKey: string, localKey: string) {
         super(model, foreignKey);
         this.localKey = localKey ?? 'id';
     }
 
-    get count() {
-        let indexes = globalThis.Store.database().indexes(this.model.className);
+    get count(): number {
+        const indexes = globalThis.Store.database().indexes(this.model.className);
         return indexes.get(this.foreignKey).get(this.$parent.primaryKey)?.size ?? 0;
     }
 
-    get originalValue() {
+    get originalValue(): unknown {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    get value() {
+    get value(): unknown {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields() {
+    getRelationalFields():Array<unknown> {
         return [];
     }
 
-    getValueByParentKey(parentProperty) {
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
-        return globalThis.Store.database().find(this.model.className,
-            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
-        );
-    }
-
-    setName() {
+    setName(): HasMany {
         const parentClassName = this.$parent.snakeCaseClassName;
         const modelClassName = this.model.snakeCaseClassName;
 
@@ -49,11 +40,18 @@ export default class HasMany extends Relation {
         return this;
     }
 
-    setParentProperties() {
+    protected getValueByParentKey(parentProperty): Collection {
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
+        return globalThis.Store.database().find(this.model.className,
+            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
+        );
+    }
+
+    protected setParentProperties(): HasMany {
         super.setParentProperties();
 
         Object.defineProperty(this.$parent,
-            `${this.$name}Count`, {
+            `${this.name}Count`, {
                 get: () => {
                     return this.count;
                 },

@@ -1,17 +1,9 @@
 import Relation from "../Relation.js";
+import {ModelStaticInterface} from "../../../JeloquentInterfaces";
 
-/**
- *
- */
 export default class BelongsTo extends Relation {
 
-    /**
-     *
-     * @param {Model} model
-     * @param {string} foreignKey
-     * @param {string} name
-     */
-    constructor(model, foreignKey, name) {
+    constructor(model: ModelStaticInterface, foreignKey: string|null = null, name: string) {
         super(model, (foreignKey ?? `${model.snakeCaseClassName}_id`), name);
     }
 
@@ -23,26 +15,18 @@ export default class BelongsTo extends Relation {
         return this.model.find(this.$parent[this.foreignKey]);
     }
 
-    // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures,@typescript-eslint/no-empty-function
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     set value(value) {
 
     }
 
-    /**
-     *
-     * @return {BelongsTo}
-     */
-    setName() {
-        let className = this.model.snakeCaseClassName;
+    setName(): BelongsTo {
+        const className = this.model.snakeCaseClassName;
         this.$name = this.$name ?? `${className}`;
         return this;
     }
 
-    /**
-     *
-     * @return {BelongsTo}
-     */
-    setParentProperties() {
+    protected setParentProperties() {
         super.setParentProperties();
 
         let name = '';

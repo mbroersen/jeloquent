@@ -17,7 +17,7 @@ export default class MorphTo extends Field {
 
     setFillPropertyOnParent() {
         Object.defineProperty(this.$parent,
-            `_${this.$name}`,
+            `_${this.name}`,
             {
                 set: (value) => {
                     if (!Array.isArray(value)) {

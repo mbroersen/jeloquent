@@ -1,60 +1,46 @@
 import Relation from "../Relation.js";
+import {ModelStaticInterface} from "../../../JeloquentInterfaces";
+import Collection from "../../Collection";
 
 /**
  *
  */
 export default class HasManyThrough extends Relation {
 
-    /**
-     *
-     * @param {Model} model
-     * @param {Model} throughModel
-     * @param {string} foreignKey
-     * @param {string} localKey
-     */
-    constructor(model, throughModel, foreignKey, localKey) {
+    localKey: string;
+
+    throughModel: ModelStaticInterface;
+
+    private _lcModelClassName: string;
+
+    private _lcParentClassName: string;
+
+    private _lcThroughModelClassName: string;
+
+    constructor(model: ModelStaticInterface, throughModel: ModelStaticInterface, foreignKey: string, localKey: string) {
         super(model, foreignKey);
         this.model = model;
         this.throughModel = throughModel;
         this.localKey = localKey ?? 'id';
     }
 
-    /**
-     *
-     * @return {string}
-     */
-    get indexName() {
+    get indexName(): string {
         return `${this._lcThroughModelClassName}.${this._lcParentClassName}_id`;
     }
 
-    get originalValue() {
+    get originalValue(): Collection {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    /**
-     *
-     * @return {Collection}
-     */
-    get value() {
+    get value(): Collection {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields() {
+    getRelationalFields():Array<unknown> {
         return [];
     }
 
-    /**
-     *
-     * @param {string} parentProperty
-     * @return {Collection}
-     */
-    getValueByParentKey(parentProperty) {
-        const keyIndex = this.model.getIndexByKey(this.indexName);
 
-        return globalThis.Store.database().find(this.model.className,
-            [...(keyIndex.get(this.$parent[parentProperty])?.values()) ?? []]
-        );
-    }
 
     /**
      *
@@ -71,5 +57,13 @@ export default class HasManyThrough extends Relation {
 
     tableSetup() {
         this.model.registerIndex(this.indexName);
+    }
+
+    private getValueByParentKey(parentProperty: string): Collection {
+        const keyIndex = this.model.getIndexByKey(this.indexName);
+
+        return globalThis.Store.database().find(this.model.className,
+            [...(keyIndex.get(this.$parent[parentProperty])?.values()) ?? []]
+        );
     }
 }

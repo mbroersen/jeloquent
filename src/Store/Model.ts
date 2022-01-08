@@ -59,7 +59,7 @@ class Model implements ModelInterface {
     }
 
     get dirtyFieldNames() {
-        return this.dirtyFields.map(field => field.$name);
+        return this.dirtyFields.map(field => field.name);
     }
 
     get dirtyFields() {
@@ -82,30 +82,30 @@ class Model implements ModelInterface {
     get originalValues() {
         return this.originalFields.reduce((originalValues, field) => {
             if (field.originalValue !== undefined) {
-                originalValues[field.$name] = field.originalValue;
+                originalValues[field.name] = field.originalValue;
             }
             return originalValues;
         }, {});
     }
 
-    get primaryKey() {
-        return this.primaryFields.reduce((toValue, field, i) => {
+    get primaryKey(): string|number {
+        return this.primaryFields.reduce((toValue:string, field:Field, i:number): string|number => {
             if (i > 0) {
                 return `${toValue}-${field.value}`;
             }
-            return field.value;
+            return field.value as (string|number);
         }, '') ?? this._tmpId ?? null;
     }
 
     get primaryKeyName(): Array<string> {
-        return this.originalFields.filter(field => field.isPrimary).map(field => field.$name);
+        return this.originalFields.filter(field => field.isPrimary).map(field => field.name);
     }
 
     get snakeCaseClassName(): string {
         return this.constructor.snakeCaseClassName;
     }
 
-    static aSyncInsert(data: object): Promise<Collection<ModelInterface>> {
+    static aSyncInsert(data: object): Promise<Collection> {
         return new Promise((resolve) => {
             requestAnimationFrame(() => {
                 resolve(this.insert(data));
@@ -113,7 +113,7 @@ class Model implements ModelInterface {
         });
     }
 
-    static all(): Collection<ModelInterface> {
+    static all(): Collection {
         return globalThis.Store.database().all(this.className);
     }
 
@@ -147,7 +147,7 @@ class Model implements ModelInterface {
     }
 
 
-    static insert(data: object|Array<object>): Collection<ModelInterface> {
+    static insert(data: object|Array<object>): Collection {
         const modelsData = Array.isArray(data) ? data : [data];
         const length = modelsData.length;
         const models = new Collection();
@@ -162,7 +162,7 @@ class Model implements ModelInterface {
         return models;
     }
 
-    static registerIndex(name) {
+    static registerIndex(name: string): void {
         Index.register(this.getInstance(), name);
     }
 
@@ -202,7 +202,7 @@ class Model implements ModelInterface {
     fill(data) {
         for (let i = 0; i < this.numberOfFields; i++) {
             if (!(this.originalFields[i] instanceof Relation)) {
-                const fieldName = this.originalFields[i].$name;
+                const fieldName = this.originalFields[i].name;
                 if (data[fieldName] !== undefined) {
                     this[`_${fieldName}`] = data[fieldName];
                 }
@@ -214,7 +214,7 @@ class Model implements ModelInterface {
         // insert through relations after model insert;
         for (let i = 0; i < this.numberOfFields; i++) {
             if ((this.originalFields[i] instanceof Relation)) {
-                const fieldName = this.originalFields[i].$name;
+                const fieldName = this.originalFields[i].name;
                 if (data[fieldName] !== undefined) {
                     this[`_${fieldName}`] = data[fieldName];
                 }
@@ -273,7 +273,7 @@ class Model implements ModelInterface {
             `indexedFields`, {
                 get: () => {
                     return this.originalFields.filter((field) => field instanceof ForeignKey).reduce((set, relation) => {
-                        set.add(relation.$name);
+                        set.add(relation.name);
                         return set;
                     }, new Set());
                 },
@@ -311,15 +311,15 @@ class Model implements ModelInterface {
                 continue;
             }
 
-            json[field.$name] = field.value;
+            json[field.name] = field.value;
 
-            if (json[field.$name] instanceof Model) {
-                json[field.$name] = json[field.$name].toObject(true);
+            if (json[field.name] instanceof Model) {
+                json[field.name] = json[field.name].toObject(true);
                 continue;
             }
 
-            if (json[field.$name] instanceof Array) {
-                json[field.$name] = [...json[field.$name].map((value) => {
+            if (json[field.name] instanceof Array) {
+                json[field.name] = [...json[field.name].map((value) => {
                     return value?.toObject(true) ?? value
                 })];
             }

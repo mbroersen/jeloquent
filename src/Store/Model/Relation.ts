@@ -1,34 +1,32 @@
 import Field from "./Field.js";
 import ForeignKey from "./Field/ForeignKey";
+import {ModelInterface, ModelStaticInterface, TableInterface} from "../../JeloquentInterfaces";
 
 /**
  *
  */
 export default class Relation extends Field {
 
-    /**
-     *
-     * @param model
-     * @param foreignKey
-     * @param name
-     */
-    constructor(model, foreignKey, name) {
-        let className = name ?? model.snakeCaseClassName;
+    foreignKey: string;
+
+    model: ModelStaticInterface;
+
+    constructor(model: ModelStaticInterface, foreignKey: string, name: string = null) {
+        const className = name ?? model.snakeCaseClassName;
         super(className);
         this.model = model;
         this.foreignKey = foreignKey;
     }
 
-
-    /**
-     *
-     * @return {ForeignKey[]}
-     */
-    getRelationalFields() {
+    getRelationalFields(): Array<ForeignKey> {
         return [new ForeignKey(this.foreignKey).setRelation(this)];
     }
 
-    setFillPropertyOnParent() {
+    tableSetup(table: TableInterface): void {
+        table.registerIndex(this.foreignKey);
+    }
+
+    protected setFillPropertyOnParent(): void {
         Object.defineProperty(
             this.$parent,
             `_${this.$name}`,
@@ -44,13 +42,5 @@ export default class Relation extends Field {
                     });
                 }
             });
-    }
-
-    /**
-     *
-     * @param table
-     */
-    tableSetup(table) {
-        table.registerIndex(this.foreignKey);
     }
 }

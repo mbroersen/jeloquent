@@ -16,8 +16,9 @@ export interface ModelStaticInterface {
     find(id: string|number|Array<string|number>):Collection|ModelInterface|null;
     getIndexByKey(indexName: string);
     getInstance(): ModelInterface;
+    ids():Array<string|number>;
     insert(data: object): ModelInterface;
-    registerIndex(): void;
+    registerIndex(name: string): void;
     update(data: object): ModelInterface;
 }
 
