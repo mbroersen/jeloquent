@@ -1,4 +1,18 @@
+import {ModelInterface} from "../../JeloquentInterfaces";
+
 export default class Field {
+
+    private $fieldValue: unknown;
+
+    private $name: string;
+
+    private $originalValue: unknown;
+
+    private $parent: ModelInterface;
+
+    private $previousValue: unknown;
+
+    private isPrimary: boolean;
 
     /**
      *
@@ -18,7 +32,7 @@ export default class Field {
      *
      * @return {boolean}
      */
-    get isDirty() {
+    get isDirty(): boolean {
         return this.$fieldValue != this.$previousValue;
     }
 
@@ -26,7 +40,7 @@ export default class Field {
      *
      * @return {*}
      */
-    get originalValue() {
+    get originalValue(): unknown {
         return this.$originalValue;
     }
 
@@ -34,7 +48,7 @@ export default class Field {
      *
      * @return {any}
      */
-    get previousValue() {
+    get previousValue(): unknown {
         return this.$previousValue;
     }
 
@@ -42,7 +56,7 @@ export default class Field {
      *
      * @return {any}
      */
-    get value() {
+    get value(): unknown {
         return this.$fieldValue;
     }
 
@@ -50,11 +64,11 @@ export default class Field {
      *
      * @param value
      */
-    set value(value) {
+    set value(value: unknown) {
         this.$fieldValue = value;
     }
 
-    addParentFieldValueLookUp() {
+    addParentFieldValueLookUp(): void {
         Object.defineProperty(this.$parent,
             this.$name, {
                 get: () => {
@@ -76,7 +90,7 @@ export default class Field {
         )
     }
 
-    addParentOriginalValueLookUp() {
+    addParentOriginalValueLookUp(): void {
         Object.defineProperty(this.$parent,
             `original_${this.$name}`, {
                 get: () => {
@@ -86,12 +100,12 @@ export default class Field {
         )
     }
 
-    resetDirty() {
+    resetDirty(): void {
         this.$originalValue = JSON.parse(JSON.stringify(this.$fieldValue));
         this.$previousValue = JSON.parse(JSON.stringify(this.$fieldValue));
     }
 
-    setFillPropertyOnParent() {
+    setFillPropertyOnParent(): void {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
             {
@@ -118,7 +132,7 @@ export default class Field {
      *
      * @return {Field}
      */
-    setParentProperties() {
+    setParentProperties(): Field {
         this.addParentFieldValueLookUp();
         this.addParentOriginalValueLookUp();
         this.setFillPropertyOnParent();
@@ -126,28 +140,17 @@ export default class Field {
         return this;
     }
 
-    /**
-     *
-     * @param parent
-     * @return {Field}
-     */
-    setup(parent) {
+    setup(parent: ModelInterface): Field {
         this.$parent = parent;
         return this.setName().setParentProperties();
     }
 
-    /**
-     *
-     */
-    tableSetup() {
+
+    tableSetup(): void {
         //todo setup table;
     }
 
-    /**
-     *
-     * @return {any}
-     */
-    toJson() {
+    toJson(): object {
         const object = {};
         object[this.$name] = this.value;
         return JSON.parse(JSON.stringify(object));
