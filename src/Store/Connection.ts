@@ -1,25 +1,19 @@
 import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
 import QueueMessage from "./Connection/Queue/QueueMessage";
-import {AdapterInterface} from "../JeloquentInterfaces";
+import {AdapterInterface, ModelInterface} from "../JeloquentInterfaces";
 
 /**
  *
  */
 export default class Connection {
 
-    adapter: AdapterInterface;
+    private _updateQueue: Array<QueueMessage>;
 
-    paused: boolean;
+    private adapter: AdapterInterface;
 
-    updateQueue: Array<QueueMessage>;
+    private paused: boolean;
 
-    /**
-     *
-     * @param adapter
-     * @param options
-     */
-    constructor(adapter:AdapterInterface|string, options) {
-
+    constructor(adapter:AdapterInterface|string, options: object) {
         let interfaceAdapter;
         let stringAdapter;
 
@@ -31,36 +25,24 @@ export default class Connection {
 
         this.adapter = interfaceAdapter ?? ConnectionAdapterFactory.getAdapter(stringAdapter, options);
 
-        this.updateQueue = [];
+        this._updateQueue = [];
         this.paused = false;
     }
 
-    addToQueue(...queueMessage) {
-        this.updateQueue.push(...queueMessage);
-    }
-
-    all(model) {
+    all(model: ModelInterface): Promise<unknown> {
         return new Promise((resolve) => {
             this.adapter.all(model)
                 .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
+                    this.handleQueueMessage(queueMessage, resolve);
                 });
         });
     }
 
-    delete(model) {
+    delete(model: ModelInterface): Promise<unknown> {
         return new Promise((resolve) => {
             this.adapter.delete(model)
                 .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
+                    this.handleQueueMessage(queueMessage, resolve);
                 });
         });
     }
@@ -68,65 +50,65 @@ export default class Connection {
     /**
      * @deprecated
      */
-    load(model) {
+    load(model: ModelInterface): Promise<unknown> {
         return this.all(model)
     }
 
-    patch(model) {
+    patch(model: ModelInterface): Promise<unknown> {
         return new Promise((resolve) => {
             this.adapter.patch(model)
                 .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
+                    this.handleQueueMessage(queueMessage, resolve);
                 });
         });
     }
 
-    pause() {
+    pause(): void {
         this.paused = true;
     }
 
-    post(model) {
+    post(model: ModelInterface): Promise<unknown> {
         return new Promise((resolve) => {
             this.adapter.post(model)
                 .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
+                    this.handleQueueMessage(queueMessage, resolve);
                 });
         });
     }
 
-    processQueue() {
-        const nextMessage = (this.updateQueue ?? []).shift();
+    put(model): Promise<unknown> {
+        return new Promise((resolve) => {
+            this.adapter.put(model)
+                .then((queueMessage) => {
+                    this.handleQueueMessage(queueMessage, resolve);
+                });
+        });
+    }
+
+    resume(): void {
+        this.paused = false;
+    }
+
+    private addToQueue(...queueMessage: QueueMessage): void {
+        this._updateQueue.push(...queueMessage);
+    }
+
+    private handleQueueMessage(queueMessage: QueueMessage, resolve: CallableFunction): void {
+        queueMessage.addCallback(resolve);
+        this.addToQueue(queueMessage);
+        queueMicrotask(() => {
+            this.processQueue();
+        });
+    }
+
+    private processQueue(): void {
+        const nextMessage = (this._updateQueue ?? []).shift();
         if (!nextMessage) {
             return;
         }
         nextMessage.execute();
-        setTimeout(() => {
-            this.processQueue()
-        }, 1);
-    }
-
-    put(model) {
-        return new Promise((resolve) => {
-            this.adapter.put(model)
-                .then((queueMessage) => {
-                    queueMessage.addCallback(resolve);
-                    this.addToQueue(queueMessage);
-                    setTimeout(() => {
-                        this.processQueue()
-                    }, 1);
-                });
+        queueMicrotask(() => {
+            this.processQueue();
         });
-    }
-
-    resume() {
-        this.paused = false;
     }
 }
