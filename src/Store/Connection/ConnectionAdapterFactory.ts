@@ -1,20 +1,11 @@
 import JsonRequestAdapter from "./Adapter/JsonRequestAdapter";
 import LocalStorageAdapter from "./Adapter/LocalStorageAdapter";
 import LocalArrayAdapter from "./Adapter/LocalArrayAdapter";
+import ConnectionSettings from "./ConnectionSettings";
+import {AdapterInterface} from "../../JeloquentInterfaces";
 
-/**
- *
- */
 class ConnectionAdapterFactory {
-
-    /**
-     *
-     * @param {String} name
-     * @param {ConnectionSettings} connectionSettings
-     * @return {ConnectionAdapter}
-     */
-    static getAdapter (name, connectionSettings) {
-
+    static getAdapter (name: string, connectionSettings: ConnectionSettings): AdapterInterface {
         if (name === 'jsonRequest') {
             return new JsonRequestAdapter(connectionSettings);
         }

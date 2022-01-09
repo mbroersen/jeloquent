@@ -1,26 +1,36 @@
 export default class ConnectionRequestQuery {
 
-    fields(...fields) {
+    private $fields: Array<string>;
+
+    private $includes: Array<string>;
+
+    private $pageNumber: number;
+
+    private $pageSize: number;
+
+    private $sort:Array<string>;
+
+    fields(...fields:Array<string>) {
         this.$fields = fields;
     }
 
-    includes(...includes) {
+    includes(...includes:Array<string>) {
         this.$includes = includes;
     }
 
-    page(number, size) {
+    page(number:number, size:number) {
         this.$pageNumber = number;
         this.$pageSize = size;
     }
 
-    queryString() {
+    queryString():string {
         return `sort=${this.$sort.join(",")}&` +
             `includes=${this.$includes.join(",")}&` +
             `fields=${this.$fields.join(",")}&` +
             `page[number]=${this.$pageNumber}&page[size]=${this.$pageSize}`;
     }
 
-    sort(...sort) {
+    sort(...sort:Array<string>) {
         this.$sort = sort;
     }
 }

@@ -37,12 +37,8 @@ export interface ModelInterface {
     get primaryKey(): string|number|null;
     get primaryKeyName(): Array<string>;
 
-
     get kebabCaseClassName(): string;
     get snakeCaseClassName(): string;
-
-    //get kebabCaseName(): String
-    //get kebabCaseName(): String
 }
 
 export interface Indexable {
