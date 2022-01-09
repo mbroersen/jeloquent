@@ -1,6 +1,5 @@
 import {ForeignKey} from "../Model";
 import {IndexInterface, ModelInterface} from "../../JeloquentInterfaces";
-import Field from "../Model/Field";
 
 export default class Index implements IndexInterface {
 
