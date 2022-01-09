@@ -15,7 +15,7 @@ export default class MorphTo extends Field {
         return globalThis.Store.classInstances[type].constructor.find(id);
     }
 
-    setFillPropertyOnParent() {
+    protected setFillPropertyOnParent(): void {
         Object.defineProperty(this.$parent,
             `_${this.name}`,
             {
