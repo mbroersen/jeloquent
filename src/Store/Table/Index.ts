@@ -20,14 +20,14 @@ export default class Index implements IndexInterface {
         return this._indexes;
     }
 
-    static add(model: ModelInterface, foreignKeyField: Field): void {
-        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.fieldValue, model.primaryKey);
+    static add(model: ModelInterface, foreignKeyField: ForeignKey): void {
+        globalThis.Store.database().addIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.value, model.primaryKey);
     }
 
     /**
      * @deprecated
      */
-    static addIndex(model: ModelInterface, foreignKeyField:Field): void {
+    static addIndex(model: ModelInterface, foreignKeyField:ForeignKey): void {
         this.add(model, foreignKeyField);
     }
 
@@ -42,21 +42,21 @@ export default class Index implements IndexInterface {
         this.register(model, indexName)
     }
 
-    static remove(model: ModelInterface, foreignKeyField: Field): void {
+    static remove(model: ModelInterface, foreignKeyField: ForeignKey): void {
         globalThis.Store.database().removeIndex(model.className, foreignKeyField.foreignKey, foreignKeyField.previousValue, model.primaryKey);
     }
 
     /**
      * @deprecated
      */
-    static removeIndex(model: ModelInterface, foreignKeyField: Field): void {
+    static removeIndex(model: ModelInterface, foreignKeyField: ForeignKey): void {
         this.remove(model, foreignKeyField);
     }
 
     static removeTmpIdFromIndex(model: ModelInterface) {
         const className = model.className;
         model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
-            globalThis.Store.database().removeIndex(className, field.$name, field.originalValue, model._tmpId);
+            globalThis.Store.database().removeIndex(className, field.name, field.originalValue, model._tmpId);
         });
     }
 

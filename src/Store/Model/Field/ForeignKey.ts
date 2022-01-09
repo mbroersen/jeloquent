@@ -1,9 +1,14 @@
 import Field from "../Field";
+import Relation from "../Relation";
 
 /**
  *
  */
 export default class ForeignKey extends Field {
+
+    private _foreignKey: string;
+
+    private relation: Relation;
 
     /**
      *
@@ -12,7 +17,11 @@ export default class ForeignKey extends Field {
      */
     constructor(name, foreignKey) {
         super(name);
-        this.foreignKey = name ?? foreignKey;
+        this._foreignKey = name ?? foreignKey;
+    }
+
+    get foreignKey(): string {
+        return this._foreignKey;
     }
 
     get value() {
@@ -23,7 +32,7 @@ export default class ForeignKey extends Field {
         this.$fieldValue = value;
     }
 
-    setRelation(relation) {
+    setRelation(relation: Relation) {
         this.relation = relation;
         return this;
     }
