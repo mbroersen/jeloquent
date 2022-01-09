@@ -23,11 +23,11 @@ class Model implements ModelInterface {
 
     ['constructor']: ModelStaticInterface;
 
-    numberOfFields: number;
+    private numberOfFields: number;
 
-    originalFields: Array<Field>;
+    private originalFields: Array<Field>;
 
-    primaryFields: Array<Field>;
+    private primaryFields: Array<Field>;
 
     constructor(fields: Array<Field> = []) {
         this.setFields(this.addRelationFields(fields));
@@ -107,8 +107,16 @@ class Model implements ModelInterface {
 
     static aSyncInsert(data: object): Promise<Collection> {
         return new Promise((resolve) => {
-            requestAnimationFrame(() => {
+            queueMicrotask(() => {
                 resolve(this.insert(data));
+            })
+        });
+    }
+
+    static aSyncUpdate(data: object): Promise<Collection> {
+        return new Promise((resolve) => {
+            queueMicrotask(() => {
+                resolve(this.update(data));
             })
         });
     }
@@ -174,13 +182,18 @@ class Model implements ModelInterface {
         }
     }
 
-    static update(data: object): ModelInterface {
-        const model = new this();
-        model.fill(data);
-        globalThis.Store.database().update(this.className, model);
-        model.fillRelations(data);
-
-        return model;
+    static update(data: object|Array<object>): Collection {
+        const modelsData = Array.isArray(data) ? data : [data];
+        const length = modelsData.length;
+        const models = new Collection();
+        for (let i = 0; i < length; i++) {
+            const model = this.getInstance();
+            model.fill(data);
+            globalThis.Store.database().update(this.className, model);
+            model.fillRelations(data);
+            models.push(model);
+        }
+        return models;
     }
 
     addRelationFields(fields) {

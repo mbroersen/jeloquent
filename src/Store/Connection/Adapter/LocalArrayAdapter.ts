@@ -1,15 +1,15 @@
 import QueueMessage from '../Queue/QueueMessage.js';
-import {Connection, ModelInterface} from "../../../JeloquentInterfaces";
+import {AdapterInterface, AdapterSettings, ModelInterface} from "../../../JeloquentInterfaces";
 
 /**
  *
  */
-export default class LocalArrayAdapter implements Connection.AdapterInterface {
-    connectionSettings: Connection.AdapterSettings;
+export default class LocalArrayAdapter implements AdapterInterface {
+    connectionSettings: AdapterSettings;
 
     options:object;
 
-    constructor (connectionSettings: Connection.AdapterSettings) {
+    constructor (connectionSettings: AdapterSettings) {
         this.connectionSettings = connectionSettings;
     }
 

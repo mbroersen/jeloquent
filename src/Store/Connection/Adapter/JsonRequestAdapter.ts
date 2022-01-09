@@ -1,15 +1,15 @@
 import QueueMessage from '../Queue/QueueMessage.js';
 import ConnectionRequest from "../ConnectionRequest";
-import {Connection, ModelInterface} from "../../../JeloquentInterfaces";
+import {AdapterInterface, AdapterSettings, ModelInterface} from "../../../JeloquentInterfaces";
 
 /**
  *
  */
-export default class JsonRequestAdapter implements Connection.AdapterInterface {
+export default class JsonRequestAdapter implements AdapterInterface {
 
-    connectionSettings: Connection.AdapterSettings;
+    connectionSettings: AdapterSettings;
 
-    constructor (connectionSettings: Connection.AdapterSettings) {
+    constructor (connectionSettings: AdapterSettings) {
         this.connectionSettings = connectionSettings;
     }
 
