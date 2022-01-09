@@ -13,7 +13,7 @@ export interface ModelStaticInterface {
     all(): Collection;
     aSyncInsert(data: object): Promise<Collection>;
     delete(id: string|number);
-    find(id: string|number|Array<string|number>):Collection|ModelInterface|null;
+    find(id: object|string|number|Array<string|number>):Collection|ModelInterface|null;
     getIndexByKey(indexName: string);
     getInstance(): ModelInterface;
     ids():Array<string|number>;

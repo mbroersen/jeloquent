@@ -1,51 +1,33 @@
 import Relation from "../Relation.js";
+import {ModelStaticInterface} from "../../../JeloquentInterfaces";
 
 /**
  *
  */
 export default class HasOne extends Relation {
 
-    /**
-     *
-     * @param {Model} model
-     */
-    constructor(model) {
+    constructor(model: ModelStaticInterface) {
         super(model);
     }
 
-    get originalValue() {
+    get originalValue(): unknown {
         return this.getValueByParentKey('originalPrimaryKey');
     }
 
-    get value() {
+    get value(): unknown {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields() {
+    getRelationalFields():Array<unknown> {
         return [];
     }
 
-    getValueByParentKey(parentProperty) {
-        const keyIndex = this.model.getIndexByKey(this.foreignKey);
-        return globalThis.Store.database().find(this.model.className,
-            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
-        ).first();
-    }
-
-    /**
-     *
-     * @return {HasOne}
-     */
-    setName() {
+    setName(): HasOne {
         this.foreignKey = `${this.$parent.snakeCaseClassName}_id`;
         return this;
     }
 
-    /**
-     *
-     * @return {HasOne}
-     */
-    setParentProperties() {
+    protected setParentProperties(): HasOne {
         super.setParentProperties();
 
         Object.defineProperty(this.$parent,
@@ -57,5 +39,12 @@ export default class HasOne extends Relation {
         )
 
         return this;
+    }
+
+    private getValueByParentKey(parentProperty) {
+        const keyIndex = this.model.getIndexByKey(this.foreignKey);
+        return globalThis.Store.database().find(this.model.className,
+            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
+        ).first();
     }
 }

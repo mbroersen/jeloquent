@@ -40,12 +40,6 @@ export default class HasManyThrough extends Relation {
         return [];
     }
 
-
-
-    /**
-     *
-     * @return {HasManyThrough}
-     */
     setName() {
         this._lcThroughModelClassName = this.throughModel.snakeCaseClassName;
         this._lcModelClassName = this.model.snakeCaseClassName;

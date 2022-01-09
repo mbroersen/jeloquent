@@ -1,8 +1,5 @@
 import Relation from "../Relation";
 
-/**
- *
- */
 export default class MorphOne extends Relation {
 
     constructor(model) {
@@ -17,11 +14,11 @@ export default class MorphOne extends Relation {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields() {
+    getRelationalFields(): Array<unknown> {
         return [];
     }
 
-    getValueByParentKey(parentProperty) {
+    private getValueByParentKey(parentProperty): unknown {
         const type = this.$parent.className;
         const id = this.$parent[parentProperty];
         const idKeyName = `${this.name}_id`;

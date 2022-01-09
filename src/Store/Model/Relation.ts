@@ -1,6 +1,6 @@
 import Field from "./Field.js";
 import ForeignKey from "./Field/ForeignKey";
-import {ModelInterface, ModelStaticInterface, TableInterface} from "../../JeloquentInterfaces";
+import {ModelStaticInterface, TableInterface} from "../../JeloquentInterfaces";
 
 /**
  *
@@ -11,7 +11,7 @@ export default class Relation extends Field {
 
     model: ModelStaticInterface;
 
-    constructor(model: ModelStaticInterface, foreignKey: string, name: string = null) {
+    constructor(model: ModelStaticInterface, foreignKey: string = null, name: string = null) {
         const className = name ?? model.snakeCaseClassName;
         super(className);
         this.model = model;
