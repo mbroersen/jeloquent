@@ -1,9 +1,9 @@
 /**
  *
  */
-import {ModelInterface} from "../../../JeloquentInterfaces";
+import {ModelInterface, QueueAble} from "../../../JeloquentInterfaces";
 
-export default class QueueMessage {
+export default class QueueMessage implements QueueAble {
 
     private action: string;
 

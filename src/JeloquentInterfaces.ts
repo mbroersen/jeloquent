@@ -123,26 +123,26 @@ export interface CollectionInterface {
 export interface AdapterInterface {
     connectionSettings: AdapterSettings;
 
-    load(model: ModelInterface): Promise<QueueMessage>
+    load(model: ModelInterface): Promise<QueueAble>
 
-    all(model: ModelInterface): Promise<QueueMessage>
+    all(model: ModelInterface): Promise<QueueAble>
 
-    get(model: ModelInterface): Promise<QueueMessage>
+    get(model: ModelInterface): Promise<QueueAble>
 
-    put(model: ModelInterface): Promise<QueueMessage>
+    put(model: ModelInterface): Promise<QueueAble>
 
-    patch(model: ModelInterface): Promise<QueueMessage>
+    patch(model: ModelInterface): Promise<QueueAble>
 
-    post(model: ModelInterface): Promise<QueueMessage>
+    post(model: ModelInterface): Promise<QueueAble>
 
-    delete(model: ModelInterface): Promise<QueueMessage>
+    delete(model: ModelInterface): Promise<QueueAble>
 }
 
 export interface AdapterSettings {
     getSettings(): object;
 }
 
-export interface QueueMessage {
+export interface QueueAble {
     execute(): void;
 
     addCallback(callback: CallableFunction);
