@@ -1,59 +1,28 @@
-import ConnectionAdapter from '../ConnectionAdapter.js';
 import QueueMessage from '../Queue/QueueMessage.js';
 import ConnectionRequest from "../ConnectionRequest";
+import {AdapterInterface, ModelInterface} from "../../../JeloquentInterfaces";
+import ConnectionSettings from "../ConnectionSettings";
 
 /**
  *
  */
-export default class JsonRequestAdapter extends ConnectionAdapter {
+export default class JsonRequestAdapter implements AdapterInterface {
 
-    /**
-     *
-     * @param {ConnectionSettings} options
-     */
-    constructor(options) {
-        super(options);
+    connectionSettings: ConnectionSettings;
+
+    constructor (connectionSettings: ConnectionSettings) {
+        this.connectionSettings = connectionSettings;
     }
 
-    /**
-     *
-     * @return {boolean}
-     */
-    get isRemote() {
-        return true;
-    }
-
-    /**
-     *
-     * @return {boolean}
-     */
-    get isLocal() {
+    get isLocal(): boolean {
         return false;
     }
 
-    /**
-     * @deprecated
-     * @param {Model} model
-     * @return {Promise<QueueMessage>}
-     */
-    load(model) {
-        return this.all(model);
+    get isRemote(): boolean {
+        return true;
     }
 
-    /**
-     *
-     * @param {Response} response
-     */
-    responseJson(response) {
-        return response.json();
-    }
-
-    /**
-     *
-     * @param model
-     * @return {Promise<QueueMessage>}
-     */
-    all(model) {
+    all(model: ModelInterface): Promise<QueueMessage> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .all(model)
@@ -65,12 +34,19 @@ export default class JsonRequestAdapter extends ConnectionAdapter {
         }));
     }
 
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<QueueMessage>}
-     */
-    get(model) {
+    delete(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .delete(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'delete', data);
+                    resolve(message);
+                });
+        }));
+    }
+
+    get(model: ModelInterface): Promise<QueueMessage> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .get(model)
@@ -82,12 +58,23 @@ export default class JsonRequestAdapter extends ConnectionAdapter {
         }))
     }
 
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<QueueMessage>}
-     */
-    post(model) {
+    load(model: ModelInterface): Promise<QueueMessage> {
+        return this.all(model);
+    }
+
+    patch(model: ModelInterface): Promise<QueueMessage> {
+        return new Promise((resolve => {
+            new ConnectionRequest(this.connectionSettings)
+                .patch(model)
+                .then(response => this.responseJson(response))
+                .then(data => {
+                    const message = new QueueMessage(model, 'fill', data);
+                    resolve(message);
+                });
+        }));
+    }
+
+    post(model: ModelInterface): Promise<QueueMessage> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .post(model)
@@ -99,12 +86,7 @@ export default class JsonRequestAdapter extends ConnectionAdapter {
         }))
     }
 
-    /**
-     *
-     * @param {Model|Collection} model
-     * @return {Promise<QueueMessage>}
-     */
-    put(model) {
+    put(model: ModelInterface): Promise<QueueMessage> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .put(model)
@@ -118,35 +100,9 @@ export default class JsonRequestAdapter extends ConnectionAdapter {
 
     /**
      *
-     * @param {Model|Collection} model
-     * @return {Promise<QueueMessage>}
+     * @param {Response} response
      */
-    patch(model) {
-        return new Promise((resolve => {
-            new ConnectionRequest(this.connectionSettings)
-                .patch(model)
-                .then(response => this.responseJson(response))
-                .then(data => {
-                    const message = new QueueMessage(model, 'fill', data);
-                    resolve(message);
-                });
-        }));
-    }
-
-    /**
-     *
-     * @param {Model} model
-     * @return {Promise<QueueMessage>}
-     */
-    delete(model) {
-        return new Promise((resolve => {
-            new ConnectionRequest(this.connectionSettings)
-                .delete(model)
-                .then(response => this.responseJson(response))
-                .then(data => {
-                    const message = new QueueMessage(model, 'delete', data);
-                    resolve(message);
-                });
-        }));
+    responseJson(response) {
+        return response.json();
     }
 }

@@ -1,4 +1,4 @@
-import {Collection, Model, Field, Store, Database, Connection, ConnectionAdapter, QueueMessage} from "../dist/jeloquent";
+import {Model, Field, Store, Database, Connection, QueueMessage} from "../dist/jeloquent";
 
 test('Store can add database', () => {
     const store = new Store();
@@ -15,11 +15,7 @@ test('Store can add database', () => {
 
 test('Store can load dataset through connection adapter', async () => {
 
-    class MockAdapter extends ConnectionAdapter {
-        constructor(options) {
-            super(options);
-        }
-
+    class MockAdapter {
         all(model) {
             return new Promise((resolve) => {
                 const modelData = [
@@ -50,7 +46,7 @@ test('Store can load dataset through connection adapter', async () => {
     const database = new Database('default', [User]);
     const connection = new Connection(new MockAdapter());
     store.add(database);
-    store.addConnections(connection);
+    store.addConnection(connection);
     store.use('default');
     await store.connection().load(User);
 

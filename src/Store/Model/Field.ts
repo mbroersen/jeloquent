@@ -1,15 +1,26 @@
-/**
- *
- */
+import {ModelInterface, TableInterface} from "../../JeloquentInterfaces";
+
 export default class Field {
+
+    protected $fieldValue: unknown;
+
+    protected $name: string;
+
+    protected $originalValue: unknown;
+
+    protected $parent: ModelInterface;
+
+    protected $previousValue: unknown;
+
+    private _isPrimary: boolean;
 
     /**
      *
      * @param name
      * @param isPrimary
      */
-    constructor(name, isPrimary) {
-        this.isPrimary = isPrimary ?? false;
+    constructor(name: string, isPrimary = false) {
+        this._isPrimary = isPrimary;
         this.$name = name;
         this.$fieldValue = null;
         this.$previousValue = undefined;
@@ -17,75 +28,60 @@ export default class Field {
         this.$parent = null;
     }
 
-    /**
-     *
-     * @return {boolean}
-     */
-    get isDirty() {
+    get isDirty(): boolean {
         return this.$fieldValue != this.$previousValue;
     }
 
-    /**
-     *
-     * @return {*}
-     */
-    get originalValue() {
+    get isPrimary(): boolean {
+        return this._isPrimary;
+    }
+
+    get name(): string {
+        return this.$name;
+    }
+
+    get originalValue(): unknown {
         return this.$originalValue;
     }
 
-    /**
-     *
-     * @return {any}
-     */
-    get previousValue() {
+    get previousValue(): unknown {
         return this.$previousValue;
     }
 
-    /**
-     *
-     * @return {any}
-     */
-    get value() {
+    get value(): unknown {
         return this.$fieldValue;
     }
 
-    /**
-     *
-     * @param value
-     */
-    set value(value) {
+    set value(value: unknown) {
+
         this.$fieldValue = value;
     }
 
-    /**
-     *
-     * @return {Field}
-     */
-    setName() {
+    resetDirty(): void {
+        this.$originalValue = JSON.parse(JSON.stringify(this.$fieldValue));
+        this.$previousValue = JSON.parse(JSON.stringify(this.$fieldValue));
+    }
+
+    setName(): Field {
         return this;
     }
 
-    /**
-     *
-     * @param parent
-     * @return {Field}
-     */
-    setup(parent) {
+    setup(parent: ModelInterface): Field {
         this.$parent = parent;
         return this.setName().setParentProperties();
     }
 
-    /**
-     *
-     */
-    tableSetup() {
-        //todo setup table;
+    tableSetup(table: TableInterface): void {
+        console.info(table.name);
     }
 
-    /**
-     *
-     */
-    addParentFieldValueLookUp() {
+    toJson(): object {
+        const object = {};
+        object[this.$name] = this.value;
+        return JSON.parse(JSON.stringify(object));
+    }
+
+    protected addParentFieldValueLookUp(): void {
         Object.defineProperty(this.$parent,
             this.$name, {
                 get: () => {
@@ -101,13 +97,14 @@ export default class Field {
                     }
 
                     this.$previousValue = JSON.parse(JSON.stringify(this.value));
+
                     this.value = value;
                 }
             }
         )
     }
 
-    addParentOriginalValueLookUp() {
+    protected addParentOriginalValueLookUp(): void {
         Object.defineProperty(this.$parent,
             `original_${this.$name}`, {
                 get: () => {
@@ -117,51 +114,26 @@ export default class Field {
         )
     }
 
-    /**
-     *
-     * @return {Field}
-     */
-    setParentProperties() {
-        this.addParentFieldValueLookUp();
-        this.addParentOriginalValueLookUp();
-        this.setFillPropertyOnParent();
-
-        return this;
-    }
-
-    /**
-     *
-     */
-    setFillPropertyOnParent() {
+    protected setFillPropertyOnParent(): void {
         Object.defineProperty(this.$parent,
             `_${this.$name}`,
             {
                 set: (value) => {
                     if (this.$originalValue === undefined) {
-                        this.$originalValue = JSON.parse(JSON.stringify(this.value));
+                        this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
                     }
 
                     this.$previousValue = JSON.parse(JSON.stringify(this.value));
-                    this.$fieldValue = value;
+                    this.value = value;
                 }
             });
     }
 
-    /**
-     *
-     */
-    resetDirty() {
-        this.$originalValue = JSON.parse(JSON.stringify(this.$fieldValue));
-        this.$previousValue = JSON.parse(JSON.stringify(this.$fieldValue));
-    }
+    protected setParentProperties(): Field {
+        this.addParentFieldValueLookUp();
+        this.addParentOriginalValueLookUp();
+        this.setFillPropertyOnParent();
 
-    /**
-     *
-     * @return {any}
-     */
-    toJson() {
-        const object = {};
-        object[this.$name] = this.value;
-        return JSON.parse(JSON.stringify(object));
+        return this;
     }
 }
