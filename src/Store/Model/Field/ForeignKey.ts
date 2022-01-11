@@ -1,45 +1,42 @@
 import Field from "../Field";
+import Relation from "../Relation";
 
 /**
  *
  */
 export default class ForeignKey extends Field {
 
+    private _foreignKey: string;
+
+    private relation: Relation;
+
     /**
      *
      * @param name
      * @param foreignKey
      */
-    constructor(name, foreignKey) {
+    constructor(name, foreignKey = null) {
         super(name);
-        this.foreignKey = name ?? foreignKey;
+        this._foreignKey = name ?? foreignKey;
     }
 
-    setRelation(relation) {
-        this.relation = relation;
-        return this;
+    get foreignKey(): string {
+        return this._foreignKey;
     }
 
-    /**
-     *
-     * @return {null}
-     */
     get value() {
         return this.$fieldValue;
     }
 
-    /**
-     *
-     * @param value
-     */
     set value(value) {
         this.$fieldValue = value;
     }
 
-    /**
-     *
-     * @param table
-     */
+    setRelation(relation: Relation) {
+        this.relation = relation;
+        return this;
+    }
+
     tableSetup(table) {
         table.registerIndex(this.foreignKey);
     }

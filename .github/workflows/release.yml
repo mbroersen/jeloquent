@@ -1,0 +1,27 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [created]
+jobs:
+  publish_npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org/'
+      - run: echo ${{ github.event.release.tag_name }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
+      - run: git config --global user.email ${{ secrets.EMAIL }}
+      - run: git config --global user.name "mark.broersen"
+      - run: npm version ${{ github.event.release.tag_name }}
+      - run: npm config set '//registry.npmjs.org/:_authToken' "${{ secrets.NPM_TOKEN }}"
+      - run: npm publish
+      # fix pushing of new version to master
+      - run: git push origin HEAD:master
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          github-token: ${{ secrets.GITHUB_TOKEN }}

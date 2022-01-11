@@ -39,36 +39,17 @@ export default class Collection extends Array {
 
     /**
      *
-     * @param field
-     * @param keyField
-     * @return {{}|[]}
-     */
-    pluck(field, keyField) {
-        const lookUpFields = field.split('.');
-
-        if (keyField) {
-            const lookUpKeyField = keyField.split('.');
-            const result = {};
-            for (let i in this) {
-                result[this._getRowFieldResult(this[i], lookUpKeyField)] = this._getRowFieldResult(this[i], lookUpFields);
-            }
-            return result;
-        }
-
-        const result = [];
-        for (let i in this) {
-            result.push(this._getRowFieldResult(this[i], lookUpFields));
-        }
-
-        return result;
-    }
-
-    /**
-     *
      * @return {T|null}
      */
     first() {
         return this[0] ?? null;
+    }
+
+    /**
+     * @return {string}
+     */
+    jsonStringify() {
+        return JSON.stringify(this);
     }
 
     /**
@@ -91,6 +72,32 @@ export default class Collection extends Array {
 
     /**
      *
+     * @param field
+     * @param keyField
+     * @return {{}|[]}
+     */
+    pluck(field, keyField = '') {
+        const lookUpFields = field.split('.');
+
+        if (keyField) {
+            const lookUpKeyField = keyField.split('.');
+            const result = {};
+            for (const i in this) {
+                result[this._getRowFieldResult(this[i], lookUpKeyField)] = this._getRowFieldResult(this[i], lookUpFields);
+            }
+            return result;
+        }
+
+        const result = [];
+        for (const i in this) {
+            result.push(this._getRowFieldResult(this[i], lookUpFields));
+        }
+
+        return result;
+    }
+
+    /**
+     *
      * @return {T}
      */
     random() {
@@ -104,34 +111,11 @@ export default class Collection extends Array {
      */
     unique(field) {
         const unique = {};
-        for (let i in this) {
+        for (const i in this) {
             unique[this[i][field]] = this[i];
         }
 
         return new Collection(...Object.values(unique));
-    }
-
-    /**
-     * @return {string}
-     */
-    jsonStringify() {
-        return JSON.stringify(this);
-    }
-
-    /**
-     *
-     * @param field
-     * @param whereIfFunction
-     * @return {Collection}
-     */
-    whereIfFunction(field, whereIfFunction) {
-        const reqister = new Collection();
-        for (let i in this) {
-            if (whereIfFunction(field, this[i])) {
-                reqister.push(this[i]);
-            }
-        }
-        return reqister;
     }
 
     /**
@@ -190,36 +174,17 @@ export default class Collection extends Array {
     /**
      *
      * @param field
-     * @param values
+     * @param whereIfFunction
      * @return {Collection}
      */
-    whereNotBetween(field, values) {
-        return this.whereIfFunction(field, (field, object) => {
-            const fieldValue = object[field];
-            return !(fieldValue >= values[0] && fieldValue <= values[1])
-        });
-    }
-
-    /**
-     *
-     * @param field
-     * @return {Collection}
-     */
-    whereNull(field) {
-        return this.whereIfFunction(field, (field, object) => {
-            return object[field] === null;
-        });
-    }
-
-    /**
-     *
-     * @param field
-     * @return {Collection}
-     */
-    whereNotNull(field) {
-        return this.whereIfFunction(field, (field, object) => {
-            return object[field] !== null;
-        });
+    whereIfFunction(field, whereIfFunction) {
+        const reqister = new Collection();
+        for (const i in this) {
+            if (whereIfFunction(field, this[i])) {
+                reqister.push(this[i]);
+            }
+        }
+        return reqister;
     }
 
     /**
@@ -231,6 +196,30 @@ export default class Collection extends Array {
     whereIn(field, values) {
         return this.whereIfFunction(field, (field, object) => {
             return values.includes(object[field]);
+        });
+    }
+
+    /**
+     *
+     * @param classInstance
+     * @return {Collection}
+     */
+    whereInstanceOf(classInstance) {
+        return this.whereIfFunction(null, (field, object) => {
+            return object instanceof classInstance;
+        });
+    }
+
+    /**
+     *
+     * @param field
+     * @param values
+     * @return {Collection}
+     */
+    whereNotBetween(field, values) {
+        return this.whereIfFunction(field, (field, object) => {
+            const fieldValue = object[field];
+            return !(fieldValue >= values[0] && fieldValue <= values[1])
         });
     }
 
@@ -251,20 +240,31 @@ export default class Collection extends Array {
      * @param classInstance
      * @return {Collection}
      */
-    whereInstanceOf(classInstance) {
+    whereNotInstanceOf(classInstance) {
         return this.whereIfFunction(null, (field, object) => {
-            return object instanceof classInstance;
+            return !(object instanceof classInstance);
         });
     }
 
     /**
      *
-     * @param classInstance
+     * @param field
      * @return {Collection}
      */
-    whereNotInstanceOf(classInstance) {
-        return this.whereIfFunction(null, (field, object) => {
-            return !(object instanceof classInstance);
+    whereNotNull(field) {
+        return this.whereIfFunction(field, (field, object) => {
+            return object[field] !== null;
+        });
+    }
+
+    /**
+     *
+     * @param field
+     * @return {Collection}
+     */
+    whereNull(field) {
+        return this.whereIfFunction(field, (field, object) => {
+            return object[field] === null;
         });
     }
 }
