@@ -1,6 +1,7 @@
 import Relation from "../Relation.js";
 import {ModelStaticInterface} from "../../../JeloquentInterfaces";
 import Collection from "../../Collection";
+import ForeignKey from "../Field/ForeignKey";
 
 /**
  *
@@ -36,7 +37,7 @@ export default class HasManyThrough extends Relation {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields():Array<unknown> {
+    getRelationalFields():Array<ForeignKey> {
         return [];
     }
 

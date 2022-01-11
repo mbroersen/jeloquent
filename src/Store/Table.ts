@@ -10,13 +10,13 @@ export default class Table implements TableInterface {
 
     name: string;
 
-    primaryKeyFieldNames: Array<string>;
-
     private _index: Index;
 
     private _model: ModelInterface;
 
     private _models: Map<string|number, ModelInterface>;
+
+    private _primaryKeyFieldNames: Array<string>;
 
     constructor (model: ModelStaticInterface) {
         this.setup(model.getInstance());
@@ -65,54 +65,29 @@ export default class Table implements TableInterface {
             throw new Error('Record doesn\'t exists');
         }
 
-        this._index.removeValueByModel(this.find(id));
+        this._index.removeValueByModel(this.findOne(id));
 
         this._models.delete(id);
     }
 
-    public find(id:number|string|Array<string|number>): Collection<ModelInterface>|ModelInterface|null {
-        const hasComposedPrimaryKey = this.primaryKeyFieldNames.length > 1;
+    public find(id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null {
+        const hasComposedPrimaryKey = this._primaryKeyFieldNames.length > 1;
         if (Array.isArray(id)) {
-            const result = [];
-            const pushFunction = hasComposedPrimaryKey ? (i:number) => {
-                result.push(this._models.get(this.getKey(id[i])) ?? null);
-            } : (i) => {
-                result.push(this._models.get(id[i]) ?? null);
+            if (hasComposedPrimaryKey) {
+                return this.findCollectionComposedPrimaryKey(id as Array<object>);
             }
-
-            for (let i = 0; i < id.length; i++) {
-                pushFunction(i);
-            }
-
-            return new Collection(...result);
+            return this.findCollection(id as Array<string|number>);
         }
 
         if (hasComposedPrimaryKey) {
-            return this._models.get(this.getKey(id)) ?? null;
+            return this.findOneComposedPrimaryKey(id as object);
         }
 
-        return this._models.get(id) ?? null;
+        return this.findOne(id as (string|number));
     }
 
     public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
         return this._index.getIndexByKey(key);
-    }
-
-    public getKey(id:number|string|Array<string|number>): string|null {
-        if (typeof id === 'string') {
-            return id;
-        }
-
-        if (id === null) {
-            return null;
-        }
-
-        const key = [];
-        for (let i = 0; i < this.primaryKeyFieldNames.length; i++) {
-            key.push(id[this.primaryKeyFieldNames[i]] ?? '');
-        }
-
-        return key.join('-');
     }
 
     public insert(model: ModelInterface): void {
@@ -141,7 +116,7 @@ export default class Table implements TableInterface {
         this._index.removeValue(indexName, lookUpKey, id)
     }
 
-    public select(id:string|number): Collection<ModelInterface>|ModelInterface|null {
+    public select(id:string|number): Collection|ModelInterface|null {
         if (!this._models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
@@ -176,12 +151,59 @@ export default class Table implements TableInterface {
         this._models.set(model.primaryKey, model);
     }
 
+    private findCollection(id:Array<string|number>): Collection {
+        const result = [];
+        for (let i = 0; i < id.length; i++) {
+            result.push(
+                this._models.get(id[i])
+            );
+        }
+        return new Collection(...result);
+    }
+
+    private findCollectionComposedPrimaryKey(id: Array<object>): Collection {
+        const result = [];
+        for (let i = 0; i < id.length; i++) {
+            result.push(
+                this._models.get(
+                    this.toComposedKey(id[i])
+                )
+            );
+        }
+        return new Collection(...result);
+    }
+
+    private findOne(id: string|number): ModelInterface|null {
+        return this._models.get(id) ?? null;
+    }
+
+    private findOneComposedPrimaryKey(id: object|string): ModelInterface|null {
+        return this._models.get(this.toComposedKey(id)) ?? null;
+    }
+
     private setup(model: ModelInterface) {
         this.name = model.className;
-        this.primaryKeyFieldNames = model.primaryKeyName;
+        this._primaryKeyFieldNames = model.primaryKeyName;
 
         this._model = model;
         this._models = new Map();
         this._index = new Index();
+    }
+
+    private toComposedKey(id:string|object): string|null {
+        if (typeof id === 'string') {
+            return id;
+        }
+
+        if (id === null) {
+            return null;
+        }
+
+        const key = [];
+        for (let i = 0; i < this._primaryKeyFieldNames.length; i++) {
+            key.push(id[this._primaryKeyFieldNames[i]] ?? '');
+        }
+
+        return key.join('-');
     }
 }

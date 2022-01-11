@@ -1,5 +1,6 @@
 import Relation from "../Relation.js";
 import {ModelStaticInterface} from "../../../JeloquentInterfaces";
+import ForeignKey from "../Field/ForeignKey";
 
 /**
  *
@@ -18,7 +19,7 @@ export default class HasOne extends Relation {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields():Array<unknown> {
+    getRelationalFields():Array<ForeignKey> {
         return [];
     }
 

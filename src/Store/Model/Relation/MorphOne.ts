@@ -1,4 +1,5 @@
 import Relation from "../Relation";
+import ForeignKey from "../Field/ForeignKey";
 
 export default class MorphOne extends Relation {
 
@@ -14,7 +15,7 @@ export default class MorphOne extends Relation {
         return this.getValueByParentKey('primaryKey');
     }
 
-    getRelationalFields(): Array<unknown> {
+    getRelationalFields(): Array<ForeignKey> {
         return [];
     }
 

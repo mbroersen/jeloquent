@@ -15,7 +15,7 @@ export default class ForeignKey extends Field {
      * @param name
      * @param foreignKey
      */
-    constructor(name, foreignKey) {
+    constructor(name, foreignKey = null) {
         super(name);
         this._foreignKey = name ?? foreignKey;
     }

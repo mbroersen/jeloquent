@@ -56,17 +56,16 @@ export interface Truncateable {
 }
 
 export interface ApiInterface {
-    insert(model: ModelInterface): void;
-    update(model: ModelInterface): void;
+    all(): Collection;
     delete(id:number|string);
-    find(id:number|string|Array<string|number>):Collection|Model|null;
-    all(): CollectionInterface;
-    select(id:number|string): ModelInterface;
+    find(id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null;
+    insert(model: ModelInterface): void;
+    select(id:number|string): Collection|ModelInterface|null;
+    update(model: ModelInterface): void;
 }
 
 export interface TableInterface extends ApiInterface, Indexable, Truncateable {
     name:string;
-    primaryKeyFieldNames: Array<string>;
 
     get ids(): Array<string|number>;
 }

@@ -1,5 +1,6 @@
 import Relation from "../Relation";
 import {ModelStaticInterface} from "../../../JeloquentInterfaces";
+import ForeignKey from "../Field/ForeignKey";
 
 export default class HasOneThrough extends Relation {
 
@@ -33,7 +34,7 @@ export default class HasOneThrough extends Relation {
         return findModel[this._lcModelClassName] ?? null;
     }
 
-    getRelationalFields(): Array<unknown> {
+    getRelationalFields(): Array<ForeignKey> {
         return [];
     }
 
