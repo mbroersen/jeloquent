@@ -1,5 +1,5 @@
 import QueueMessage from '../Queue/QueueMessage.js';
-import {AdapterInterface, AdapterSettings, ModelInterface} from "../../../JeloquentInterfaces";
+import {AdapterInterface, AdapterSettings, ModelInterface, ModelStaticInterface} from "../../../JeloquentInterfaces";
 
 /**
  *
@@ -13,7 +13,7 @@ export default class LocalArrayAdapter implements AdapterInterface {
         this.connectionSettings = connectionSettings;
     }
 
-    all(model: ModelInterface): Promise<QueueMessage> {
+    all(model: ModelStaticInterface): Promise<QueueMessage> {
         return new Promise((resolve) => {
             resolve(new QueueMessage(model, 'insert', this.options[model.className]));
         });
@@ -36,7 +36,7 @@ export default class LocalArrayAdapter implements AdapterInterface {
      * @param model
      * @return {Promise<unknown>}
      */
-    load(model:ModelInterface): Promise<QueueMessage> {
+    load(model:ModelStaticInterface): Promise<QueueMessage> {
         return new Promise((resolve) => {
             resolve(new QueueMessage(model, 'insert', this.options[model.className]));
         });

@@ -1,35 +1,23 @@
-import {ConnectionAdapterFactory} from "./Connection/ConnectionAdapterFactory";
-import QueueMessage from "./Connection/Queue/QueueMessage";
-import {AdapterInterface, ModelInterface} from "../JeloquentInterfaces";
+import {AdapterInterface, ModelInterface, ModelStaticInterface, QueueAble} from "../JeloquentInterfaces";
 
 /**
  *
  */
 export default class Connection {
 
-    private _updateQueue: Array<QueueMessage>;
+    private _updateQueue: Array<QueueAble>;
 
     private adapter: AdapterInterface;
 
     private paused: boolean;
 
-    constructor(adapter:AdapterInterface|string, options: object) {
-        let interfaceAdapter;
-        let stringAdapter;
-
-        if (adapter instanceof String) {
-            stringAdapter = adapter;
-        } else {
-            interfaceAdapter = adapter;
-        }
-
-        this.adapter = interfaceAdapter ?? ConnectionAdapterFactory.getAdapter(stringAdapter, options);
-
+    constructor(adapter:AdapterInterface) {
+        this.adapter = adapter;
         this._updateQueue = [];
         this.paused = false;
     }
 
-    all(model: ModelInterface): Promise<unknown> {
+    all(model: ModelStaticInterface): Promise<unknown> {
         return new Promise((resolve) => {
             this.adapter.all(model)
                 .then((queueMessage) => {
@@ -50,7 +38,7 @@ export default class Connection {
     /**
      * @deprecated
      */
-    load(model: ModelInterface): Promise<unknown> {
+    load(model: ModelStaticInterface): Promise<unknown> {
         return this.all(model)
     }
 
@@ -89,11 +77,11 @@ export default class Connection {
         this.paused = false;
     }
 
-    private addToQueue(...queueMessage: QueueMessage): void {
+    private addToQueue(...queueMessage: Array<QueueAble>): void {
         this._updateQueue.push(...queueMessage);
     }
 
-    private handleQueueMessage(queueMessage: QueueMessage, resolve: CallableFunction): void {
+    private handleQueueMessage(queueMessage: QueueAble, resolve: CallableFunction): void {
         queueMessage.addCallback(resolve);
         this.addToQueue(queueMessage);
         queueMicrotask(() => {

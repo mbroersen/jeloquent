@@ -1,6 +1,7 @@
 import {Database, Store, Table, Connection} from './Store/Store.js';
 import {Model, Field, Relation, BelongsTo, HasOne, HasOneThrough, HasMany, HasManyThrough, MorphOne, MorphTo, ForeignKey} from './Store/Model.js';
 import {ConnectionAdapterFactory} from "./Store/Connection/ConnectionAdapterFactory.js";
+import ConnectionSettings from "./Store/Connection/ConnectionSettings";
 import QueueMessage from "./Store/Connection/Queue/QueueMessage";
 import Collection from './Store/Collection.js';
 
@@ -22,5 +23,6 @@ export {
     MorphOne,
     MorphTo,
     ConnectionAdapterFactory,
+    ConnectionSettings,
     QueueMessage
 }

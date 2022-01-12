@@ -122,9 +122,9 @@ export interface CollectionInterface {
 export interface AdapterInterface {
     connectionSettings: AdapterSettings;
 
-    load(model: ModelInterface): Promise<QueueAble>
+    load(model: ModelStaticInterface): Promise<QueueAble>
 
-    all(model: ModelInterface): Promise<QueueAble>
+    all(model: ModelStaticInterface): Promise<QueueAble>
 
     get(model: ModelInterface): Promise<QueueAble>
 
@@ -139,6 +139,15 @@ export interface AdapterInterface {
 
 export interface AdapterSettings {
     getSettings(): object;
+}
+
+export interface AdapterSettingsOptions {
+    headers: object;
+    mode: string;
+    contentType: string;
+    baseUrl: string;
+    cache: string;
+    modelPathMappings: Map<string, string>;
 }
 
 export interface QueueAble {

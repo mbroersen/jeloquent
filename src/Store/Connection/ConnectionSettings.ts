@@ -1,9 +1,11 @@
+import {AdapterSettingsOptions, ModelStaticInterface} from "../../JeloquentInterfaces";
+
 /**
  *
  */
 export default class ConnectionSettings {
 
-    private baseUrl: string;
+    private _baseUrl: string;
 
     private cache: string;
 
@@ -13,19 +15,22 @@ export default class ConnectionSettings {
 
     private mode: string;
 
+    private modelPathMappings: Map<string, string>;
+
     /**
      *
      */
-    constructor() {
-        this.contentType = 'application/json';
-        this.mode = 'cors';
-        this.cache = 'no-cache';
-        this.headers = {};
-        this.baseUrl = 'http://localhost';
+    constructor(options: AdapterSettingsOptions) {
+        this.contentType = options?.contentType ?? 'application/json';
+        this.mode = options?.mode ?? 'cors';
+        this.cache = options?.cache ?? 'no-cache';
+        this.headers = options?.headers ?? {};
+        this._baseUrl = options?.baseUrl ?? 'http://localhost';
+        this.modelPathMappings = options?.modelPathMappings ?? new Map();
     }
 
-    getBaseUrl(): string {
-        return this.baseUrl;
+    get baseUrl(): string {
+        return this._baseUrl;
     }
 
     getSettings(): object {
@@ -43,8 +48,7 @@ export default class ConnectionSettings {
         };
     }
 
-    setBaseUrl(baseUrl: string): ConnectionSettings {
-        this.baseUrl = baseUrl ?? 'http://localhost';
-        return this;
+    modelEndPoint(model:ModelStaticInterface): string {
+        return `${this.baseUrl}/${this.modelPathMappings.get(model.className) ?? model.kebabCaseClassName}`
     }
 }
