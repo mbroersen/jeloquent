@@ -1,7 +1,7 @@
 /**
  *
  */
-import {ModelInterface, QueueAble} from "../../../JeloquentInterfaces";
+import {ModelInterface, ModelStaticInterface, QueueAble} from "../../../JeloquentInterfaces";
 
 export default class QueueMessage implements QueueAble {
 
@@ -11,9 +11,9 @@ export default class QueueMessage implements QueueAble {
 
     private data: object|Array<object>;
 
-    private model: ModelInterface;
+    private model: ModelInterface|ModelStaticInterface;
 
-    constructor(model: ModelInterface, action: string, data:object|Array<object>) {
+    constructor(model: ModelInterface|ModelStaticInterface, action: string, data:object|Array<object>) {
         this.model = model;
         this.action = action;
         this.data = data;

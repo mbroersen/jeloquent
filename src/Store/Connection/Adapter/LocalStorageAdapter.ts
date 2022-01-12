@@ -1,7 +1,9 @@
 import {
     ModelInterface,
     AdapterSettings,
-    AdapterInterface
+    AdapterInterface,
+    ModelStaticInterface,
+    QueueAble
 } from "../../../JeloquentInterfaces";
 import QueueMessage from "../Queue/QueueMessage";
 
@@ -15,31 +17,31 @@ export default class LocalStorageAdapter implements AdapterInterface {
         this.connectionSettings = connectionSettings;
     }
 
-    all(model: ModelInterface): Promise<QueueMessage> {
+    all(model: ModelStaticInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
     }
 
-    delete(model: ModelInterface): Promise<QueueMessage> {
+    delete(model: ModelInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
     }
 
-    get(model: ModelInterface): Promise<QueueMessage> {
+    get(model: ModelInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
     }
 
-    load(model: ModelInterface): Promise<QueueMessage> {
+    load(model: ModelStaticInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
     }
 
-    patch(model: ModelInterface): Promise<QueueMessage> {
+    patch(model: ModelInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
     }
 
-    post (model: ModelInterface): Promise<QueueMessage> {
+    post (model: ModelInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncInsert', this.getTableFromLocalStorage(model)));
     }
 
-    put(model: ModelInterface): Promise<QueueMessage> {
+    put(model: ModelInterface): Promise<QueueAble> {
         return Promise.resolve(new QueueMessage(model, 'aSyncUpdate', this.getTableFromLocalStorage(model)));
     }
 

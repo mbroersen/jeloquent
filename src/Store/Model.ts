@@ -109,7 +109,7 @@ class Model implements ModelInterface {
         return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.insert(data));
-            })
+            });
         });
     }
 
@@ -117,7 +117,7 @@ class Model implements ModelInterface {
         return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.update(data));
-            })
+            });
         });
     }
 

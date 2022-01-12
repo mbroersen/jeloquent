@@ -1,6 +1,6 @@
 import QueueMessage from '../Queue/QueueMessage.js';
 import ConnectionRequest from "../ConnectionRequest";
-import {AdapterInterface, ModelInterface} from "../../../JeloquentInterfaces";
+import {AdapterInterface, ModelInterface, ModelStaticInterface, QueueAble} from "../../../JeloquentInterfaces";
 import ConnectionSettings from "../ConnectionSettings";
 
 /**
@@ -22,7 +22,7 @@ export default class JsonRequestAdapter implements AdapterInterface {
         return true;
     }
 
-    all(model: ModelInterface): Promise<QueueMessage> {
+    all(model: ModelStaticInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .all(model)
@@ -34,7 +34,7 @@ export default class JsonRequestAdapter implements AdapterInterface {
         }));
     }
 
-    delete(model: ModelInterface): Promise<QueueMessage> {
+    delete(model: ModelInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .delete(model)
@@ -46,7 +46,7 @@ export default class JsonRequestAdapter implements AdapterInterface {
         }));
     }
 
-    get(model: ModelInterface): Promise<QueueMessage> {
+    get(model: ModelInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .get(model)
@@ -58,11 +58,11 @@ export default class JsonRequestAdapter implements AdapterInterface {
         }))
     }
 
-    load(model: ModelInterface): Promise<QueueMessage> {
+    load(model: ModelStaticInterface): Promise<QueueAble> {
         return this.all(model);
     }
 
-    patch(model: ModelInterface): Promise<QueueMessage> {
+    patch(model: ModelInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .patch(model)
@@ -74,7 +74,7 @@ export default class JsonRequestAdapter implements AdapterInterface {
         }));
     }
 
-    post(model: ModelInterface): Promise<QueueMessage> {
+    post(model: ModelInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .post(model)
@@ -86,7 +86,7 @@ export default class JsonRequestAdapter implements AdapterInterface {
         }))
     }
 
-    put(model: ModelInterface): Promise<QueueMessage> {
+    put(model: ModelInterface): Promise<QueueAble> {
         return new Promise((resolve => {
             new ConnectionRequest(this.connectionSettings)
                 .put(model)

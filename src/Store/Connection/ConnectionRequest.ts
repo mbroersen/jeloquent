@@ -41,7 +41,7 @@ export default class ConnectionRequest {
     }
 
     modelApiLocation(model): string {
-        return `${this.connectionRequestSettings.getBaseUrl()}/${model.kebabCaseClassName}`;
+        return this.connectionRequestSettings.modelEndPoint(model);
     }
 
     patch(model):Promise<unknown> {
