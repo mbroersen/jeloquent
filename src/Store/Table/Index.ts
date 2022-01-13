@@ -54,9 +54,11 @@ export default class Index implements IndexInterface {
 
     static removeTmpIdFromIndex(model: ModelInterface) {
         const className = model.className;
-        model.dirtyFields.filter(field => field instanceof ForeignKey).forEach((field) => {
-            globalThis.Store.database().removeIndex(className, field.name, field.originalValue, model._tmpId);
-        });
+        model.dirtyFields
+            .filter(field => field.constructor.name === 'ForeignKey')
+            .forEach((field) => {
+                globalThis.Store.database().removeIndex(className, field.name, field.originalValue, model._tmpId);
+            });
     }
 
     public addValue(indexName: string, lookUpKey:string|number, id:string|number): void {

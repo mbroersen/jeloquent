@@ -1,5 +1,5 @@
-import {Model} from "./Model.js";
-import Collection from "./Collection.js";
+import {Model} from "./Model";
+import Collection from "./Collection";
 import Index from "./Table/Index";
 import {TableInterface, ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 

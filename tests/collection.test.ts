@@ -1,4 +1,4 @@
-import {Collection} from "../dist/jeloquent";
+import {Collection} from "../src/Jeloquent";
 
 test('Where statement of collection', () => {
     const nameFilter = new Collection(
@@ -80,7 +80,7 @@ test('pluck function of collection', () => {
         {id: 9, name: 'test2'},
         {id: 3, name: 'test2'},
         {id: 41, name: 'test3'}
-        ).pluck('id');
+    ).pluck('id');
 
     expect(pluck).toBeInstanceOf(Array);
     expect(pluck.length).toStrictEqual(4);
@@ -114,7 +114,7 @@ test('pluck function of collection', () => {
                     {id: 411, name: 'team 41user test'},
                     {id: 419, name: 'team 41 user test2'},
                     {id: 413, name: 'team 41 user test2'}
-                    )
+                )
         }
     ).pluck('users.name');
 

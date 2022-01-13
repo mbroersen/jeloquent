@@ -1,4 +1,4 @@
-import {Connection, ConnectionAdapterFactory, ConnectionSettings} from "../dist/jeloquent";
+import {Connection, ConnectionAdapterFactory, ConnectionSettings} from "../src/Jeloquent";
 import {User, Team, testStore} from "./Models";
 
 test('test if we can use connection to fill user model', () => {

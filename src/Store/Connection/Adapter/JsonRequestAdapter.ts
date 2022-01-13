@@ -1,4 +1,4 @@
-import QueueMessage from '../Queue/QueueMessage.js';
+import QueueMessage from '../Queue/QueueMessage';
 import ConnectionRequest from "../ConnectionRequest";
 import {AdapterInterface, ModelInterface, ModelStaticInterface, QueueAble} from "../../../JeloquentInterfaces";
 import ConnectionSettings from "../ConnectionSettings";

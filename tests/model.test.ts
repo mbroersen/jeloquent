@@ -1,4 +1,4 @@
-import {Collection} from "../dist/jeloquent";
+import {Collection} from "../src/Jeloquent";
 import {User, UserAddress, testStore, Avatar, Team, Comment, TwoPersonTeam} from "./Models";
 
 
@@ -95,7 +95,7 @@ test('Insert relations via model', () => {
 
 
 test('user can be saved', () => {
-    let user = new User();
+    const user = new User();
     user.name = 'Mark Man';
     user.team_id = 1;
     user.user_address_id = 22;
@@ -165,7 +165,7 @@ test('changed model has dirty fields', () => {
 
 
 test('model has original value', () => {
-    let user = new User();
+    const user = new User();
     user.name = 'Mark Man';
     user.team_id = 1;
     user.user_address_id = 22;
@@ -190,12 +190,12 @@ test('model has original value', () => {
     expect(foundUser.originalFields[1].originalValue).toStrictEqual('Mark Man3');
     expect(foundUser.originalFields[1].previousValue).toStrictEqual('Mark Man4');
 
-    let originalKeys = Object.keys(foundUser.originalValues);
+    const originalKeys = Object.keys(foundUser.originalValues);
     expect(originalKeys).toContain('id');
     expect(originalKeys).toContain('name');
     expect(originalKeys).toContain('team_id');
 
-    let originalValues = Object.values(foundUser.originalValues);
+    const originalValues = Object.values(foundUser.originalValues);
     expect(originalValues).toContain(null);
     expect(originalValues).toContain('Mark Man3');
     expect(originalValues).toContain(1);

@@ -1,7 +1,7 @@
-import QueueMessage from '../Queue/QueueMessage.js';
+import QueueMessage from '../Queue/QueueMessage';
 import {AdapterInterface, AdapterSettings, ModelInterface, ModelStaticInterface} from "../../../JeloquentInterfaces";
 
-/**
+/**∂
  *
  */
 export default class LocalArrayAdapter implements AdapterInterface {

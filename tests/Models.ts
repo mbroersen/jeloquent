@@ -1,4 +1,4 @@
-import {Store, Database, BelongsTo, HasOne, Model, Field, HasMany, HasManyThrough, MorphOne, MorphTo, HasOneThrough} from '../dist/jeloquent';
+import {Store, Database, BelongsTo, HasOne, Model, Field, HasMany, HasManyThrough, MorphOne, MorphTo, HasOneThrough} from '../src/jeloquent';
 
 class AvatarInfo extends Model {
     constructor() {

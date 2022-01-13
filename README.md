@@ -103,7 +103,7 @@ export default class Comment extends Model {
 ```js
 
 import {Database, Store} from 'jeloquent';
-import {User, Team, Comment} from './Models.js';
+import {User, Team, Comment} from './Models';
 
 const models = [
     User,
@@ -211,18 +211,19 @@ User.all().filter(user => !user.hasComment);
 ```js
 
 const jsonDataOfUser = User.find(1).toJson();
-
-//results in
-{
-    comments: [
-        {id: 1, title: "Hello", text: 'Bla Bla', user_id: 1}, 
-        {id: 2, title: "Hello 2", text: 'Bla Bla Bla', user_id: 1}
+```
+*Results in*
+```json
+{ 
+    "comments": [
+        {"id": 1, "title": "Hello", "text": "Bla Bla", "user_id": 1}, 
+        {"id": 2, "title": "Hello 2", "text": "Bla Bla Bla", "user_id": 1}
     ],
-    id: 1,
-    name: 'test 1',
-    team_id: 1,
-    team: {id: 1, name: 'name'}
-};
+    "id": 1,
+    "name": "test 1",
+    "team_id": 1,
+    "team": {"id": 1, "name": "name"}
+}
 ```
 
 

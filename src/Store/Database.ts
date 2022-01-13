@@ -1,4 +1,3 @@
-
 import {DatabaseInterface, ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
 import Table from "./Table";

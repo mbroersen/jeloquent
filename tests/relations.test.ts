@@ -1,4 +1,4 @@
-import {Collection} from "../dist/jeloquent";
+import {Collection} from "../src/Jeloquent";
 import {User, Team, Avatar, UserAddress, Comment, AvatarInfo} from "./Models";
 
 const userData = [
@@ -179,16 +179,16 @@ test('user without relation should return null', () => {
 
 
 test('saving relation should add index', () => {
-    let user = new User();
+    const user = new User();
     user.save();
 
-    let comment = new Comment();
+    const comment = new Comment();
     comment.title = 'id';
     comment.user_id = user.primaryKey;
     expect(comment.dirtyFields.length).toStrictEqual(2);
     comment.save();
 
-    let comment2 = new Comment();
+    const comment2 = new Comment();
     comment2.title = 'id';
     comment2.user_id = user.primaryKey;
     comment2.save();
@@ -200,21 +200,21 @@ test('saving relation should add index', () => {
 
 
 test('deleting relation should update relation key', () => {
-    let user = new User();
+    const user = new User();
     user.save();
 
-    let comment = new Comment();
+    const comment = new Comment();
     comment.title = 'id';
     comment.user_id = user.primaryKey;
     expect(comment.dirtyFields.length).toStrictEqual(2);
     comment.save();
 
-    let comment2 = new Comment();
+    const comment2 = new Comment();
     comment2.title = 'id';
     comment2.user_id = user.primaryKey;
     comment2.save();
 
-    let comment3 = new Comment();
+    const comment3 = new Comment();
     comment3.title = 'id';
     comment3.user_id = user.primaryKey;
     comment3.save();

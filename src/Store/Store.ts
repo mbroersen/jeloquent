@@ -1,5 +1,5 @@
-import Database from "./Database.js";
-import Table from "./Table.js";
+import Database from "./Database";
+import Table from "./Table";
 import Connection from "./Connection";
 import Index from "./Table/Index";
 import {ConnectionInterface, DatabaseInterface, StoreInterface} from "../JeloquentInterfaces";
