@@ -1,4 +1,4 @@
-import {Model, Field, Store, Database, Connection, QueueMessage} from "../dist/jeloquent";
+import {Model, Field, Store, Database, Connection, QueueMessage} from "../src/Jeloquent";
 
 test('Store can add database', () => {
     const store = new Store();

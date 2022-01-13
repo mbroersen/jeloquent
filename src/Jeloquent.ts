@@ -1,9 +1,9 @@
-import {Database, Store, Table, Connection} from './Store/Store.js';
-import {Model, Field, Relation, BelongsTo, HasOne, HasOneThrough, HasMany, HasManyThrough, MorphOne, MorphTo, ForeignKey} from './Store/Model.js';
-import {ConnectionAdapterFactory} from "./Store/Connection/ConnectionAdapterFactory.js";
+import {Database, Store, Table, Connection} from './Store/Store';
+import {Model, Field, Relation, BelongsTo, HasOne, HasOneThrough, HasMany, HasManyThrough, MorphOne, MorphTo, ForeignKey} from './Store/Model';
+import {ConnectionAdapterFactory} from "./Store/Connection/ConnectionAdapterFactory";
 import ConnectionSettings from "./Store/Connection/ConnectionSettings";
 import QueueMessage from "./Store/Connection/Queue/QueueMessage";
-import Collection from './Store/Collection.js';
+import Collection from './Store/Collection';
 
 export {
     Connection,

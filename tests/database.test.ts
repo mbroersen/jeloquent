@@ -1,4 +1,4 @@
-import {Database, Store} from "../dist/jeloquent";
+import {Database, Store} from "../src/Jeloquent";
 
 import {User, UserAddress, Avatar, Team, Comment} from "./Models";
 
@@ -8,13 +8,13 @@ test('tables can be added or dropped', () => {
     store.add(database);
     store.use('defaultDb');
 
-    for (let tableName of database.showTables()) {
+    for (const tableName of database.showTables()) {
         expect(['Team', 'User', 'UserAddress', 'Avatar', 'Comment']).toContain(tableName);
-    };
+    }
 
 
     database.drop('User');
-    for (let tableName of database.showTables()) {
+    for (const tableName of database.showTables()) {
         expect(['Team', 'UserAddress', 'Avatar', 'Comment']).toContain(tableName);
-    };
+    }
 });

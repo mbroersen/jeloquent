@@ -1,9 +1,45 @@
 import {AdapterSettingsOptions, ModelStaticInterface} from "../../JeloquentInterfaces";
 
-/**
- *
- */
+enum MODE {
+    NO_CORS = 'no-cors',
+    CORS = 'cors',
+    SAME_ORIGIN = 'same-origin',
+}
+
+enum CACHE {
+    DEFAULT = 'default',
+    NO_CACHE = 'no-cache',
+    RELOAD = 'reload',
+    FORCE_CACHE = 'force-cache',
+    ONLY_IF_CACHED = 'only-if-cached',
+}
+
+enum REDIRECT {
+    MANUAL = 'manual',
+    FOLLOW = 'follow',
+    ERROR = 'error',
+}
+
+enum REFERRER_POLICY {
+    NO_REFERRER = 'no-referrer', 
+    NO_REFERRER_WHEN_DOWNGRADE = '*no-referrer-when-downgrade', 
+    ORIGIN = 'origin', 
+    ORIGIN_WHEN_CROSS_ORIGIN = 'origin-when-cross-origin',
+    SAME_ORIGIN = 'same-origin',
+    STRICT_ORIGIN = 'strict-origin',
+    STRICT_ORIGIN_WHEN_CROSS_ORIGIN = 'strict-origin-when-cross-origin',
+    UNSAFE_URL = 'unsafe-url',
+}
+
 export default class ConnectionSettings {
+
+    static OPTION_CACHES = CACHE;
+
+    static OPTION_MODE = MODE;
+
+    static OPTION_REDIRECT = REDIRECT;
+
+    static OPTION_REFERRER_POLICY = REFERRER_POLICY;
 
     private _baseUrl: string;
 
@@ -17,13 +53,10 @@ export default class ConnectionSettings {
 
     private modelPathMappings: Map<string, string>;
 
-    /**
-     *
-     */
     constructor(options: AdapterSettingsOptions) {
         this.contentType = options?.contentType ?? 'application/json';
-        this.mode = options?.mode ?? 'cors';
-        this.cache = options?.cache ?? 'no-cache';
+        this.mode = options?.mode ?? ConnectionSettings.OPTION_MODE.CORS;
+        this.cache = options?.cache ?? ConnectionSettings.OPTION_CACHES.NO_CACHE;
         this.headers = options?.headers ?? {};
         this._baseUrl = options?.baseUrl ?? 'http://localhost';
         this.modelPathMappings = options?.modelPathMappings ?? new Map();
@@ -35,16 +68,15 @@ export default class ConnectionSettings {
 
     getSettings(): object {
         return {
-            "mode": this.mode, // no-cors, *cors, same-origin
-            "cache": this.cache, // *default, no-cache, reload, force-cache, only-if-cached
-            //credentials: 'same-origin', // include, *same-origin, omit
+            "mode": this.mode,
+            "cache": this.cache,
             "headers": {
                 'Accept': this.contentType,
                 'Content-Type': this.contentType,
                 ...this.headers
             },
-            "redirect": 'follow', // manual, *follow, error
-            "referrerPolicy": 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            "redirect": ConnectionSettings.OPTION_REDIRECT.FOLLOW,
+            "referrerPolicy": ConnectionSettings.OPTION_REFERRER_POLICY.NO_REFERRER,
         };
     }
 

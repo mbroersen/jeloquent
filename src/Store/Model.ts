@@ -1,14 +1,13 @@
-import HasManyThrough from './Model/Relation/HasManyThrough.js';
-import HasMany from "./Model/Relation/HasMany.js";
-import BelongsTo from "./Model/Relation/BelongTo.js";
-import MorphOne from "./Model/Relation/MorphOne.js";
-import HasOne from "./Model/Relation/HasOne.js";
-import HasOneThrough from "./Model/Relation/HasOneThrough.js";
-import MorphTo from "./Model/Field/MorphTo.js";
-
-import Field from "./Model/Field.js";
-import Relation from "./Model/Relation.js";
-import ForeignKey from "./Model/Field/ForeignKey.js";
+import HasManyThrough from './Model/Relation/HasManyThrough';
+import HasMany from "./Model/Relation/HasMany";
+import BelongsTo from "./Model/Relation/BelongTo";
+import MorphOne from "./Model/Relation/MorphOne";
+import HasOne from "./Model/Relation/HasOne";
+import HasOneThrough from "./Model/Relation/HasOneThrough";
+import MorphTo from "./Model/Field/MorphTo";
+import Field from "./Model/Field";
+import Relation from "./Model/Relation";
+import ForeignKey from "./Model/Field/ForeignKey";
 import Index from "./Table/Index";
 import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";

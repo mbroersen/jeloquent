@@ -1,20 +1,12 @@
 import Field from "../Field";
 import Relation from "../Relation";
 
-/**
- *
- */
 export default class ForeignKey extends Field {
 
     private _foreignKey: string;
 
     private relation: Relation;
 
-    /**
-     *
-     * @param name
-     * @param foreignKey
-     */
     constructor(name, foreignKey = null) {
         super(name);
         this._foreignKey = name ?? foreignKey;

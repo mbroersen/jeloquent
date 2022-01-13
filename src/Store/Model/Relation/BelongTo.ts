@@ -1,4 +1,4 @@
-import Relation from "../Relation.js";
+import Relation from "../Relation";
 import {ModelStaticInterface} from "../../../JeloquentInterfaces";
 
 export default class BelongsTo extends Relation {

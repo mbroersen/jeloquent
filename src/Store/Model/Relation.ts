@@ -1,4 +1,4 @@
-import Field from "./Field.js";
+import Field from "./Field";
 import ForeignKey from "./Field/ForeignKey";
 import {ModelStaticInterface, TableInterface} from "../../JeloquentInterfaces";
 
