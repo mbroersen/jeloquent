@@ -18,7 +18,7 @@ export default class HasManyThrough extends Relation {
 
     private _lcThroughModelClassName: string;
 
-    constructor(model: ModelStaticInterface, throughModel: ModelStaticInterface, foreignKey: string, localKey: string) {
+    constructor(model: ModelStaticInterface, throughModel: ModelStaticInterface, foreignKey: string = null, localKey: string = null) {
         super(model, foreignKey);
         this.model = model;
         this.throughModel = throughModel;

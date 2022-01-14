@@ -30,7 +30,7 @@ export default class Database implements DatabaseInterface {
         this.table(table).addIndex(indexName, lookUpKey, id)
     }
 
-    all(table): Collection {
+    all(table: string): Collection {
         return this.table(table).all();
     }
 
@@ -46,7 +46,7 @@ export default class Database implements DatabaseInterface {
         this._tables.delete(table);
     }
 
-    find(table:string, id:number|string|Array<string|number>): Collection<ModelInterface>|ModelInterface|null {
+    find(table:string, id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null {
         return this.table(table).find(id);
     }
 

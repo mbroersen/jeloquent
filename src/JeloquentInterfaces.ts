@@ -11,7 +11,8 @@ export interface ModelStaticInterface {
     get kebabCaseClassName(): string;
 
     all(): Collection;
-    aSyncInsert(data: object): Promise<Collection>;
+    aSyncInsert(data): Promise<Collection>;
+    aSyncUpdate(data): Promise<Collection>;
     delete(id: string|number);
     find(id: object|string|number|Array<string|number>):Collection|ModelInterface|null;
     getIndexByKey(indexName: string);
@@ -28,7 +29,6 @@ export interface ModelInterface {
 
     fill(data: object): void;
     fillRelations(data: object): void;
-
     tableSetup(table: Table):void;
 
     get className(): string;
@@ -87,13 +87,13 @@ export interface DatabaseInterface {
 
 
     setIndexes():void;
-
+    all(tableName:string): Collection;
     ids(tableName:string): Array<string|number>;
     insert(tableName:string, model: ModelInterface): void;
     update(tableName:string, model: ModelInterface): void;
     delete(tableName:string, id:number|string);
-    find(tableName:string, id:number|string|Array<string|number>):Collection|Model|null;
-    all(tableName:string): CollectionInterface;
+    find(table:string, id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null
+
     select(tableName:string, id:number|string): ModelInterface;
 
     indexes(table:string): Map<string, Map<string|number, Set<string|number>>>;

@@ -10,7 +10,7 @@ export default class HasMany extends Relation {
 
     localKey: string;
 
-    constructor(model: ModelStaticInterface, foreignKey: string, localKey: string) {
+    constructor(model: ModelStaticInterface, foreignKey: string = null, localKey: string = null) {
         super(model, foreignKey);
         this.localKey = localKey ?? 'id';
     }

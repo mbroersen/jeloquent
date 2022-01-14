@@ -38,6 +38,7 @@ class Avatar extends Model {
 
 
 class User extends Model {
+
     constructor() {
         const fields = [
             new Field('id', true),
@@ -56,7 +57,7 @@ class User extends Model {
 /**
  *
  */
-class UserAddress extends Model{
+class UserAddress extends Model {
 
     constructor() {
         const fields = [
@@ -103,7 +104,6 @@ class TwoPersonTeam extends Model {
 
 
 class Comment extends Model {
-
     constructor() {
         const fields = [
             new Field('id', true),
@@ -118,7 +118,15 @@ class Comment extends Model {
 }
 
 const testStore = new Store();
-const database = new Database('default', [Team, TwoPersonTeam, User, Comment, AvatarInfo, Avatar, UserAddress]);
+const database = new Database('default', [
+    Team,
+    TwoPersonTeam,
+    User,
+    Comment,
+    AvatarInfo,
+    Avatar,
+    UserAddress
+]);
 testStore.add(database);
 testStore.use('default');
 
