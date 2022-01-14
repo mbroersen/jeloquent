@@ -3,7 +3,7 @@
   "module": "dist/jeloquent.js",
   "unpkg": "dist/jeloquent.js",
   "main": "dist/jeloquent.js",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "micro framework / memory orm model store",
   "scripts": {
     "build": "./node_modules/.bin/esbuild ./src/Jeloquent.js --bundle --format=esm --platform=browser --minify --keep-names --outfile=./dist/jeloquent.js --loader:.js=jsx",
