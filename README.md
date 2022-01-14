@@ -36,7 +36,7 @@ npm install jeloquent
 ```
 
 ## Playground
-[![Edit shy-rgb-681hz](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/shy-rgb-681hz?expanddevtools=1&fontsize=14&hidenavigation=1&previewwindow=tests&theme=dark&view=editor)
+[![Edit shy-rgb-681hz](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/beautiful-lucy-liu94?expanddevtools=1&fontsize=14&hidenavigation=1&previewwindow=tests&theme=dark&view=editor)
 
 ## Usage
 
