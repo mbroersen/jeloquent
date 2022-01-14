@@ -3,7 +3,7 @@ import {ModelStaticInterface} from "../../../JeloquentInterfaces";
 
 export default class BelongsTo extends Relation {
 
-    constructor(model: ModelStaticInterface, foreignKey: string|null = null, name: string) {
+    constructor(model: ModelStaticInterface, foreignKey: string|null = null, name: string = null) {
         super(model, (foreignKey ?? `${model.snakeCaseClassName}_id`), name);
     }
 

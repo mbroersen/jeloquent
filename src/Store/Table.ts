@@ -116,12 +116,12 @@ export default class Table implements TableInterface {
         this._index.removeValue(indexName, lookUpKey, id)
     }
 
-    public select(id:string|number): Collection|ModelInterface|null {
+    public select(id:string|number): ModelInterface|null {
         if (!this._models.has(id)) {
             throw new Error('Record doesn\'t exists');
         }
 
-        return this.find(id);
+        return this.findOne(id);
     }
 
     public setupIndexes(): void {

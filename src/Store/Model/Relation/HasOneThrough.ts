@@ -14,7 +14,7 @@ export default class HasOneThrough extends Relation {
 
     private _lcThroughModelClassName: string;
 
-    constructor(model: ModelStaticInterface, throughModel: ModelStaticInterface, foreignKey: string, localKey = 'id') {
+    constructor(model: ModelStaticInterface, throughModel: ModelStaticInterface, foreignKey: string = null, localKey = 'id') {
         super(model, foreignKey);
         this.throughModel = throughModel;
         this.localKey = localKey;

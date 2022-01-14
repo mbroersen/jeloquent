@@ -104,16 +104,16 @@ class Model implements ModelInterface {
         return this.constructor.snakeCaseClassName;
     }
 
-    static aSyncInsert(data: object): Promise<Collection> {
-        return new Promise((resolve) => {
+    static aSyncInsert(data): Promise<Collection> {
+        return new Promise((resolve: CallableFunction) => {
             queueMicrotask(() => {
                 resolve(this.insert(data));
             });
         });
     }
 
-    static aSyncUpdate(data: object): Promise<Collection> {
-        return new Promise((resolve) => {
+    static aSyncUpdate(data): Promise<Collection> {
+        return new Promise((resolve: CallableFunction) => {
             queueMicrotask(() => {
                 resolve(this.update(data));
             });
