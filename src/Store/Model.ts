@@ -11,6 +11,7 @@ import ForeignKey from "./Model/Field/ForeignKey";
 import Index from "./Table/Index";
 import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
+import * as Str from "../Util/Str"
 
 class Model implements ModelInterface {
 
@@ -38,19 +39,11 @@ class Model implements ModelInterface {
     }
 
     static get kebabCaseClassName(): string {
-        if (! this.kebabCaseName) {
-            this.kebabCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '-$1').toLowerCase())
-        }
-
-        return this.kebabCaseName;
+        return this.kebabCaseName ??= Str.KebabCase(this.className);
     }
 
     static get snakeCaseClassName(): string {
-        if (!this.snakeCaseName) {
-            this.snakeCaseName = (this.name[0].toLowerCase() + this.name.slice(1).replace(/([A-Z])/g, '_$1').toLowerCase());
-        }
-
-        return this.snakeCaseName;
+        return this.snakeCaseName ??= Str.SnakeCase(this.className);
     }
 
     get className(): string {
