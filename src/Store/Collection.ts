@@ -1,3 +1,5 @@
+import * as Operators from './Collection/Where/Operators';
+
 /**
  *
  */
@@ -9,24 +11,12 @@ export default class Collection extends Array {
 
     get operators() {
         return {
-            '>'(fieldValue, value) {
-                return fieldValue > value;
-            },
-            '>='(fieldValue, value) {
-                return fieldValue >= value;
-            },
-            '<'(fieldValue, value) {
-                return fieldValue < value;
-            },
-            '<='(fieldValue, value) {
-                return fieldValue <= value;
-            },
-            '!='(fieldValue, value) {
-                return fieldValue != value;
-            },
-            '=='(fieldValue, value) {
-                return fieldValue == value;
-            }
+            '==': Operators.equal,
+            '!=': Operators.notEqual,
+            '>=': Operators.gtAndEqual,
+            '<=': Operators.ltAndEqual,
+            '>': Operators.gt,
+            '<': Operators.lt,
         }
     }
 
