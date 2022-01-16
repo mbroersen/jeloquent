@@ -98,7 +98,7 @@ class Model implements ModelInterface {
     }
 
     static aSyncInsert(data): Promise<Collection> {
-        return new Promise((resolve: CallableFunction) => {
+        return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.insert(data));
             });
@@ -106,7 +106,7 @@ class Model implements ModelInterface {
     }
 
     static aSyncUpdate(data): Promise<Collection> {
-        return new Promise((resolve: CallableFunction) => {
+        return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.update(data));
             });
@@ -126,10 +126,10 @@ class Model implements ModelInterface {
     }
 
     static getIndexByKey(indexName) {
-        const className = this.className;
-        const currentDatabase = globalThis.Store.database();
-
-        return currentDatabase.getIndexByKey(className, indexName);
+        return globalThis
+            .Store
+            .database()
+            .getIndexByKey(this.className, indexName);
     }
 
     static getInstance(): ModelInterface {
@@ -143,9 +143,11 @@ class Model implements ModelInterface {
     }
 
     static ids() {
-        return globalThis.Store.database().ids(this.className);
+        return globalThis
+            .Store
+            .database()
+            .ids(this.className);
     }
-
 
     static insert(data: object|Array<object>): Collection {
         const modelsData = Array.isArray(data) ? data : [data];
@@ -166,6 +168,9 @@ class Model implements ModelInterface {
         Index.register(this.getInstance(), name);
     }
 
+    /**
+     * @deprecated
+     */
     static select(id) {
         try {
             return globalThis.Store.database().select(this.className, id);
@@ -324,13 +329,17 @@ class Model implements ModelInterface {
             }
 
             if (json[field.name] instanceof Array) {
-                json[field.name] = [...json[field.name].map((value) => {
-                    return value?.toObject(true) ?? value
-                })];
+                json[field.name] = this.arrayToObjects(json, field);
             }
         }
 
         return {...json};
+    }
+
+    private arrayToObjects(json: object, field: Field): Array<unknown> {
+        return [...json[field.name].map((value) => {
+            return value?.toObject(true) ?? value
+        })];
     }
 }
 
