@@ -11,7 +11,8 @@ import ForeignKey from "./Model/Field/ForeignKey";
 import Index from "./Table/Index";
 import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
-import * as Str from "../Util/Str"
+import * as Str from "../Util/Str";
+import * as Obj from "../Util/Obj";
 
 class Model implements ModelInterface {
 
@@ -23,11 +24,11 @@ class Model implements ModelInterface {
 
     ['constructor']: ModelStaticInterface;
 
+    private _originalFields: Array<Field>;
+
+    private _primaryFields: Array<Field>;
+
     private numberOfFields: number;
-
-    private originalFields: Array<Field>;
-
-    private primaryFields: Array<Field>;
 
     constructor(fields: Array<Field> = []) {
         this.setFields(this.addRelationFields(fields));
@@ -62,6 +63,10 @@ class Model implements ModelInterface {
         return this.constructor.kebabCaseClassName;
     }
 
+    get originalFields(): Array<Field> {
+        return this._originalFields;
+    }
+
     get originalPrimaryKey() {
         return this.primaryFields.reduce((toValue, field, i) => {
             if (i > 0) {
@@ -78,6 +83,10 @@ class Model implements ModelInterface {
             }
             return originalValues;
         }, {});
+    }
+
+    get primaryFields():Array<Field> {
+        return this._primaryFields ??= this.originalFields.filter(field => field.isPrimary);
     }
 
     get primaryKey(): string|number {
@@ -273,25 +282,11 @@ class Model implements ModelInterface {
     }
 
     setFields(fields) {
-        this.originalFields = [...fields];
+        this._originalFields = [...fields];
         this.numberOfFields = this.originalFields.length;
         for (let i = 0; i < this.numberOfFields; i++) {
             this.originalFields[i].setup(this);
         }
-
-        Object.defineProperty(this,
-            `indexedFields`, {
-                get: () => {
-                    return this.originalFields.filter((field) => field instanceof ForeignKey).reduce((set, relation) => {
-                        set.add(relation.name);
-                        return set;
-                    }, new Set());
-                },
-            }
-        );
-
-        this.primaryFields = this.originalFields.filter(field => field.isPrimary);
-
         return this;
     }
 
@@ -312,34 +307,7 @@ class Model implements ModelInterface {
     }
 
     toObject(fromRelation = false): object {
-        const json = {};
-
-        for (let i = 0; i < this.originalFields.length; i++) {
-            const field = this.originalFields[i];
-
-            if (field instanceof Relation && fromRelation) {
-                continue;
-            }
-
-            json[field.name] = field.value;
-
-            if (json[field.name] instanceof Model) {
-                json[field.name] = json[field.name].toObject(true);
-                continue;
-            }
-
-            if (json[field.name] instanceof Array) {
-                json[field.name] = this.arrayToObjects(json, field);
-            }
-        }
-
-        return {...json};
-    }
-
-    private arrayToObjects(json: object, field: Field): Array<unknown> {
-        return [...json[field.name].map((value) => {
-            return value?.toObject(true) ?? value
-        })];
+        return Obj.fromModel(this, fromRelation);
     }
 }
 
