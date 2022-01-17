@@ -13,6 +13,7 @@ import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Collection from "./Collection";
 import * as Str from "../Util/Str";
 import * as Obj from "../Util/Obj";
+import * as ModelSetup from "./Model/Util/Setup";
 
 class Model implements ModelInterface {
 
@@ -31,7 +32,7 @@ class Model implements ModelInterface {
     private numberOfFields: number;
 
     constructor(fields: Array<Field> = []) {
-        this.setFields(this.addRelationFields(fields));
+        this.setFields(ModelSetup.addRelationFieldsToList(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
     }
 
@@ -202,18 +203,6 @@ class Model implements ModelInterface {
         return models;
     }
 
-    addRelationFields(fields) {
-        const fieldList = [...fields];
-        fields.forEach((field, i) => {
-            if (field instanceof Relation) {
-                fieldList.splice(i, 0, ...field.getRelationalFields());
-            }
-        });
-
-        this.numberOfFields = fieldList.length;
-        return fieldList;
-    }
-
     delete() {
         this.constructor.delete(this.primaryKey);
     }
@@ -282,24 +271,12 @@ class Model implements ModelInterface {
     }
 
     setFields(fields) {
-        this._originalFields = [...fields];
-        this.numberOfFields = this.originalFields.length;
-        for (let i = 0; i < this.numberOfFields; i++) {
-            this.originalFields[i].setup(this);
-        }
+        ModelSetup.setFields(this, fields);
         return this;
     }
 
     tableSetup(table) {
-        for (let i = 0; i < this.numberOfFields; i++) {
-            if (this.originalFields[i] instanceof ForeignKey) {
-                this.originalFields[i].tableSetup(table);
-            }
-
-            if (this.originalFields[i] instanceof HasManyThrough) {
-                this.originalFields[i].tableSetup(table);
-            }
-        }
+        ModelSetup.setupTable(this, table);
     }
 
     toJSON(): object {
