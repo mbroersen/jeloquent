@@ -24,7 +24,7 @@ test('User can be found', () => {
     const allUsers = User.all();
 
     expect(lUser).toBeInstanceOf(User);
-    expect(lUser.primaryKey).toBe(12);
+    expect(lUser.primaryKey).toBe("12");
     expect(allUsers).toBeInstanceOf(Collection);
     expect(cUser).toBeInstanceOf(Collection);
     expect(allUsers.length).toBe(1);
@@ -57,7 +57,7 @@ test('Model returns classNames', () => {
 
 test('Model fetch all primaryKeys', () => {
     const indexes = User.ids();
-    expect(indexes).toStrictEqual([12]);
+    expect(indexes).toStrictEqual(["12"]);
     testStore.database().truncate('User');
     expect(User.ids()).toStrictEqual([]);
 });
@@ -109,8 +109,8 @@ test('user can be saved', () => {
     user.id = 9;
     user.save();
     expect(Store.database().ids('User')).not.toContain('_7');
-    expect(user.primaryKey).toEqual(9);
-    expect(Store.database().ids('User')).toContain(9);
+    expect(user.primaryKey).toEqual("9");
+    expect(Store.database().ids('User')).toContain("9");
 
     const foundUser = Store.database().find('User', 9);
     expect(foundUser.name).toStrictEqual('Mark Man');

@@ -1,7 +1,7 @@
 import Relation from "../Relation";
 import ForeignKey from "../Field/ForeignKey";
 import HasManyThrough from "../Relation/HasManyThrough";
-
+import Field from "../Field";
 
 export function addRelationFieldsToList(fields) {
     const fieldList = [...fields];
@@ -13,7 +13,7 @@ export function addRelationFieldsToList(fields) {
     return fieldList;
 }
 
-export function setFields(model, fields) {
+export function setFields(model, fields: Field[]) {
     model._originalFields = [...fields];
     model.numberOfFields = model.originalFields.length;
     for (let i = 0; i < model.numberOfFields; i++) {

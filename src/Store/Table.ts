@@ -14,7 +14,7 @@ export default class Table implements TableInterface {
 
     private _model: ModelInterface;
 
-    private _models: Map<string|number, ModelInterface>;
+    private _models: Map<string, ModelInterface>;
 
     private _primaryKeyFieldNames: Array<string>;
 
@@ -22,7 +22,7 @@ export default class Table implements TableInterface {
         this.setup(model.getInstance());
     }
 
-    get ids():Array<string|number> {
+    get ids():string[] {
         return [...this._models.keys()];
     }
 
@@ -39,7 +39,7 @@ export default class Table implements TableInterface {
     }
 
     public addIndex(indexName:string, lookUpKey:string, id:string|number): void {
-        this._index.addValue(indexName, lookUpKey, id);
+        this._index.addValue(indexName, lookUpKey, `${id}`);
     }
 
     public all(): Collection {
@@ -61,13 +61,13 @@ export default class Table implements TableInterface {
     }
 
     public delete(id:string|number): void {
-        if (!this._models.has(id)) {
+        if (!this._models.has(`${id}`)) {
             throw new Error('Record doesn\'t exists');
         }
 
         this._index.removeValueByModel(this.findOne(id));
 
-        this._models.delete(id);
+        this._models.delete(`${id}`);
     }
 
     public find(id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null {
@@ -116,12 +116,19 @@ export default class Table implements TableInterface {
         this._index.removeValue(indexName, lookUpKey, id)
     }
 
-    public select(id:string|number): ModelInterface|null {
-        if (!this._models.has(id)) {
-            throw new Error('Record doesn\'t exists');
+    public save(model: ModelInterface) {
+        if (!model.primaryKey.startsWith('_') && this.ids.includes(model._tmpId)) {
+            //todo remove indexes for foreignKey
+            //                                team_id  this.team_id
+            Index.removeTmpIdFromIndex(model);
+            this.delete(model._tmpId);
         }
 
-        return this.findOne(id);
+        if (this.ids.includes(model.primaryKey)) {
+            this.update(model);
+            return;
+        }
+        this.insert(model);
     }
 
     public setupIndexes(): void {
@@ -155,7 +162,7 @@ export default class Table implements TableInterface {
         const result = [];
         for (let i = 0; i < id.length; i++) {
             result.push(
-                this._models.get(id[i])
+                this._models.get(`${id[i]}`)
             );
         }
         return new Collection(...result);
@@ -174,7 +181,7 @@ export default class Table implements TableInterface {
     }
 
     private findOne(id: string|number): ModelInterface|null {
-        return this._models.get(id) ?? null;
+        return this._models.get(`${id}`) ?? null;
     }
 
     private findOneComposedPrimaryKey(id: object|string): ModelInterface|null {

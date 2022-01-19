@@ -45,7 +45,7 @@ export default class HasOne extends Relation {
     private getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,
-            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
+            [...keyIndex.get(`${this.$parent[parentProperty]}`)?.values() ?? []]
         ).first();
     }
 }

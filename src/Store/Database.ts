@@ -106,8 +106,8 @@ export default class Database implements DatabaseInterface {
         this.table(table).removeIndex(indexName, lookUpKey, id);
     }
 
-    select(table: string, id:number|string): ModelInterface {
-        return this.table(table).select(id);
+    save(table: string, model: ModelInterface): void {
+        this.table(table).save(model);
     }
 
     setIndexes(): void {

@@ -44,7 +44,7 @@ export default class HasMany extends Relation {
     protected getValueByParentKey(parentProperty): Collection {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,
-            [...keyIndex.get(this.$parent[parentProperty])?.values() ?? []]
+            [...keyIndex.get(`${this.$parent[parentProperty]}`)?.values() ?? []]
         );
     }
 
