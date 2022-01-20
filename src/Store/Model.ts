@@ -26,6 +26,10 @@ class Model implements ModelInterface {
 
     ['constructor']: ModelStaticInterface;
 
+    /**
+     * Todo convert to Map<string, Field>;
+     * @private
+     */
     private _originalFields: Field[];
 
     private _primaryFields: Field[];
@@ -35,6 +39,28 @@ class Model implements ModelInterface {
     constructor(fields: Field[] = []) {
         this.setFields(ModelSetup.addRelationFieldsToList(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
+
+        // should add fieldMap
+        // todo use proxy
+        // return new Proxy(this, {
+        //     construct(target, argArray, newTarget): object {
+        //         return Reflect.construct(target, argArray, newTarget);
+        //     },
+        //
+        //     get(target: Database, p): any {
+        //         if (!target[p]) {
+        //             return (...args) => {
+        //                 const arrayArgs = [...args];
+        //                 const tableName = arrayArgs.shift();
+        //
+        //                 console.log(target);
+        //
+        //                 return target.table(tableName)[p](...arrayArgs);
+        //             }
+        //         }
+        //         return Reflect.get(target, p);
+        //     }
+        // })
     }
 
     static get className(): string {

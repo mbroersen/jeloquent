@@ -1,8 +1,7 @@
-import {DatabaseInterface, ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
-import Collection from "./Collection";
+import {ModelInterface, ModelStaticInterface} from "../JeloquentInterfaces";
 import Table from "./Table";
 
-export default class Database implements DatabaseInterface {
+export default class Database {
 
     private _name: string;
 
@@ -30,28 +29,12 @@ export default class Database implements DatabaseInterface {
         this.table(table).addIndex(indexName, lookUpKey, id)
     }
 
-    all(table: string): Collection {
-        return this.table(table).all();
-    }
-
     allModels(table): Map<string|number, ModelInterface> {
         return this.table(table).allModels();
     }
 
-    delete(table:string, id:number|string): void {
-        this.table(table).delete(id);
-    }
-
     drop(table: string): void {
         this._tables.delete(table);
-    }
-
-    find(table:string, id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null {
-        return this.table(table).find(id);
-    }
-
-    getIndexByKey(table: string, indexName: string): Map<string|number, Set<string|number>> {
-        return this.table(table).getIndexByKey(indexName);
     }
 
     ids(table: string): Array<string|number> {
@@ -60,10 +43,6 @@ export default class Database implements DatabaseInterface {
 
     indexes(table: string): Map<string, Map<string|number, Set<string|number>>>  {
         return this.table(table).indexes;
-    }
-
-    insert(table: string, model: ModelInterface): void {
-        this.table(table).insert(model);
     }
 
     /**
@@ -83,11 +62,11 @@ export default class Database implements DatabaseInterface {
         const matchValue = sqlParts[10];
 
         if (matchField === 'id') {
-            return this[action.toLowerCase()](table, matchValue);
+            return this.table(table)[action.toLowerCase()](matchValue);
         }
 
         if (matchField === undefined && action === 'SELECT') {
-            return this.all(table);
+            return this.table(table).all();
         }
 
         return null;
@@ -96,18 +75,6 @@ export default class Database implements DatabaseInterface {
     register(model: ModelStaticInterface) {
         const table = new Table(model);
         this._tables.set(table.name, table);
-    }
-
-    registerIndex(table: string, name: string): void {
-        this.table(table).registerIndex(name);
-    }
-
-    removeIndex(table: string, indexName: string, lookUpKey: string, id:string|number): void {
-        this.table(table).removeIndex(indexName, lookUpKey, id);
-    }
-
-    save(table: string, model: ModelInterface): void {
-        this.table(table).save(model);
     }
 
     setIndexes(): void {
@@ -120,15 +87,7 @@ export default class Database implements DatabaseInterface {
         return [...this._tables.keys()];
     }
 
-    truncate(table: string): void {
-        this.table(table).truncate();
-    }
-
-    update(table: string, model: ModelInterface): void {
-        this.table(table).update(model);
-    }
-
-    private table(name:string): Table {
+    table(name:string): Table {
         return this._tables.get(name);
     }
 }

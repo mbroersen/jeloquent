@@ -44,7 +44,25 @@ class Store implements StoreInterface {
     }
 
     database(): DatabaseInterface|null {
-        return this.databases.get(this.useDatabase) ?? null;
+        if (!this.databases.has(this.useDatabase)) {
+            return null;
+        }
+        return new Proxy(this.databases.get(this.useDatabase), {
+            construct(target, argArray, newTarget): object {
+                return Reflect.construct(target, argArray, newTarget);
+            },
+
+            get(target: Database, p): any {
+                if (!target[p]) {
+                    return (...args) => {
+                        const arrayArgs = [...args];
+                        const tableName = arrayArgs.shift();
+                        return target.table(tableName)[p](...arrayArgs);
+                    }
+                }
+                return Reflect.get(target, p);
+            }
+        }) as DatabaseInterface;
     }
 
     use(storeName = 'default'): void {

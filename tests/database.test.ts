@@ -8,13 +8,13 @@ test('tables can be added or dropped', () => {
     store.add(database);
     store.use('defaultDb');
 
-    for (const tableName of database.showTables()) {
+    for (const tableName of store.database().showTables()) {
         expect(['Team', 'User', 'UserAddress', 'Avatar', 'Comment']).toContain(tableName);
     }
 
 
     database.drop('User');
-    for (const tableName of database.showTables()) {
+    for (const tableName of store.database().showTables()) {
         expect(['Team', 'UserAddress', 'Avatar', 'Comment']).toContain(tableName);
     }
 });

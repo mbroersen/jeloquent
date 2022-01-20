@@ -92,7 +92,7 @@ export interface DatabaseInterface {
     find(table:string, id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null
     save(tableName:string, data:object);
 
-    indexes(table:string): Map<string, Map<string|number, Set<string|number>>>;
+    indexes(table:string): Map<string, Map<string, Set<string>>>;
 }
 
 
