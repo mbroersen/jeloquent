@@ -3,11 +3,11 @@ import {IndexInterface, ModelInterface} from "../../JeloquentInterfaces";
 
 export default class Index implements IndexInterface {
 
-    private _indexes: Map<string, Map<string|number, Set<string|number>>>;
+    private _indexes: Map<string, Map<string, Set<string>>>;
 
     private indexedFields: Set<string>;
 
-    private splitIndexNames: Map<string, Array<string>>;
+    private splitIndexNames: Map<string, string[]>;
 
     constructor() {
         this._indexes = new Map();
@@ -67,15 +67,15 @@ export default class Index implements IndexInterface {
         }
 
         const index = this.index(indexName);
-        if (!(index.has(lookUpKey))) {
+        if (!(index.has(`${lookUpKey}`))) {
             this.registerLookUpKey(indexName, lookUpKey, id);
             return;
         }
         const keys = this.indexLookUpKey(indexName, lookUpKey);
-        if (keys.has(id)) {
+        if (keys.has(`${id}`)) {
             return;
         }
-        keys.add(id);
+        keys.add(`${id}`);
     }
 
     public addValueByModel(model: ModelInterface) {
@@ -88,11 +88,11 @@ export default class Index implements IndexInterface {
         }
     }
 
-    public getIndexByKey(key: string): Map<string|number, Set<string|number>> {
+    public getIndexByKey(key: string): Map<string, Set<string>> {
         return this.index(key);
     }
 
-    public getLookUpValue(model: ModelInterface, fieldName: string): string|number|null {
+    public getLookUpValue(model: ModelInterface, fieldName: string): string {
         const lookUpValue = this.splitIndexNames.get(fieldName);
         let returnValue = null;
         let indexLookUpValue = model;
@@ -104,7 +104,7 @@ export default class Index implements IndexInterface {
             returnValue = indexLookUpValue;
         }
 
-        return returnValue ?? null;
+        return `${returnValue}`;
     }
 
     public register(indexName: string): void {
@@ -123,11 +123,11 @@ export default class Index implements IndexInterface {
     }
 
     public registerLookUpKey(indexName, lookUpKey, id) {
-        this.index(indexName).set(lookUpKey, new Set([id]));
+        this.index(indexName).set(`${lookUpKey}`, new Set([`${id}`]));
     }
 
     public removeValue(indexName: string, lookUpKey:string|number, id:string|number): void {
-        this.indexLookUpKey(indexName, lookUpKey).delete(id);
+        this.indexLookUpKey(indexName, lookUpKey).delete(`${id}`);
     }
 
     public removeValueByModel(model: ModelInterface): void {
@@ -147,14 +147,14 @@ export default class Index implements IndexInterface {
     }
 
     public unregisterLookUpKey(indexName:string, lookUpKey:string|number): void {
-        this.index(indexName).delete(lookUpKey);
+        this.index(indexName).delete(`${lookUpKey}`);
     }
 
-    private index(index: string): Map<string|number, Set<string|number>> {
+    private index(index: string): Map<string, Set<string>> {
         return this._indexes.get(index);
     }
 
     private indexLookUpKey(index: string, key: string|number): Set<string|number> {
-        return this.index(index).get(key);
+        return this.index(index).get(`${key}`);
     }
 }

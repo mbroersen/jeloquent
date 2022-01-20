@@ -1,5 +1,4 @@
 import Collection from "./Store/Collection";
-import {Model} from "./Store/Model";
 import Table from "./Store/Table";
 import Field from "./Store/Model/Field";
 
@@ -34,7 +33,7 @@ export interface ModelInterface {
     get className(): string;
     get dirtyFields():Array<Field>
 
-    get primaryKey(): string|number|null;
+    get primaryKey(): string|null;
     get primaryKeyName(): Array<string>;
 
     get kebabCaseClassName(): string;
@@ -60,7 +59,6 @@ export interface ApiInterface {
     delete(id:number|string);
     find(id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null;
     insert(model: ModelInterface): void;
-    select(id:number|string): Collection|ModelInterface|null;
     update(model: ModelInterface): void;
 }
 
@@ -85,7 +83,6 @@ export interface StoreInterface {
 export interface DatabaseInterface {
     get name(): string;
 
-
     setIndexes():void;
     all(tableName:string): Collection;
     ids(tableName:string): Array<string|number>;
@@ -93,8 +90,7 @@ export interface DatabaseInterface {
     update(tableName:string, model: ModelInterface): void;
     delete(tableName:string, id:number|string);
     find(table:string, id:number|string|object|Array<string|number|object>): Collection|ModelInterface|null
-
-    select(tableName:string, id:number|string): ModelInterface;
+    save(tableName:string, data:object);
 
     indexes(table:string): Map<string, Map<string|number, Set<string|number>>>;
 }

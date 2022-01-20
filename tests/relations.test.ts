@@ -1,54 +1,63 @@
 import {Collection} from "../src/Jeloquent";
 import {User, Team, Avatar, UserAddress, Comment, AvatarInfo} from "./Models";
 
-const userData = [
-    {id: 1, name: 'test 1', team_id: 123},
-    {id: 2, name: 'user 2', team_id: 123},
-    {id: 3, name: 'user 3', team_id: 1},
-    {id: 4, name: 'teamless user', team_id: null},
-];
 
-const teamData = [
-    {id: 1, name: 'team 1'},
-    {id: 123, name: 'team 123'},
-    {id: 234, name: 'team no users'},
-];
+beforeAll(() => {
 
-const userAddressData = [
-    {id: 1, user_id: 1, city: 'Alkmaar', street: 'Waagplein', house_number: 21}
-];
+    const userData = [
+        {id: 1, name: 'test 1', team_id: 123},
+        {id: 2, name: 'user 2', team_id: 123},
+        {id: 3, name: 'user 3', team_id: 1},
+        {id: 4, name: 'teamless user', team_id: null},
+    ];
 
-const avatarData = [
-    {avatar_id: 1, avatar_type: 'User', 'img_url': 'http://test.com/test.png', avatar_info_id: 99},
-    {avatar_id: 1, avatar_type: 'Team', 'img_url': 'http://test.com/test2.png', avatar_info_id: 99},
-    {avatar_id: 123, avatar_type: 'Team', 'img_url': 'http://test.com/test3.png', avatar_info_id: 99},
-];
+    const teamData = [
+        {id: 1, name: 'team 1'},
+        {id: 123, name: 'team 123'},
+        {id: 234, name: 'team no users'},
+    ];
 
-const commentData = [
-    {id: 1, title: 'title', text: 'My Text 1_1', user_id: 1},
-    {id: 2, title: 'title', text: 'My Text 1_2', user_id: 1},
-    {id: 3, title: 'title', text: 'My Text 1_3', user_id: 1},
-    {id: 4, title: 'title', text: 'My Text 2_1', user_id: 2},
-    {id: 5, title: 'title', text: 'My Text 2_2', user_id: 2},
-    {id: 6, title: 'title', text: 'My Text 2_3', user_id: 2},
-    {id: 7, title: 'title', text: 'My Text 3_1', user_id: 3},
-    {id: 8, title: 'title', text: 'My Text 3_2', user_id: 3},
-];
+    const userAddressData = [
+        {id: 1, user_id: 1, city: 'Alkmaar', street: 'Waagplein', house_number: 21}
+    ];
 
-const avatarInfoData = [
-    {id: 99, name: 'test data'},
-    {id: 199, name: 'test21321 data'},
-    {id: 299, name: 'test 2123data'},
-];
+    const avatarData = [
+        {avatar_id: 1, avatar_type: 'User', 'img_url': 'http://test.com/test.png', avatar_info_id: 99},
+        {avatar_id: 1, avatar_type: 'Team', 'img_url': 'http://test.com/test2.png', avatar_info_id: 99},
+        {avatar_id: 123, avatar_type: 'Team', 'img_url': 'http://test.com/test3.png', avatar_info_id: 99},
+    ];
+
+    const commentData = [
+        {id: 1, title: 'title', text: 'My Text 1_1', user_id: 1},
+        {id: 2, title: 'title', text: 'My Text 1_2', user_id: 1},
+        {id: 3, title: 'title', text: 'My Text 1_3', user_id: 1},
+        {id: 4, title: 'title', text: 'My Text 2_1', user_id: 2},
+        {id: 5, title: 'title', text: 'My Text 2_2', user_id: 2},
+        {id: 6, title: 'title', text: 'My Text 2_3', user_id: 2},
+        {id: 7, title: 'title', text: 'My Text 3_1', user_id: 3},
+        {id: 8, title: 'title', text: 'My Text 3_2', user_id: 3},
+    ];
+
+    const avatarInfoData = [
+        {id: 99, name: 'test data'},
+        {id: 199, name: 'test21321 data'},
+        {id: 299, name: 'test 2123data'},
+    ];
 
 
-AvatarInfo.insert(avatarInfoData);
-Avatar.insert(avatarData);
-User.insert(userData);
-UserAddress.insert(userAddressData);
-Team.insert(teamData);
-Comment.insert(commentData);
-//
+    AvatarInfo.insert(avatarInfoData);
+    Avatar.insert(avatarData);
+    User.insert(userData);
+    UserAddress.insert(userAddressData);
+    Team.insert(teamData);
+    Comment.insert(commentData);
+
+
+
+})
+
+
+
 
 test('BelongsTo relations is added to user', () => {
     const lUser = User.find(1);
@@ -99,7 +108,6 @@ test('HasOne Relation is added to user model', () => {
     const lUser2 = User.find(2);
     expect(lUser2.hasUserAddress).toStrictEqual(false);
     expect(lUser2.user_address).toStrictEqual(null);
-
 });
 
 
@@ -136,7 +144,7 @@ test('relation indexes should update on save', () => {
     expect(lComment.isDirty()).toStrictEqual(true);
 
     lComment.save();
-    expect(globalThis.Store.database().indexes('Comment').get('user_id').get(3).has(5)).toStrictEqual(true);
+    expect(globalThis.Store.database().indexes('Comment').get('user_id').get('3').has('5')).toStrictEqual(true);
 
     expect(lUser.comments.length).toStrictEqual(3);
     expect(lComment.user.id).toStrictEqual(3);
@@ -152,8 +160,8 @@ test('relation indexes should update on save', () => {
     lAvatar.save();
 
     expect(lAvatar.avatar_info.id).toStrictEqual(199);
-    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get(199).has('1-User')).toStrictEqual(true);
-    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get(99).has('1-User')).toStrictEqual(false);
+    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get('199').has('1-User')).toStrictEqual(true);
+    expect(globalThis.Store.database().indexes('Avatar').get('avatar_info_id').get('99').has('1-User')).toStrictEqual(false);
 });
 
 

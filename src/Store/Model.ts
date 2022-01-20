@@ -14,6 +14,7 @@ import Collection from "./Collection";
 import * as Str from "../Util/Str";
 import * as Obj from "../Util/Obj";
 import * as ModelSetup from "./Model/Util/Setup";
+import Table from "./Table";
 
 class Model implements ModelInterface {
 
@@ -25,18 +26,18 @@ class Model implements ModelInterface {
 
     ['constructor']: ModelStaticInterface;
 
-    private _originalFields: Array<Field>;
+    private _originalFields: Field[];
 
-    private _primaryFields: Array<Field>;
+    private _primaryFields: Field[];
 
     private numberOfFields: number;
 
-    constructor(fields: Array<Field> = []) {
+    constructor(fields: Field[] = []) {
         this.setFields(ModelSetup.addRelationFieldsToList(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
     }
 
-    static get className() : string {
+    static get className(): string {
         return this.name;
     }
 
@@ -52,11 +53,11 @@ class Model implements ModelInterface {
         return this.constructor.className;
     }
 
-    get dirtyFieldNames() {
+    get dirtyFieldNames(): string[] {
         return this.dirtyFields.map(field => field.name);
     }
 
-    get dirtyFields() {
+    get dirtyFields(): Field[] {
         return this.originalFields.filter(field => field.isDirty);
     }
 
@@ -64,11 +65,11 @@ class Model implements ModelInterface {
         return this.constructor.kebabCaseClassName;
     }
 
-    get originalFields(): Array<Field> {
+    get originalFields(): Field[] {
         return this._originalFields;
     }
 
-    get originalPrimaryKey() {
+    get originalPrimaryKey(): unknown {
         return this.primaryFields.reduce((toValue, field, i) => {
             if (i > 0) {
                 return `${toValue}-${field.originalValue}`;
@@ -77,7 +78,7 @@ class Model implements ModelInterface {
         }, '') ?? this._tmpId ?? null;
     }
 
-    get originalValues() {
+    get originalValues(): object {
         return this.originalFields.reduce((originalValues, field) => {
             if (field.originalValue !== undefined) {
                 originalValues[field.name] = field.originalValue;
@@ -86,20 +87,25 @@ class Model implements ModelInterface {
         }, {});
     }
 
-    get primaryFields():Array<Field> {
+    get primaryFields(): Field[] {
         return this._primaryFields ??= this.originalFields.filter(field => field.isPrimary);
     }
 
-    get primaryKey(): string|number {
-        return this.primaryFields.reduce((toValue:string, field:Field, i:number): string|number => {
+    get primaryKey(): string {
+        return this.primaryFields.reduce((toValue:string, field:Field, i:number): string => {
             if (i > 0) {
                 return `${toValue}-${field.value}`;
             }
-            return field.value as (string|number);
+
+            if (field.value === null) {
+                return field.value;
+            }
+
+            return `${field.value}`;
         }, '') ?? this._tmpId ?? null;
     }
 
-    get primaryKeyName(): Array<string> {
+    get primaryKeyName(): string[] {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.name);
     }
 
@@ -107,7 +113,7 @@ class Model implements ModelInterface {
         return this.constructor.snakeCaseClassName;
     }
 
-    static aSyncInsert(data): Promise<Collection> {
+    static aSyncInsert(data: object): Promise<Collection> {
         return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.insert(data));
@@ -115,7 +121,7 @@ class Model implements ModelInterface {
         });
     }
 
-    static aSyncUpdate(data): Promise<Collection> {
+    static aSyncUpdate(data: object): Promise<Collection> {
         return new Promise((resolve) => {
             queueMicrotask(() => {
                 resolve(this.update(data));
@@ -131,7 +137,7 @@ class Model implements ModelInterface {
         globalThis.Store.database().delete(this.className, id);
     }
 
-    static find(id) {
+    static find(id): unknown {
         return globalThis.Store.database().find(this.className, id);
     }
 
@@ -159,7 +165,7 @@ class Model implements ModelInterface {
             .ids(this.className);
     }
 
-    static insert(data: object|Array<object>): Collection {
+    static insert(data: object|object[]): Collection {
         const modelsData = Array.isArray(data) ? data : [data];
         const length = modelsData.length;
         const models = new Collection();
@@ -178,18 +184,7 @@ class Model implements ModelInterface {
         Index.register(this.getInstance(), name);
     }
 
-    /**
-     * @deprecated
-     */
-    static select(id) {
-        try {
-            return globalThis.Store.database().select(this.className, id);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    static update(data: object|Array<object>): Collection {
+    static update(data: object|object[]): Collection {
         const modelsData = Array.isArray(data) ? data : [data];
         const length = modelsData.length;
         const models = new Collection();
@@ -230,7 +225,7 @@ class Model implements ModelInterface {
         }
     }
 
-    isDirty(fieldName) {
+    isDirty(fieldName:string = null) {
         if (fieldName) {
             return this.dirtyFieldNames.includes(fieldName);
         }
@@ -252,30 +247,15 @@ class Model implements ModelInterface {
     }
 
     save() {
-        const className = this.className;
-        const currentDatabase = globalThis.Store.database();
-        const tableIds = currentDatabase.ids(className);
-
-        if (this.primaryKey[0] !== '_' && tableIds.includes(this._tmpId)) {
-            //todo remove indexes for foreignKey
-            //                                team_id  this.team_id
-            Index.removeTmpIdFromIndex(this);
-            currentDatabase.delete(className, this._tmpId);
-        }
-
-        if (tableIds.includes(this.primaryKey)) {
-            currentDatabase.update(className, this);
-            return;
-        }
-        currentDatabase.insert(className, this);
+        globalThis.Store.database().save(this.className, this);
     }
 
-    setFields(fields) {
+    setFields(fields: Field[]) {
         ModelSetup.setFields(this, fields);
         return this;
     }
 
-    tableSetup(table) {
+    tableSetup(table: Table) {
         ModelSetup.setupTable(this, table);
     }
 

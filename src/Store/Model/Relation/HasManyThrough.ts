@@ -56,9 +56,8 @@ export default class HasManyThrough extends Relation {
 
     private getValueByParentKey(parentProperty: string): Collection {
         const keyIndex = this.model.getIndexByKey(this.indexName);
-
         return globalThis.Store.database().find(this.model.className,
-            [...(keyIndex.get(this.$parent[parentProperty])?.values()) ?? []]
+            [...(keyIndex.get(`${this.$parent[parentProperty]}`)?.values()) ?? []]
         );
     }
 }
