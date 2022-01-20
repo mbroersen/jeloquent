@@ -6,6 +6,7 @@ test('Store can add database', () => {
     store.add(database);
     store.use('default');
 
+    // is now proxy TODO fix a test
     expect(store.database()).toBeInstanceOf(Database);
     store.use('none');
     expect(store.database()).toStrictEqual(null);
