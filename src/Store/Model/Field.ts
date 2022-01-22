@@ -52,7 +52,25 @@ export default class Field {
         return this.$fieldValue;
     }
 
+    set _value(value) {
+        if (this.$originalValue === undefined) {
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
+        }
+
+        this.$previousValue = JSON.parse(JSON.stringify(this.value));
+        this.$fieldValue = value;
+    }
+
     set value(value: unknown) {
+        if (this.$previousValue === undefined) {
+            this.$previousValue = JSON.parse(JSON.stringify(this.value ?? value));
+        }
+
+        if (this.$originalValue === undefined) {
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
+        }
+
+        this.$previousValue = JSON.parse(JSON.stringify(this.value));
 
         this.$fieldValue = value;
     }
@@ -81,59 +99,7 @@ export default class Field {
         return JSON.parse(JSON.stringify(object));
     }
 
-    protected addParentFieldValueLookUp(): void {
-        Object.defineProperty(this.$parent,
-            this.$name, {
-                get: () => {
-                    return this.value;
-                },
-                set: (value) => {
-                    if (this.$previousValue === undefined) {
-                        this.$previousValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    if (this.$originalValue === undefined) {
-                        this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    this.$previousValue = JSON.parse(JSON.stringify(this.value));
-
-                    this.value = value;
-                }
-            }
-        )
-    }
-
-    protected addParentOriginalValueLookUp(): void {
-        Object.defineProperty(this.$parent,
-            `original_${this.$name}`, {
-                get: () => {
-                    return this.originalValue;
-                },
-            }
-        )
-    }
-
-    protected setFillPropertyOnParent(): void {
-        Object.defineProperty(this.$parent,
-            `_${this.$name}`,
-            {
-                set: (value) => {
-                    if (this.$originalValue === undefined) {
-                        this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    this.$previousValue = JSON.parse(JSON.stringify(this.value));
-                    this.value = value;
-                }
-            });
-    }
-
     protected setParentProperties(): Field {
-        this.addParentFieldValueLookUp();
-        this.addParentOriginalValueLookUp();
-        this.setFillPropertyOnParent();
-
         return this;
     }
 }

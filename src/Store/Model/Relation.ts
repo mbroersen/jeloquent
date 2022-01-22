@@ -26,21 +26,14 @@ export default class Relation extends Field {
         table.registerIndex(this.foreignKey);
     }
 
-    protected setFillPropertyOnParent(): void {
-        Object.defineProperty(
-            this.$parent,
-            `_${this.$name}`,
-            {
-                set: (value) => {
-                    if (!Array.isArray(value)) {
-                        value = [value];
-                    }
-                    value.forEach((modelValue) => {
-                        if (!(this.model.ids().includes(modelValue.id))) {
-                            this.model.insert(modelValue);
-                        }
-                    });
-                }
-            });
+    set _value(value) {
+        if (!Array.isArray(value)) {
+            value = [value];
+        }
+        value.forEach((modelValue) => {
+            if (!(this.model.ids().includes(modelValue.id))) {
+                this.model.insert(modelValue);
+            }
+        });
     }
 }
