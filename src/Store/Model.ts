@@ -26,11 +26,7 @@ class Model implements ModelInterface {
 
     ['constructor']: ModelStaticInterface;
 
-    /**
-     * Todo convert to Map<string, Field>;
-     * @private
-     */
-    private _originalFields: Field[];
+    private _originalFields: Map<string, Field>;
 
     private _primaryFields: Field[];
 
@@ -40,27 +36,7 @@ class Model implements ModelInterface {
         this.setFields(ModelSetup.addRelationFieldsToList(fields));
         this._tmpId = `_${++globalThis.Store.numberOfModelCreated}`;
 
-        // should add fieldMap
-        // todo use proxy
-        // return new Proxy(this, {
-        //     construct(target, argArray, newTarget): object {
-        //         return Reflect.construct(target, argArray, newTarget);
-        //     },
-        //
-        //     get(target: Database, p): any {
-        //         if (!target[p]) {
-        //             return (...args) => {
-        //                 const arrayArgs = [...args];
-        //                 const tableName = arrayArgs.shift();
-        //
-        //                 console.log(target);
-        //
-        //                 return target.table(tableName)[p](...arrayArgs);
-        //             }
-        //         }
-        //         return Reflect.get(target, p);
-        //     }
-        // })
+        return ModelSetup.modelProxy(this);
     }
 
     static get className(): string {
@@ -92,7 +68,7 @@ class Model implements ModelInterface {
     }
 
     get originalFields(): Field[] {
-        return this._originalFields;
+        return [...this._originalFields.values()];
     }
 
     get originalPrimaryKey(): unknown {
@@ -118,7 +94,7 @@ class Model implements ModelInterface {
     }
 
     get primaryKey(): string {
-        return this.primaryFields.reduce((toValue:string, field:Field, i:number): string => {
+        return (this.primaryFields.reduce((toValue:string, field:Field, i:number): string => {
             if (i > 0) {
                 return `${toValue}-${field.value}`;
             }
@@ -128,7 +104,7 @@ class Model implements ModelInterface {
             }
 
             return `${field.value}`;
-        }, '') ?? this._tmpId ?? null;
+        }, '') ?? this._tmpId ?? null);
     }
 
     get primaryKeyName(): string[] {
@@ -181,7 +157,7 @@ class Model implements ModelInterface {
             return obj;
         }, [])
 
-        return Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone);
+        return ModelSetup.modelProxy(Object.create(Object.getPrototypeOf(original)).setFields(fieldsClone));
     }
 
     static ids() {
@@ -277,6 +253,7 @@ class Model implements ModelInterface {
     }
 
     setFields(fields: Field[]) {
+        this._originalFields = new Map();
         ModelSetup.setFields(this, fields);
         return this;
     }

@@ -28,20 +28,6 @@ export default class HasOne extends Relation {
         return this;
     }
 
-    protected setParentProperties(): HasOne {
-        super.setParentProperties();
-
-        Object.defineProperty(this.$parent,
-            `has${this.model.className}`, {
-                get: () => {
-                    return this.value !== null;
-                },
-            }
-        )
-
-        return this;
-    }
-
     private getValueByParentKey(parentProperty) {
         const keyIndex = this.model.getIndexByKey(this.foreignKey);
         return globalThis.Store.database().find(this.model.className,

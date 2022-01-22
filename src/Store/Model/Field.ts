@@ -21,11 +21,11 @@ export default class Field {
      */
     constructor(name: string, isPrimary = false) {
         this._isPrimary = isPrimary;
-        this.$name = name;
         this.$fieldValue = null;
         this.$previousValue = undefined;
         this.$originalValue = undefined;
         this.$parent = null;
+        this.$name = name;
     }
 
     get isDirty(): boolean {
@@ -52,9 +52,28 @@ export default class Field {
         return this.$fieldValue;
     }
 
-    set value(value: unknown) {
+    set _value(newValue: unknown) {
+        if (this.$originalValue === undefined) {
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? newValue));
+        }
+        this.$previousValue = JSON.parse(JSON.stringify(this.value));
+        this.$fieldValue = newValue;
+    }
 
-        this.$fieldValue = value;
+
+    // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+    set value(newValue: unknown) {
+        if (this.$previousValue === undefined) {
+            this.$previousValue = JSON.parse(JSON.stringify(this.value ?? newValue));
+        }
+
+        if (this.$originalValue === undefined) {
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? newValue));
+        }
+
+        this.$previousValue = JSON.parse(JSON.stringify(this.value));
+
+        this.$fieldValue = newValue;
     }
 
     resetDirty(): void {
@@ -81,59 +100,7 @@ export default class Field {
         return JSON.parse(JSON.stringify(object));
     }
 
-    protected addParentFieldValueLookUp(): void {
-        Object.defineProperty(this.$parent,
-            this.$name, {
-                get: () => {
-                    return this.value;
-                },
-                set: (value) => {
-                    if (this.$previousValue === undefined) {
-                        this.$previousValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    if (this.$originalValue === undefined) {
-                        this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    this.$previousValue = JSON.parse(JSON.stringify(this.value));
-
-                    this.value = value;
-                }
-            }
-        )
-    }
-
-    protected addParentOriginalValueLookUp(): void {
-        Object.defineProperty(this.$parent,
-            `original_${this.$name}`, {
-                get: () => {
-                    return this.originalValue;
-                },
-            }
-        )
-    }
-
-    protected setFillPropertyOnParent(): void {
-        Object.defineProperty(this.$parent,
-            `_${this.$name}`,
-            {
-                set: (value) => {
-                    if (this.$originalValue === undefined) {
-                        this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
-                    }
-
-                    this.$previousValue = JSON.parse(JSON.stringify(this.value));
-                    this.value = value;
-                }
-            });
-    }
-
     protected setParentProperties(): Field {
-        this.addParentFieldValueLookUp();
-        this.addParentOriginalValueLookUp();
-        this.setFillPropertyOnParent();
-
         return this;
     }
 }

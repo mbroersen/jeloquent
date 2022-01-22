@@ -18,29 +18,26 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
-    getRelationalFields(): Array<ForeignKey> {
+    set _value(value: Record<string, unknown>|Record<string, unknown>[]) {
+        if (!Array.isArray(value)) {
+            value = [value];
+        }
+
+        value.forEach((modelValue) => {
+            // todo should use primary key names
+            // should contain primary key names
+            // maybe add static model helper
+            if (!(this.model.ids().includes(`${modelValue?.id}`))) {
+                this.model.insert(modelValue);
+            }
+        });
+    }
+
+    getRelationalFields(): ForeignKey[] {
         return [new ForeignKey(this.foreignKey).setRelation(this)];
     }
 
     tableSetup(table: TableInterface): void {
         table.registerIndex(this.foreignKey);
-    }
-
-    protected setFillPropertyOnParent(): void {
-        Object.defineProperty(
-            this.$parent,
-            `_${this.$name}`,
-            {
-                set: (value) => {
-                    if (!Array.isArray(value)) {
-                        value = [value];
-                    }
-                    value.forEach((modelValue) => {
-                        if (!(this.model.ids().includes(modelValue.id))) {
-                            this.model.insert(modelValue);
-                        }
-                    });
-                }
-            });
     }
 }

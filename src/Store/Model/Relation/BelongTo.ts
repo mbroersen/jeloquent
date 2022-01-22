@@ -15,11 +15,6 @@ export default class BelongsTo extends Relation {
         return this.model.find(this.$parent[this.foreignKey]);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    set value(value) {
-
-    }
-
     setName(): BelongsTo {
         const className = this.model.snakeCaseClassName;
         this.$name = this.$name ?? `${className}`;
@@ -33,7 +28,7 @@ export default class BelongsTo extends Relation {
         for (const namePart of this.$name.split('_')) {
             name += namePart[0].toUpperCase() + namePart.slice(1);
         }
-
+        //TODO remove
         Object.defineProperty(this.$parent,
             `has${name}`, {
                 get: () => {

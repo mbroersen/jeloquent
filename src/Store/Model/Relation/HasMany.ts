@@ -37,7 +37,7 @@ export default class HasMany extends Relation {
         const modelClassName = this.model.snakeCaseClassName;
 
         this.foreignKey = `${parentClassName}_id`;
-        this.$name = `${modelClassName}s`;
+        this.$name = `${modelClassName}s`; //todo fix plural notation
         return this;
     }
 
@@ -51,6 +51,7 @@ export default class HasMany extends Relation {
     protected setParentProperties(): HasMany {
         super.setParentProperties();
 
+        // todo remove and move to proxy
         Object.defineProperty(this.$parent,
             `${this.name}Count`, {
                 get: () => {
@@ -59,6 +60,7 @@ export default class HasMany extends Relation {
             }
         );
 
+        // todo remove and move to proxy
         Object.defineProperty(this.$parent,
             `has${this.model.className}s`, {
                 get: () => {

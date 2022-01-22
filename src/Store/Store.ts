@@ -52,7 +52,7 @@ class Store implements StoreInterface {
                 return Reflect.construct(target, argArray, newTarget);
             },
 
-            get(target: Database, p): any {
+            get(target: Database, p): unknown {
                 if (!target[p]) {
                     return (...args) => {
                         const arrayArgs = [...args];
