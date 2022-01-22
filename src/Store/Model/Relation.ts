@@ -18,15 +18,7 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
-    getRelationalFields(): Array<ForeignKey> {
-        return [new ForeignKey(this.foreignKey).setRelation(this)];
-    }
-
-    tableSetup(table: TableInterface): void {
-        table.registerIndex(this.foreignKey);
-    }
-
-    set _value(value) {
+    set _value(value: unknown) {
         if (!Array.isArray(value)) {
             value = [value];
         }
@@ -35,5 +27,13 @@ export default class Relation extends Field {
                 this.model.insert(modelValue);
             }
         });
+    }
+
+    getRelationalFields(): Array<ForeignKey> {
+        return [new ForeignKey(this.foreignKey).setRelation(this)];
+    }
+
+    tableSetup(table: TableInterface): void {
+        table.registerIndex(this.foreignKey);
     }
 }
