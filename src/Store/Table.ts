@@ -91,12 +91,12 @@ export default class Table implements TableInterface {
     }
 
     public insert(model: ModelInterface): void {
-        if (this._models.has(model.primaryKey)) {
-            throw new Error('Record already exists');
-        }
-
         if (!(model instanceof Model)) {
             throw new Error('Record should be instance of model');
+        }
+
+        if (this._models.has(model.primaryKey)) {
+            return;
         }
 
         model.resetDirty();

@@ -24,12 +24,7 @@ export default class Relation extends Field {
         }
 
         value.forEach((modelValue) => {
-            // todo should use primary key names
-            // should contain primary key names
-            // maybe add static model helper
-            if (!(this.model.ids().includes(`${modelValue?.id}`))) {
-                this.model.insert(modelValue);
-            }
+            this.model.insert(modelValue);
         });
     }
 
