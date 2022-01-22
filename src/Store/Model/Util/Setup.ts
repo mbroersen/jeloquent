@@ -2,6 +2,7 @@ import Relation from "../Relation";
 import ForeignKey from "../Field/ForeignKey";
 import HasManyThrough from "../Relation/HasManyThrough";
 import Field from "../Field";
+import {ModelInterface} from "../../../JeloquentInterfaces";
 
 export function addRelationFieldsToList(fields) {
     const fieldList = [...fields];
@@ -15,8 +16,8 @@ export function addRelationFieldsToList(fields) {
 
 export function setFields(model, fields: Field[]) {
     fields.forEach((field) => {
-        model._originalFields.set(field.name, field);
         field.setup(modelProxy(model));
+        model._originalFields.set(field.name, field);
     });
     model.numberOfFields = model.originalFields.length;
 }
@@ -39,17 +40,17 @@ export function modelProxy(model) {
             return Reflect.construct(target, argArray, newTarget);
         },
 
-        get(target: any, p: string | symbol, receiver: any): any {
+        get(target: ModelInterface, p: string | symbol): unknown {
             if (Reflect.has(target, p)) {
                 return Reflect.get(target, p);
             }
 
-            if (target._originalFields.has(p)) {
-                return target._originalFields.get(p).value;
-            }
-
             if (typeof p !== 'string') {
                 return null;
+            }
+
+            if (target._originalFields.has(p)) {
+                return target._originalFields.get(p).value;
             }
 
             if (p.startsWith('original_') && !Reflect.has(target, p.replace('original_', '')) && target._originalFields.has(p.replace('original_', ''))) {
@@ -58,9 +59,13 @@ export function modelProxy(model) {
             return null;
         },
 
-        set(target: any, p: string | symbol, value: any, receiver: any): boolean {
+        set(target: ModelInterface, p: string | symbol, value: unknown): boolean {
             if (Reflect.has(target, p)) {
                 return Reflect.set(target, p, value);
+            }
+
+            if (typeof p !== 'string') {
+                return false;
             }
 
             if (target._originalFields.has(p)) {

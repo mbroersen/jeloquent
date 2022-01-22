@@ -18,12 +18,13 @@ export default class Relation extends Field {
         this.foreignKey = foreignKey;
     }
 
-    set _value(value: unknown) {
+    set _value(value: Record<string, unknown>|Record<string, unknown>[]) {
         if (!Array.isArray(value)) {
             value = [value];
         }
+
         value.forEach((modelValue) => {
-            if (!(this.model.ids().includes(modelValue.id))) {
+            if (!(this.model.ids().includes(modelValue?.id))) {
                 this.model.insert(modelValue);
             }
         });

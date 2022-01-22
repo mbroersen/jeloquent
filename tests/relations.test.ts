@@ -202,8 +202,8 @@ test('saving relation should add index', () => {
     comment2.save();
 
     expect(comment.user).toBeInstanceOf(User);
-    expect(user.comment.length).toStrictEqual(2);
-    expect(user.comment.first()).toBeInstanceOf(Comment);
+    expect(user.comments.length).toStrictEqual(2);
+    expect(user.comments.first()).toBeInstanceOf(Comment);
 });
 
 
@@ -231,6 +231,6 @@ test('deleting relation should update relation key', () => {
     Comment.delete(comment.primaryKey);
 
     expect(comment.user).toBeInstanceOf(User);
-    expect(user.comment.length).toStrictEqual(1);
-    expect(user.comment.first()).toBeInstanceOf(Comment);
+    expect(user.comments.length).toStrictEqual(1);
+    expect(user.comments.first()).toBeInstanceOf(Comment);
 })

@@ -20,8 +20,8 @@ export default class ForeignKey extends Field {
         return this.$fieldValue;
     }
 
-    set value(value) {
-        this.$fieldValue = value;
+    set value(newValue: unknown) {
+        this.$fieldValue = newValue;
     }
 
     setRelation(relation: Relation) {

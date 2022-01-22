@@ -16,7 +16,7 @@ export interface ModelStaticInterface {
     find(id: object|string|number|Array<string|number>):Collection|ModelInterface|null;
     getIndexByKey(indexName: string);
     getInstance(): ModelInterface;
-    ids():Array<string|number>;
+    ids():Array<string>;
     insert(data: object): ModelInterface;
     registerIndex(name: string): void;
     update(data: object): ModelInterface;
@@ -25,6 +25,7 @@ export interface ModelStaticInterface {
 
 export interface ModelInterface {
     _tmpId: string;
+    _originalFields: Map<string, Field>;
 
     fill(data: object): void;
     fillRelations(data: object): void;

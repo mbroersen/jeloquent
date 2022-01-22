@@ -21,11 +21,11 @@ export default class Field {
      */
     constructor(name: string, isPrimary = false) {
         this._isPrimary = isPrimary;
-        this.$name = name;
         this.$fieldValue = null;
         this.$previousValue = undefined;
         this.$originalValue = undefined;
         this.$parent = null;
+        this.$name = name;
     }
 
     get isDirty(): boolean {
@@ -52,27 +52,28 @@ export default class Field {
         return this.$fieldValue;
     }
 
-    set _value(value) {
+    set _value(newValue: unknown) {
         if (this.$originalValue === undefined) {
-            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? newValue));
         }
-
         this.$previousValue = JSON.parse(JSON.stringify(this.value));
-        this.$fieldValue = value;
+        this.$fieldValue = newValue;
     }
 
-    set value(value: unknown) {
+
+    // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+    set value(newValue: unknown) {
         if (this.$previousValue === undefined) {
-            this.$previousValue = JSON.parse(JSON.stringify(this.value ?? value));
+            this.$previousValue = JSON.parse(JSON.stringify(this.value ?? newValue));
         }
 
         if (this.$originalValue === undefined) {
-            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? value));
+            this.$originalValue = JSON.parse(JSON.stringify(this.value ?? newValue));
         }
 
         this.$previousValue = JSON.parse(JSON.stringify(this.value));
 
-        this.$fieldValue = value;
+        this.$fieldValue = newValue;
     }
 
     resetDirty(): void {
