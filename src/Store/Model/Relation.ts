@@ -24,13 +24,16 @@ export default class Relation extends Field {
         }
 
         value.forEach((modelValue) => {
-            if (!(this.model.ids().includes(modelValue?.id))) {
+            // todo should use primary key names
+            // should contain primary key names
+            // maybe add static model helper
+            if (!(this.model.ids().includes(`${modelValue?.id}`))) {
                 this.model.insert(modelValue);
             }
         });
     }
 
-    getRelationalFields(): Array<ForeignKey> {
+    getRelationalFields(): ForeignKey[] {
         return [new ForeignKey(this.foreignKey).setRelation(this)];
     }
 
