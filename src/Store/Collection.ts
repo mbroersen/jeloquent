@@ -24,10 +24,6 @@ export default class Collection extends Array {
         return this[0] ?? null;
     }
 
-    jsonStringify(): string {
-        return JSON.stringify(this);
-    }
-
     last() {
         return this.slice(-1)[0] ?? null;
     }
@@ -141,6 +137,16 @@ export default class Collection extends Array {
         return this.whereIfFunction(field, (field, object) => {
             return object[field] === null;
         });
+    }
+
+    toJSON() {
+        return this.toObject();
+    }
+
+    toObject() {
+       return this.map((item) => {
+           return (item.toObject?.() ?? item);
+       });
     }
 
     private _getRowFieldResult(row, lookUpFields) {

@@ -51,13 +51,7 @@ beforeAll(() => {
     UserAddress.insert(userAddressData);
     Team.insert(teamData);
     Comment.insert(commentData);
-
-
-
-})
-
-
-
+});
 
 test('BelongsTo relations is added to user', () => {
     const lUser = User.find(1);
@@ -72,7 +66,6 @@ test('BelongsTo relations is added to user', () => {
     expect(lUser2.team).toStrictEqual(null);
 
 });
-
 
 test('HasMany Relation is added to user model', () => {
     const lUser = User.find(1);

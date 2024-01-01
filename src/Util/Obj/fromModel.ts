@@ -1,5 +1,6 @@
 import Field from "../../Store/Model/Field";
 import Relation from "../../Store/Model/Relation";
+import MorphTo from "../../Store/Model/Field/MorphTo";
 
 export default function (model, fromRelation = false) {
     const json = {};
@@ -9,9 +10,18 @@ export default function (model, fromRelation = false) {
         if (field instanceof Relation && fromRelation) {
             continue
         }
-        json[field.name] = field?.value;
+
+        if (field instanceof MorphTo && fromRelation) {
+            continue;
+        }
+
+
         if (Array.isArray(json[field.name])) {
             json[field.name] = arrayToObjects(json, field);
+        } else if (field instanceof Relation) {
+            json[field.name] = field?.value?.toObject?.(true) ?? null;
+        } else {
+            json[field.name] = field.value;
         }
     }
 

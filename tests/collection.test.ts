@@ -325,3 +325,18 @@ test('returning random value', () => {
     expect(uniqueCollection).toBeInstanceOf(Collection);
     expect(uniqueCollection.length).toStrictEqual(4);
 });
+
+test('we should be able to stringify collection with json values', () => {
+    const string = JSON.stringify(new Collection(
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 1, name: 'test'},
+        {id: 2, name: null},
+        {id: 3, name: 'test2'},
+        {id: 4, name: 'test3'}
+    ));
+
+    expect(string).toBe('[{\"id\":1,\"name\":\"test\"},{\"id\":1,\"name\":\"test\"},{\"id\":1,\"name\":\"test\"},{\"id\":1,\"name\":\"test\"},{\"id\":1,\"name\":\"test\"},{\"id\":2,\"name\":null},{\"id\":3,\"name\":\"test2\"},{\"id\":4,\"name\":\"test3\"}]');
+})
