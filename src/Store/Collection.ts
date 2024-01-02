@@ -63,7 +63,7 @@ export default class Collection extends Array {
 
     toObject() {
         return this.map((item) => {
-            return (item.toObject?.() ?? item);
+            return (item?.toObject?.() ?? item);
         });
     }
 
