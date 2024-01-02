@@ -57,6 +57,16 @@ export default class Collection extends Array {
         return this[Math.round(((this.length - 1) * Math.random()))];
     }
 
+    toJSON() {
+        return this.toObject();
+    }
+
+    toObject() {
+        return this.map((item) => {
+            return (item.toObject?.() ?? item);
+        });
+    }
+
     unique(field: string): Collection {
         const unique = {};
         for (const i in this) {
@@ -133,21 +143,16 @@ export default class Collection extends Array {
         });
     }
 
+
     whereNull(field: string): Collection {
         return this.whereIfFunction(field, (field, object) => {
             return object[field] === null;
         });
     }
 
-    toJSON() {
-        return this.toObject();
-    }
 
-    toObject() {
-       return this.map((item) => {
-           return (item.toObject?.() ?? item);
-       });
-    }
+
+
 
     private _getRowFieldResult(row, lookUpFields) {
         let resultField = row[lookUpFields[0]] ?? null;
