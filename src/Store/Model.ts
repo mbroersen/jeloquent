@@ -52,7 +52,7 @@ class Model implements ModelInterface {
     }
 
     get className(): string {
-        return this.constructor.className;
+        return Object.getPrototypeOf(this).constructor.className;
     }
 
     get dirtyFieldNames(): string[] {
@@ -64,7 +64,7 @@ class Model implements ModelInterface {
     }
 
     get kebabCaseClassName(): string {
-        return this.constructor.kebabCaseClassName;
+        return  Object.getPrototypeOf(this).constructor.kebabCaseClassName;
     }
 
     get originalFields(): Field[] {
@@ -112,7 +112,7 @@ class Model implements ModelInterface {
     }
 
     get snakeCaseClassName(): string {
-        return this.constructor.snakeCaseClassName;
+        return Object.getPrototypeOf(this).constructor.snakeCaseClassName;
     }
 
     static aSyncInsert(data: object): Promise<Collection> {
