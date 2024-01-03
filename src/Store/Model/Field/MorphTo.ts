@@ -12,7 +12,7 @@ export default class MorphTo extends Field {
         const type = this.$parent[`${name}_type`];
         const id = this.$parent[`${name}_id`];
 
-        return globalThis.Store.classInstances[type].constructor.find(id);
+        return Object.getPrototypeOf(globalThis.Store.classInstances[type]).constructor.find(id);
     }
 
     set _value(value) {
@@ -26,7 +26,7 @@ export default class MorphTo extends Field {
 
         for (const record of value) {
             record['id'] = record[id];
-            globalThis.Store.classInstances[record[type]].constructor.insert(record);
+            Object.getPrototypeOf(globalThis.Store.classInstances[record[type]]).constructor.insert(record);
         }
     }
 }
