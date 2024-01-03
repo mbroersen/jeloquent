@@ -94,10 +94,10 @@ export default class Field {
         console.info(table.name);
     }
 
-    toJson(): object {
+    toJSON(): object {
         const object = {};
         object[this.$name] = this.value;
-        return JSON.parse(JSON.stringify(object));
+        return object;
     }
 
     protected setParentProperties(): Field {

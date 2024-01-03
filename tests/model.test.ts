@@ -92,9 +92,9 @@ test('Insert relations via model', () => {
     expect(UserAddress.find(22).city).toStrictEqual('Hoorn');
     expect(User.find(1).user_address).toBeInstanceOf(UserAddress);
     expect(User.find(1).team).toBeInstanceOf(Team);
-    // expect(User.find(1).avatar).toBeInstanceOf(Avatar);
-    // expect(User.find(1).comments.length).toStrictEqual(4);
-    // expect(Comment.all().length).toStrictEqual(4);
+    expect(User.find(1).avatar).toBeInstanceOf(Avatar);
+    expect(User.find(1).comments.length).toStrictEqual(4);
+    expect(Comment.all().length).toStrictEqual(4);
 
 });
 
@@ -144,8 +144,8 @@ test('two belongsTo relation of same type can be saved', () => {
     expect(team.user_two).toBeInstanceOf(User);
     expect(team.user_two.id).toStrictEqual(2);
 
-    expect(JSON.stringify(Team.all().first())).toStrictEqual("{\"id\":1,\"name\":\"team relation 1\",\"users\":[{\"id\":1,\"name\":\"name\",\"team_id\":1},null,null,{\"id\":2,\"name\":\"name\",\"team_id\":1}],\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1}],\"avatar\":null}");
-    expect(Team.all().jsonStringify()).toStrictEqual("[{\"id\":1,\"name\":\"team relation 1\",\"users\":[{\"id\":1,\"name\":\"name\",\"team_id\":1},null,null,{\"id\":2,\"name\":\"name\",\"team_id\":1}],\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1}],\"avatar\":null}]");
+    expect(JSON.stringify(Team.all().first())).toStrictEqual("{\"id\":1,\"name\":\"team relation 1\",\"users\":[{\"id\":1,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":1,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},null,null,{\"id\":2,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[],\"avatar\":null,\"user_address\":null}],\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":null}");
+    expect(JSON.stringify(Team.all())).toStrictEqual("[{\"id\":1,\"name\":\"team relation 1\",\"users\":[{\"id\":1,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":1,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},null,null,{\"id\":2,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[],\"avatar\":null,\"user_address\":null}],\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":null}]");
 })
 
 
@@ -168,6 +168,23 @@ test('changed model has dirty fields', () => {
 
 });
 
+test('you should be able to JSON.stringify a model collection', () => {
+    User.insert({
+        id: 1, name: 'user 1', team_id: 1,
+        team: {id: 1, name: 'team relation 1'},
+        user_address: {id: 22, city: 'Hoorn', steet: 'waagplein', house_number: 1, user_id: 1},
+        avatar: {avatar_type: 'User', avatar_id: 1, img_url: 'team.png'},
+        comments: [
+            {id: 9, title: 'titel', text: 'hoi', user_id: 1},
+            {id: 19, title: 'a titel', text: 'hoi 2', user_id: 1},
+            {id: 29, title: 'titel b', text: 'hoi 2', user_id: 1},
+            {id: 39, title: '9 titel', text: 'hoi 2', user_id: 1},
+        ]
+    });
+
+    const jsonString = JSON.stringify(User.all());
+    expect(jsonString).toStrictEqual("[{\"id\":1,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":1,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":2,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[],\"avatar\":null,\"user_address\":null},{\"id\":null,\"name\":\"test\",\"team_id\":null,\"team\":null,\"comments\":[],\"avatar\":null,\"user_address\":null}]");
+});
 
 test('model has original value', () => {
     const user = new User();

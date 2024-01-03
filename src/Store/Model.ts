@@ -234,10 +234,6 @@ class Model implements ModelInterface {
         return this.dirtyFields.length > 0;
     }
 
-    jsonStringify(): string {
-        return JSON.stringify(this.toObject());
-    }
-
     registerIndex(name) {
         Index.register(this, name);
     }
