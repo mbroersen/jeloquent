@@ -186,6 +186,9 @@ test('you should be able to JSON.stringify a model collection', () => {
     expect(jsonString).toStrictEqual("[{\"id\":1,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[{\"id\":9,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":19,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":29,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":39,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":1,\"user\":{\"id\":1,\"name\":\"name\",\"team_id\":1},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":1,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":22,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":1}},{\"id\":2,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[],\"avatar\":null,\"user_address\":null},{\"id\":null,\"name\":\"test\",\"team_id\":null,\"team\":null,\"comments\":[],\"avatar\":null,\"user_address\":null}]");
 });
 
+
+
+
 test('model has original value', () => {
     const user = new User();
     user.name = 'Mark Man';
@@ -223,3 +226,59 @@ test('model has original value', () => {
     expect(originalValues).toContain(1);
 
 });
+
+test('model can be deleted', () => {
+    const user = User.all().first();
+    expect(user.id).toStrictEqual(1);
+    User.all().first().delete();
+    expect(User.find(1)).toBeNull();
+});
+
+test('model can be stringified', () => {
+    const string = JSON.stringify(User.all().first());
+    expect(string).toStrictEqual("{\"id\":2,\"name\":\"name\",\"team_id\":1,\"team\":{\"id\":1,\"name\":\"team relation 1\"},\"comments\":[],\"avatar\":null,\"user_address\":null}");
+})
+
+test('User should be able to update', () => {
+    User.insert({
+        id: 121, name: 'user 1', team_id: 1211,
+        team: {id: 1211, name: 'team relation 1'},
+        user_address: {id: 221, city: 'Hoorn', steet: 'waagplein', house_number: 1, user_id: 121},
+        avatar: {avatar_type: 'User', avatar_id: 121, img_url: 'team.png'},
+        comments: [
+            {id: 91, title: 'titel', text: 'hoi', user_id: 121},
+            {id: 191, title: 'a titel', text: 'hoi 2', user_id: 121},
+            {id: 291, title: 'titel b', text: 'hoi 2', user_id: 121},
+            {id: 391, title: '9 titel', text: 'hoi 2', user_id: 121},
+        ]
+    });
+
+
+    const user = User.find(121);
+
+    User.aSyncUpdate({'id': user.id, 'name': 'Napolion'}).then(() => {
+        expect(JSON.stringify(User.find(user.id)))
+            .toEqual("{\"id\":121,\"name\":\"Napolion\",\"team_id\":1211,\"team\":{\"id\":1211,\"name\":\"team relation 1\"},\"comments\":[{\"id\":91,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":191,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":291,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":391,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":121,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}}");
+
+        const userToUpdate = User.find(user.id);
+        userToUpdate.name = 'Mark Napolion';
+        userToUpdate.save();
+
+        expect(JSON.stringify(User.find(user.id)))
+            .toEqual("{\"id\":121,\"name\":\"Mark Napolion\",\"team_id\":1211,\"team\":{\"id\":1211,\"name\":\"team relation 1\"},\"comments\":[{\"id\":91,\"title\":\"titel\",\"text\":\"hoi\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Mark Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":191,\"title\":\"a titel\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Mark Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":291,\"title\":\"titel b\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Mark Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}},{\"id\":391,\"title\":\"9 titel\",\"text\":\"hoi 2\",\"user_id\":121,\"user\":{\"id\":121,\"name\":\"Mark Napolion\",\"team_id\":1211},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}}],\"avatar\":{\"img_url\":\"team.png\",\"avatar_id\":121,\"avatar_type\":\"User\",\"avatar_info_id\":null},\"user_address\":{\"id\":221,\"city\":\"Hoorn\",\"street\":null,\"house_number\":1,\"user_id\":121}}");
+
+        Avatar.update({avatar_type: 'User', avatar_id: 121, img_url: 'jpeg'})
+        expect(Avatar.find({avatar_type: 'User', avatar_id: 121}).img_url).toEqual('jpeg');
+
+    });
+
+
+
+})
+
+test('model should be able to aSyncInsert', () => {
+    User.aSyncInsert({id: 1278, name: 'Test Mark'})
+        .then(() => {
+            expect(User.find(1278).name).toStrictEqual('Test Mark')
+    })
+})

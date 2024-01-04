@@ -107,6 +107,17 @@ class Model implements ModelInterface {
         }, '') ?? this._tmpId ?? null);
     }
 
+    primaryKeyByValues(values): string
+    {
+       return this.primaryFields.reduce((toValue, field:Field, i) => {
+            if (i > 0) {
+                return `${toValue}-${values[field.name]}`
+            }
+            return `${values[field.name]}`;
+        }, '');
+    }
+
+
     get primaryKeyName(): string[] {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.name);
     }
@@ -191,7 +202,7 @@ class Model implements ModelInterface {
         const length = modelsData.length;
         const models = new Collection();
         for (let i = 0; i < length; i++) {
-            const model = this.getInstance();
+            const model = this.find(this.getInstance().primaryKeyByValues(data));
             model.fill(data);
             globalThis.Store.database().update(this.className, model);
             model.fillRelations(data);
@@ -201,7 +212,7 @@ class Model implements ModelInterface {
     }
 
     delete() {
-        this.constructor.delete(this.primaryKey);
+        Object.getPrototypeOf(this).constructor.delete(this.primaryKey);
     }
 
     fill(data) {
