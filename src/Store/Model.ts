@@ -107,20 +107,12 @@ class Model implements ModelInterface {
         }, '') ?? this._tmpId ?? null);
     }
 
-    primaryKeyByValues(values): string
-    {
-       return this.primaryFields.reduce((toValue, field:Field, i) => {
-            if (i > 0) {
-                return `${toValue}-${values[field.name]}`
-            }
-            return `${values[field.name]}`;
-        }, '');
-    }
-
 
     get primaryKeyName(): string[] {
         return this.originalFields.filter(field => field.isPrimary).map(field => field.name);
     }
+
+
 
     get snakeCaseClassName(): string {
         return Object.getPrototypeOf(this).constructor.snakeCaseClassName;
@@ -243,6 +235,16 @@ class Model implements ModelInterface {
             return this.dirtyFieldNames.includes(fieldName);
         }
         return this.dirtyFields.length > 0;
+    }
+
+    primaryKeyByValues(values): string
+    {
+        return this.primaryFields.reduce((toValue, field:Field, i) => {
+            if (i > 0) {
+                return `${toValue}-${values[field.name]}`
+            }
+            return `${values[field.name]}`;
+        }, '');
     }
 
     registerIndex(name) {
